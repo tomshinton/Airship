@@ -1,0 +1,97 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "AirMovementComponent.h"
+#include "Events/DamageEvents.h"
+#include "HealthInterface.h"
+#include "Utils/InterfaceFunctions.h"
+#include "ConstructorHelpers.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "AirChar.h"
+
+UAirMovementComponent::UAirMovementComponent()
+	: MaxCameraPitch(20.f)
+	, TurnSpeed(1.f)
+	, TiltCameraSpeed(.5f)
+	, StrafeSpeed(350.f)
+	, ForwardSpeed(400.f)
+	, BackwardsSpeed(200.f)
+	, SprintModifier(1.5f)
+	, MaxTurnValue(3.f)
+{
+	static ConstructorHelpers::FObjectFinder<UCurveFloat> BankingCurveRef(TEXT("CurveFloat'/Game/Data/Curves/C_Player_Banking.C_Player_Banking'"));
+	if (BankingCurveRef.Object)
+	{
+		BankingCurve = BankingCurveRef.Object;
+	}
+
+	if (!OwningCharacter)
+	{
+		OwningCharacter = Cast<AAirChar>(GetOwner());
+	}
+}
+
+void UAirMovementComponent::MoveForward(float InAxis)
+{
+	if (InAxis != 0)
+	{
+		Cast<UCharacterMovementComponent>(OwningCharacter->GetMovementComponent())->MaxWalkSpeed = GetModifiedMoveSpeed(InAxis);
+		OwningCharacter->AddMovementInput(OwningCharacter->GetActorForwardVector(), InAxis);
+	}
+}
+
+void UAirMovementComponent::MoveRight(float InAxis)
+{
+	if (InAxis != 0)
+	{
+		Cast<UCharacterMovementComponent>(OwningCharacter->GetMovementComponent())->MaxWalkSpeed = StrafeSpeed;
+		OwningCharacter->AddMovementInput(OwningCharacter->GetActorRightVector(), InAxis);
+	}
+}
+
+void UAirMovementComponent::LookRight(float InAxis)
+{
+	LastTurnValue = InAxis;
+
+	OwningCharacter->AddControllerYawInput(InAxis*TurnSpeed);
+}
+
+void UAirMovementComponent::LookUp(float InAxis)
+{
+	OwningCharacter->AddControllerPitchInput(InAxis*TiltCameraSpeed);
+}
+
+void UAirMovementComponent::StartJump()
+{
+	OwningCharacter->bPressedJump = true;
+}
+
+void UAirMovementComponent::EndJump()
+{
+	OwningCharacter->bPressedJump = false;
+}
+
+float UAirMovementComponent::GetModifiedMoveSpeed(const float InVal)
+{
+	if (InVal != 0)
+	{
+		const float LinearVal = InVal > 0 ? ForwardSpeed : BackwardsSpeed;
+		float ModifiedVal = LinearVal * (IsSprinting ? SprintModifier : 1.f);
+		GetModifiedSprintFromCurve(ModifiedVal);
+		return ModifiedVal;
+	}
+	return 0.f;
+}
+
+void UAirMovementComponent::GetModifiedSprintFromCurve(float& InVal)
+{
+	if (BankingCurve)
+	{
+		const float NormalisedVal = FMath::Clamp(LastTurnValue / MaxTurnValue, 0.f, 1.f);
+		InVal *= BankingCurve->GetFloatValue(NormalisedVal);
+	}
+}
+
+void UAirMovementComponent::ToggleSprint()
+{
+	IsSprinting ? IsSprinting = false : IsSprinting = true;
+}
