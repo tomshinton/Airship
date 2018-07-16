@@ -5,7 +5,8 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "HealthInterface.h"
-#include "Events/DamageEvents.h"
+#include "Utils/Events/DamageEvents.h"
+
 #include "HealthComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthDepleted, FBaseDamageEvent, KillingBlow);

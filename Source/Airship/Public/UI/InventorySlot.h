@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "UI/AirWidget.h"
-#include "Datatypes/InventoryItems.h"
 #include "AirInventory.h"
+#include "Utils/Datatypes/InventoryItems.h"
 #include "InventorySlot.generated.h"
 
 UCLASS()
@@ -27,8 +27,14 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = Inventory)
 	FInventoryItem GetLinkedItem();
 
+	UFUNCTION(BlueprintCallable, Category = Inventory)
+	void SetInventorySlot(const int32 InSlot) { InventorySlot = InSlot; };
+
 	UPROPERTY(EditAnywhere, Category = Inventory)
 	int32 InventorySlot;
+
+	UPROPERTY(EditAnywhere, Category = Inventory)
+	bool IsHotBarSlot;
 	
 protected:
 	virtual void NativeConstruct() override;

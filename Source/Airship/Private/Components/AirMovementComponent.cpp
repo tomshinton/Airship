@@ -1,12 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AirMovementComponent.h"
-#include "Events/DamageEvents.h"
-#include "HealthInterface.h"
-#include "Utils/InterfaceFunctions.h"
 #include "ConstructorHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AirChar.h"
+#include "AirController.h"
+#include "CameraBobs.h"
 
 UAirMovementComponent::UAirMovementComponent()
 	: MaxCameraPitch(20.f)
@@ -28,6 +27,8 @@ UAirMovementComponent::UAirMovementComponent()
 	{
 		OwningCharacter = Cast<AAirChar>(GetOwner());
 	}
+
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UAirMovementComponent::MoveForward(float InAxis)
@@ -94,4 +95,34 @@ void UAirMovementComponent::GetModifiedSprintFromCurve(float& InVal)
 void UAirMovementComponent::ToggleSprint()
 {
 	IsSprinting ? IsSprinting = false : IsSprinting = true;
+}
+
+void UAirMovementComponent::ApplyCameraShakes()
+{
+	if(AAirController* OwningController = Cast<AAirController>(OwningCharacter->GetController()))
+	{
+		OwningController->ClientPlayCameraShake(GetAppropriateCameraShake(), 1.f, ECameraAnimPlaySpace::CameraLocal);
+	}
+}
+
+TSubclassOf<UCameraShake> UAirMovementComponent::GetAppropriateCameraShake()
+{
+	if (GetOwner()->GetVelocity().Size() > 0)
+	{
+		if (IsSprinting)
+		{
+			return URunBob::StaticClass();
+		}
+		else
+		{
+			return UWalkBob::StaticClass();
+		}
+	}
+
+	return UCameraShake::StaticClass();
+}
+
+void UAirMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+{
+	ApplyCameraShakes();
 }

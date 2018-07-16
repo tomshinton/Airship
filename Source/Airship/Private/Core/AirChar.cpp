@@ -3,17 +3,29 @@
 #include "AirChar.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ConstructorHelpers.h"
-#include "Events/DamageEvents.h"
+#include <DrawDebugHelpers.h>
 
 // Sets default values
 AAirChar::AAirChar()
+	: LeftHandTargetLocation(FVector(40.f, 30.f, 40.f))
+	, RightHandTargetLocation(FVector(40.f, -30.f, 40.f))
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	RightHand = CreateDefaultSubobject<USceneComponent>(TEXT("RightHandComponent"));
+	RightHand->SetupAttachment(RootComponent);
+	RightHand->SetRelativeLocation(FVector(RightHandTargetLocation));
+
+	LeftHand = CreateDefaultSubobject<USceneComponent>(TEXT("LeftHandComponent"));
+	LeftHand->SetupAttachment(RootComponent);
+	RightHand->SetRelativeLocation(LeftHandTargetLocation);
 
 	MovementComponent = CreateDefaultSubobject<UAirMovementComponent>(TEXT("MovementComponent"));
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 	InventoryComponent = CreateDefaultSubobject<UAirInventory>(TEXT("InventoryComponent"));
+	InventoryComponent->InventorySize = 20;
+	InventoryComponent->SetHandComponents(LeftHand, RightHand);
 }
 
 void AAirChar::Landed(const FHitResult& Hit)

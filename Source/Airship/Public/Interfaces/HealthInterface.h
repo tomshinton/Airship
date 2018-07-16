@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Interface.h"
-#include "Events/DamageEvents.h"
+#include "Utils/Events/DamageEvents.h"
 
 #include "HealthInterface.generated.h"
 

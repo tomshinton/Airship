@@ -22,9 +22,16 @@ class AIRSHIP_API AAirChar : public ACharacter
 public:
 	UFUNCTION(BlueprintPure, Category = Inventory)
 	UAirInventory* GetInventory() { return InventoryComponent; }
+
 public:
 	// Sets default values for this character's properties
 	AAirChar();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Char)
+	USceneComponent* RightHand;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Char)
+	USceneComponent* LeftHand;
 
 	UHealthComponent* HealthComponent;
 	UInteractionComponent* InteractionComponent;
@@ -39,14 +46,6 @@ protected:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-#pragma region MovementParams
-
-
-
-#pragma endregion MovementParams
-
-	
-
-	
-	
+	FVector RightHandTargetLocation;
+	FVector LeftHandTargetLocation;	
 };

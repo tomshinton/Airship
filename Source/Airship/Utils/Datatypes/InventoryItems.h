@@ -1,7 +1,10 @@
 #pragma once
 
 #include "Engine/DataTable.h"
-#include "Utils/InventoryFunctions.h"
+#include "../Functions/InventoryFunctions.h"
+#include "WorldItem.h"
+
+
 #include "InventoryItems.generated.h"
 
 USTRUCT(Blueprintable, BlueprintType)
@@ -29,7 +32,7 @@ public:
 		UTexture2D* ItemIcon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
-		TSubclassOf<AActor> ItemActorClass;
+		TSubclassOf<AWorldItem> ItemClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
 		bool Stacks;
@@ -48,11 +51,11 @@ struct FInventoryItem
 	GENERATED_BODY()
 
 	FInventoryItem()
-		: ItemID(0)
+		: ItemID("Item")
 		, Quantity(0)
 	{}
 
-	FInventoryItem(const int32 InItemID, const int32 InQuantity)
+	FInventoryItem(const FName InItemID, const int32 InQuantity)
 		: ItemID(InItemID)
 		, Quantity(InQuantity)
 	{
@@ -60,14 +63,26 @@ struct FInventoryItem
 	}
 
 public:
-	int32 ItemID;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	FName ItemID;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	int32 Quantity;
 
 	bool IsItemValid()
 	{
-		return !ItemInfo.IsNullSlot;
+		return ItemInfo.IsNullSlot;
+	}
+
+	void Print()
+	{
+		FString Callback = ItemInfo.IsNullSlot ? "Empty" : ItemInfo.ItemName.ToString();
+		UE_LOG(LogTemp, Log, TEXT("%s"), *Callback);
+ 	}
+
+	TSubclassOf<AWorldItem> GetItemClass()
+	{
+		return ItemInfo.ItemClass;
 	}
 
 private:

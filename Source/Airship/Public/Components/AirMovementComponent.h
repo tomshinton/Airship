@@ -29,6 +29,11 @@ public:
 	void GetModifiedSprintFromCurve(float& InVal);
 
 	void ToggleSprint();
+	void ApplyCameraShakes();
+	TSubclassOf<UCameraShake> GetAppropriateCameraShake();
+
+
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
 private:
 	float MaxCameraPitch;

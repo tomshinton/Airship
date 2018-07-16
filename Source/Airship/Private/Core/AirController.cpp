@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AirController.h"
-#include "Utils/CollisionDefs.h"
 #include "AirChar.h"
+#include "Utils/Defs/CollisionDefs.h"
 
 DECLARE_CYCLE_STAT(TEXT("ControllerLookAt"), STAT_LookAt, STATGROUP_ControllerFunctions);
 
@@ -40,8 +40,6 @@ void AAirController::LookAt()
 			TraceParams.AddIgnoredActor(GetPawn());
 			TraceParams.bTraceComplex = false;
 			TraceParams.TraceTag = TraceTag;
-
-			World->DebugDrawTraceTag = TraceTag;
 
 			FVector StartLocation;
 			FVector TraceDirection;

@@ -4,7 +4,6 @@
 #include "AirChar.h"
 #include "AirInventory.h"
 #include "Kismet/GameplayStatics.h"
-#include "Utils/InventoryFunctions.h"
 
 void UInventorySlot::UpdateFocused_Implementation(){}
 void UInventorySlot::UpdateFocusCleared_Implementation(){}
@@ -14,10 +13,10 @@ FInventoryItem UInventorySlot::GetLinkedItem()
 {
 	if (PlayerInventory)
 	{
-		return PlayerInventory->GetItemByID(InventorySlot);
+		return LinkedInventoryItem;
 	}
 
-	return FInventoryItem(0, 0);
+	return FInventoryItem();
 }
 
 void UInventorySlot::NativeConstruct()
@@ -32,22 +31,25 @@ void UInventorySlot::NativeConstruct()
 			PlayerInventory->OnSlotFocusUpdated.AddDynamic(this, &UInventorySlot::PlayerFocusChanged);
 			PlayerInventory->OnInventoryUpdated.AddDynamic(this, &UInventorySlot::PlayerInventoryChanged);
 
-			LinkedInventoryItem = PlayerInventory->GetItemByID(InventorySlot);
+			LinkedInventoryItem = PlayerInventory->GetItemBySlot(InventorySlot);
 		}
 	}
 }
 
 void UInventorySlot::PlayerFocusChanged(int32 InSlot)
 {
-	if (InSlot == InventorySlot)
+	if (IsHotBarSlot)
 	{
-		IsFocused = true;
-		UpdateFocused();
-	}
-	else if(IsFocused)
-	{
-		IsFocused = false;
-		UpdateFocusCleared();
+		if (InSlot == InventorySlot)
+		{
+			IsFocused = true;
+			UpdateFocused();
+		}
+		else if (IsFocused)
+		{
+			IsFocused = false;
+			UpdateFocusCleared();
+		}
 	}
 }
 
@@ -55,6 +57,7 @@ void UInventorySlot::PlayerInventoryChanged()
 {
 	if (PlayerInventory)
 	{
+		LinkedInventoryItem = PlayerInventory->GetItemBySlot(InventorySlot);
 		UpdateSlotVisuals();
 	}
 }
