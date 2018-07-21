@@ -22,6 +22,7 @@ class AIRSHIP_API UAirInventory : public UActorComponent
 	UAirInventory();
 
 public:
+
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void AddItem(const FName ID, const int32 Quantity);
 
@@ -56,7 +57,16 @@ public:
 	void FocusNextItem();
 	void FocusLastItem();
 
+	/************************************************************************/
+	/* Interaction                                                          */
+	/************************************************************************/
+
 	void Wield();
+
+	void StartPrimary();
+	void EndPrimary();
+	void StartSecondary();
+	void EndSecondary();
 
 	UPROPERTY(BlueprintAssignable)
 	FOnInventoryUpdated OnInventoryUpdated;

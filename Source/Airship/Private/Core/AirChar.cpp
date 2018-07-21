@@ -93,6 +93,11 @@ void AAirChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 			PlayerInputComponent->BindAction("ToggleInventory", IE_Pressed, SpawnedHUD, &AAirHUD::ToggleInventoryScreen);
 		}
 	}
+
+	PlayerInputComponent->BindAction("StartPrimary", IE_Pressed, InventoryComponent, &UAirInventory::StartPrimary);
+	PlayerInputComponent->BindAction("EndPrimary", IE_Released, InventoryComponent, &UAirInventory::EndPrimary);
+	PlayerInputComponent->BindAction("StartSecondary", IE_Pressed, InventoryComponent, &UAirInventory::StartSecondary);
+	PlayerInputComponent->BindAction("EndSecondary", IE_Released, InventoryComponent, &UAirInventory::EndSecondary);
 }
 
 bool AAirChar::ShouldLowerHands()

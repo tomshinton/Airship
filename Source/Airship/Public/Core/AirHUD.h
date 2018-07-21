@@ -14,10 +14,13 @@ class AIRSHIP_API AAirHUD : public AHUD
 	GENERATED_BODY()
 
 	AAirHUD(const FObjectInitializer& ObjectInitializer);
+
 public:
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void ToggleInventoryScreen();
+
+	void SetIsAiming(const bool InIsAiming);
 
 	UPROPERTY(EditDefaultsOnly, Category = Classes)
 	TSubclassOf<UAirWidget> HUD;
@@ -25,11 +28,16 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Classes)
 	TSubclassOf<UAirWidget> InventoryScreen;
 
+	UPROPERTY(EditDefaultsOnly, Category = Classes)
+	TSubclassOf<UUserWidget> Crosshair;
+
 protected:
 	virtual void BeginPlay() override;
 
 	TWeakObjectPtr<UAirWidget> HUDWidget;
 	TWeakObjectPtr<UAirWidget> InventoryScreenWidget;
+	TWeakObjectPtr<UUserWidget> CrosshairWidget;
 
 	bool InventoryIsVisible;
+	bool IsAiming;
 };

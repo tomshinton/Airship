@@ -202,3 +202,35 @@ void UAirInventory::Wield()
 		}
 	}
 }
+
+void UAirInventory::StartPrimary()
+{
+	if (IWieldInterface* CurrentWieldInterface = Cast<IWieldInterface>(CurrentWieldActor.Get()))
+	{
+		CurrentWieldInterface->StartPrimary();
+	}
+}
+
+void UAirInventory::EndPrimary()
+{
+	if (IWieldInterface* CurrentWieldInterface = Cast<IWieldInterface>(CurrentWieldActor.Get()))
+	{
+		CurrentWieldInterface->EndPrimary();
+	}
+}
+
+void UAirInventory::StartSecondary()
+{
+	if (IWieldInterface* CurrentWieldInterface = Cast<IWieldInterface>(CurrentWieldActor.Get()))
+	{
+		CurrentWieldInterface->StartSecondary();
+	}
+}
+
+void UAirInventory::EndSecondary()
+{
+	if (IWieldInterface* CurrentWieldInterface = Cast<IWieldInterface>(CurrentWieldActor.Get()))
+	{
+		CurrentWieldInterface->EndSecondary();
+	}
+}

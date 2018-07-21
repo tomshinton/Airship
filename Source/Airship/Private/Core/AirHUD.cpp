@@ -29,6 +29,11 @@ void AAirHUD::BeginPlay()
 			InventoryScreenWidget = UUMGFunctions::CreateAirWidget(World, InventoryScreen);
 			InventoryScreenWidget->SetOwningHUD(this);
 		}
+
+		if (Crosshair)
+		{
+			CrosshairWidget = CreateWidget<UUserWidget>(World, Crosshair);
+		}
 	}
 }
 
@@ -56,6 +61,23 @@ void AAirHUD::ToggleInventoryScreen()
 					UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(LocalController, InventoryWidgetPtr, EMouseLockMode::LockAlways);
 				}
 			}
+		}
+	}
+}
+
+void AAirHUD::SetIsAiming(const bool InIsAiming)
+{
+	IsAiming = InIsAiming;
+
+	if (CrosshairWidget.Get())
+	{
+		if (IsAiming)
+		{
+			CrosshairWidget->AddToViewport(10);
+		}
+		else
+		{
+			CrosshairWidget->RemoveFromParent();
 		}
 	}
 }
