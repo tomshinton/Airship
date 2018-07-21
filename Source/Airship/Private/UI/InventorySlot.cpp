@@ -4,6 +4,9 @@
 #include "AirChar.h"
 #include "AirInventory.h"
 #include "Kismet/GameplayStatics.h"
+#include <WidgetBlueprintLibrary.h>
+#include "Utils/Functions/BindingFunctions.h"
+#include "InventorySlotDragOperation.h"
 
 void UInventorySlot::UpdateFocused_Implementation(){}
 void UInventorySlot::UpdateFocusCleared_Implementation(){}
@@ -11,7 +14,7 @@ void UInventorySlot::UpdateSlotVisuals_Implementation() {}
 
 FInventoryItem UInventorySlot::GetLinkedItem()
 {
-	if (PlayerInventory)
+	if (LinkedInventory.Get())
 	{
 		return LinkedInventoryItem;
 	}
@@ -19,19 +22,36 @@ FInventoryItem UInventorySlot::GetLinkedItem()
 	return FInventoryItem();
 }
 
-void UInventorySlot::NativeConstruct()
+bool UInventorySlot::OnInventorySlotDrop(UInventorySlotDragOperation* Operation)
 {
-	Super::NativeConstruct();
+	UAirInventory* ThisInventory = LinkedInventory.Get();
+	UAirInventory* OtherInventory = Operation->SourceInventory;
+
+	const int32 ThisSlotNum = InventorySlot;
+	const int32 OtherSlotNum = Operation->IncomingSlot->InventorySlot;
+
+	FInventoryItem OtherInventoryItem = Operation->IncomingSlot->GetLinkedItem();
+	FInventoryItem ThisInventoryItem = LinkedInventoryItem;
+
+	OtherInventory->SetItemBySlot(ThisInventoryItem, OtherSlotNum);
+	ThisInventory->SetItemBySlot(OtherInventoryItem, ThisSlotNum);
+
+	return true;
+}
+
+void UInventorySlot::Build()
+{
+	Super::Build();
 
 	if (AAirChar* LocalChar = Cast<AAirChar>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
 	{
-		PlayerInventory = LocalChar->GetInventory();
-		if (PlayerInventory)
+		LinkedInventory = LocalChar->GetInventory();
+		if (LinkedInventory.Get())
 		{
-			PlayerInventory->OnSlotFocusUpdated.AddDynamic(this, &UInventorySlot::PlayerFocusChanged);
-			PlayerInventory->OnInventoryUpdated.AddDynamic(this, &UInventorySlot::PlayerInventoryChanged);
+			LinkedInventory->OnSlotFocusUpdated.AddDynamic(this, &UInventorySlot::PlayerFocusChanged);
+			LinkedInventory->OnInventoryUpdated.AddDynamic(this, &UInventorySlot::PlayerInventoryChanged);
 
-			LinkedInventoryItem = PlayerInventory->GetItemBySlot(InventorySlot);
+			LinkedInventoryItem = LinkedInventory->GetItemBySlot(InventorySlot);
 		}
 	}
 }
@@ -55,9 +75,9 @@ void UInventorySlot::PlayerFocusChanged(int32 InSlot)
 
 void UInventorySlot::PlayerInventoryChanged()
 {
-	if (PlayerInventory)
+	if (LinkedInventory.Get())
 	{
-		LinkedInventoryItem = PlayerInventory->GetItemBySlot(InventorySlot);
+		LinkedInventoryItem = LinkedInventory->GetItemBySlot(InventorySlot);
 		UpdateSlotVisuals();
 	}
 }

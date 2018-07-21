@@ -12,12 +12,3 @@ AAirGameMode::AAirGameMode()
 	PlayerControllerClass = AAirController::StaticClass();
 	HUDClass = AAirHUD::StaticClass();
 }
-
-void AAirGameMode::BeginPlay()
-{
-	if (HUDWidgetClass)
-	{
-		SpawnedHUD = CreateWidget<UAirWidget>(GetWorld()->GetFirstPlayerController(), HUDWidgetClass);
-		SpawnedHUD->AddToViewport(0);
-	}
-}

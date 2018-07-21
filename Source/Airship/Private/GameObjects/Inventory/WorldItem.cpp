@@ -10,8 +10,10 @@ AWorldItem::AWorldItem()
 
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
 	ItemMesh->SetupAttachment(RootComponent);
+	ItemMesh->SetCastShadow(false);
 
 	ItemMesh->SetCollisionProfileName("NoCollision");
+
 }
 
 void AWorldItem::StartPrimary()

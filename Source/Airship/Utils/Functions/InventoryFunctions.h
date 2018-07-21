@@ -14,7 +14,6 @@ class AIRSHIP_API UInventoryFunctions : public UObject
 
 public:
 
-	
 	static FInventoryItemRow* GetItemInfo(const FName ItemID);
 	static UDataTable* GetDataTable();
 

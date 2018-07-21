@@ -20,7 +20,7 @@ class AIRSHIP_API UWalkBob : public UCameraShake
 		RotOscillation.Pitch.Amplitude = .05f;
 		RotOscillation.Pitch.Frequency = 12.f;
 		RotOscillation.Pitch.InitialOffset = EInitialOscillatorOffset::EOO_OffsetRandom;
-
+/*
 		RotOscillation.Yaw.Amplitude = .05f;
 		RotOscillation.Yaw.Frequency = 6.f;
 		RotOscillation.Yaw.InitialOffset = EInitialOscillatorOffset::EOO_OffsetRandom;
@@ -28,7 +28,7 @@ class AIRSHIP_API UWalkBob : public UCameraShake
 		RotOscillation.Roll.Amplitude = .05f;
 		RotOscillation.Roll.Frequency = 3.5f;
 		RotOscillation.Roll.InitialOffset = EInitialOscillatorOffset::EOO_OffsetRandom;
-
+*/
 		LocOscillation.Z.Amplitude = .1f;
 		LocOscillation.Z.Frequency = 6.f;
 		LocOscillation.Z.InitialOffset = EInitialOscillatorOffset::EOO_OffsetRandom;
@@ -49,7 +49,7 @@ class AIRSHIP_API URunBob : public UCameraShake
 		RotOscillation.Pitch.Amplitude = .05f;
 		RotOscillation.Pitch.Frequency = 12.f;
 		RotOscillation.Pitch.InitialOffset = EInitialOscillatorOffset::EOO_OffsetRandom;
-
+/*
 		RotOscillation.Yaw.Amplitude = .05f;
 		RotOscillation.Yaw.Frequency = 6.f;
 		RotOscillation.Yaw.InitialOffset = EInitialOscillatorOffset::EOO_OffsetRandom;
@@ -57,7 +57,7 @@ class AIRSHIP_API URunBob : public UCameraShake
 		RotOscillation.Roll.Amplitude = .05f;
 		RotOscillation.Roll.Frequency = 3.5f;
 		RotOscillation.Roll.InitialOffset = EInitialOscillatorOffset::EOO_OffsetRandom;
-
+*/
 		LocOscillation.Z.Amplitude = .1f;
 		LocOscillation.Z.Frequency = 12.f;
 		LocOscillation.Z.InitialOffset = EInitialOscillatorOffset::EOO_OffsetRandom;

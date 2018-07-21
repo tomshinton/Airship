@@ -17,12 +17,4 @@ class AIRSHIP_API AAirGameMode : public AGameModeBase
 
 	AAirGameMode();
 
-public:
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UAirWidget> HUDWidgetClass;
-	UPROPERTY()
-	UAirWidget* SpawnedHUD;
-
-protected:
-	virtual void BeginPlay() override;
 };

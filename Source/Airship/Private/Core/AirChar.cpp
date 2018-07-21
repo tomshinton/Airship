@@ -4,23 +4,30 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ConstructorHelpers.h"
 #include <DrawDebugHelpers.h>
+#include "AirHUD.h"
+#include "AirController.h"
 
 // Sets default values
 AAirChar::AAirChar()
 	: LeftHandTargetLocation(FVector(40.f, 30.f, 40.f))
 	, RightHandTargetLocation(FVector(40.f, -30.f, 40.f))
+	, HandBlendTime(1.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	Camera->SetupAttachment(RootComponent);
+
 	RightHand = CreateDefaultSubobject<USceneComponent>(TEXT("RightHandComponent"));
-	RightHand->SetupAttachment(RootComponent);
+	RightHand->SetupAttachment(Camera);
 	RightHand->SetRelativeLocation(FVector(RightHandTargetLocation));
 
 	LeftHand = CreateDefaultSubobject<USceneComponent>(TEXT("LeftHandComponent"));
-	LeftHand->SetupAttachment(RootComponent);
+	LeftHand->SetupAttachment(Camera);
 	RightHand->SetRelativeLocation(LeftHandTargetLocation);
 
 	MovementComponent = CreateDefaultSubobject<UAirMovementComponent>(TEXT("MovementComponent"));
+	MovementComponent->SetCameraComponent(Camera);
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 	InventoryComponent = CreateDefaultSubobject<UAirInventory>(TEXT("InventoryComponent"));
@@ -28,6 +35,30 @@ AAirChar::AAirChar()
 	InventoryComponent->SetHandComponents(LeftHand, RightHand);
 }
 
+void AAirChar::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	FVector NewRightHandLoc = RightHandTargetLocation;
+	FVector NewLeftHandLoc = LeftHandTargetLocation;
+
+	if (ShouldLowerHands())
+	{
+		NewRightHandLoc.Z -= HandOffset;
+		NewLeftHandLoc.Z -= HandOffset;
+	}
+
+	RightHand->SetRelativeLocation(FMath::VInterpTo(RightHand->RelativeLocation, NewRightHandLoc, DeltaSeconds, HandBlendTime));
+	LeftHand->SetRelativeLocation(FMath::VInterpTo(LeftHand->RelativeLocation, NewLeftHandLoc, DeltaSeconds, HandBlendTime));
+}
+
+void AAirChar::BeginPlay()
+{
+	Super::BeginPlay();
+
+	LeftHandTargetLocation = LeftHand->RelativeLocation;
+	RightHandTargetLocation = RightHand->RelativeLocation;
+}
 void AAirChar::Landed(const FHitResult& Hit)
 {
 	OnCharLanded.Broadcast();
@@ -54,8 +85,25 @@ void AAirChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("FocusNextItem", IE_Pressed, InventoryComponent, &UAirInventory::FocusNextItem);
 	PlayerInputComponent->BindAction("FocusLastItem", IE_Pressed, InventoryComponent, &UAirInventory::FocusLastItem);
+
+	if (AAirController* OwningController = Cast<AAirController>(GetController()))
+	{
+		if (AAirHUD* SpawnedHUD = Cast<AAirHUD>(OwningController->GetHUD()))
+		{
+			PlayerInputComponent->BindAction("ToggleInventory", IE_Pressed, SpawnedHUD, &AAirHUD::ToggleInventoryScreen);
+		}
+	}
 }
 
+bool AAirChar::ShouldLowerHands()
+{
+	if (MovementComponent->GetIsSprinting() || GetCharacterMovement()->IsFalling())
+	{
+		return true;
+	}
+
+	return false;
+}
 
 
 

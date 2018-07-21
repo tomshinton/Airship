@@ -8,7 +8,7 @@
 #include "CameraBobs.h"
 
 UAirMovementComponent::UAirMovementComponent()
-	: MaxCameraPitch(20.f)
+	: MaxCameraPitch(40.f)
 	, TurnSpeed(1.f)
 	, TiltCameraSpeed(.5f)
 	, StrafeSpeed(350.f)
@@ -53,12 +53,23 @@ void UAirMovementComponent::LookRight(float InAxis)
 {
 	LastTurnValue = InAxis;
 
-	OwningCharacter->AddControllerYawInput(InAxis*TurnSpeed);
+	if (OwnerCamera && OwningCharacter)
+	{
+		const FRotator CurrentRotation = OwningCharacter->GetActorRotation();
+		const FRotator TargetRotation = CurrentRotation + FRotator(0.f, InAxis*TurnSpeed, 0.f);
+		OwningCharacter->SetActorRotation(TargetRotation);
+	}
 }
 
 void UAirMovementComponent::LookUp(float InAxis)
 {
-	OwningCharacter->AddControllerPitchInput(InAxis*TiltCameraSpeed);
+	if (OwnerCamera)
+	{
+		const float NewPitch = FMath::Clamp(OwnerCamera->RelativeRotation.Pitch + (-InAxis * TiltCameraSpeed), -MaxCameraPitch, MaxCameraPitch);
+		FRotator NewRotation = OwnerCamera->RelativeRotation;
+		NewRotation.Pitch = NewPitch;
+		OwnerCamera->SetRelativeRotation(NewRotation);
+	}
 }
 
 void UAirMovementComponent::StartJump()

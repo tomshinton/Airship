@@ -8,6 +8,8 @@
 #include "Utils/Datatypes/InventoryItems.h"
 #include "InventorySlot.generated.h"
 
+class UInventorySlotPayload;
+
 UCLASS()
 class AIRSHIP_API UInventorySlot : public UAirWidget
 {
@@ -27,8 +29,14 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = Inventory)
 	FInventoryItem GetLinkedItem();
 
+	UFUNCTION(BlueprintCallable, Category = DragAndDrop)
+	bool OnInventorySlotDrop(UInventorySlotDragOperation* Payload);
+
 	UFUNCTION(BlueprintCallable, Category = Inventory)
-	void SetInventorySlot(const int32 InSlot) { InventorySlot = InSlot; };
+	void SetInventorySlot(const int32 InSlot, bool InIsHotbarSlot) { InventorySlot = InSlot; IsHotBarSlot = InIsHotbarSlot; };
+
+	UFUNCTION(BlueprintCallable, Category = Inventory)
+	UAirInventory* GetLinkedInventory() const { return LinkedInventory.Get(); }
 
 	UPROPERTY(EditAnywhere, Category = Inventory)
 	int32 InventorySlot;
@@ -36,9 +44,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = Inventory)
 	bool IsHotBarSlot;
 	
-protected:
-	virtual void NativeConstruct() override;
+	virtual void Build() override;
 
+protected:
+	
 	UFUNCTION()
 	void PlayerFocusChanged(int32 InSlot);
 
@@ -49,5 +58,6 @@ private:
 	bool IsFocused;
 
 	FInventoryItem LinkedInventoryItem;
-	UAirInventory* PlayerInventory;
+	UPROPERTY()
+	TWeakObjectPtr<UAirInventory> LinkedInventory;
 };

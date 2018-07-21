@@ -9,6 +9,8 @@
 
 #include "AirInventory.generated.h"
 
+class AWorldItem;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSlotFocusUpdated, const int32, Slot);
 
@@ -35,18 +37,26 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void Audit(FName ItemID, int32& Stacks, int32& Total);
 
+	UFUNCTION(BlueprintCallable, Category = Inventory)
+	void SwapSlots(const int32 FirstSlot, const int32 SecondSlot);
+
+	UFUNCTION(BlueprintPure, Category = Inventory)
+	void GetBackpackBounds(bool& HasBackpackSlots, int32& BackpackStart, int32& BackpackEnd);
+
+	UFUNCTION(BlueprintPure, Category = Inventory)
+	void GetHotbarBounds(bool& HasHotbarSlots, int32& HotbarStart, int32& HotbarEnd);
+
 	void SetHandComponents(USceneComponent* InLeftHand, USceneComponent* InRightHand) {	LeftHand = InLeftHand; RightHand = InRightHand;	}
 
 	FInventoryItem GetItemBySlot(const int32 ID);
 	FName GetItemNameBySlot(const int32 ID);
 
+	void SetItemBySlot(FInventoryItem InItem, const int32 InSlot);
+
 	void FocusNextItem();
 	void FocusLastItem();
 
 	void Wield();
-
-	UFUNCTION(BlueprintCallable, Category = Inventory)
-	void PrintInventory();
 
 	UPROPERTY(BlueprintAssignable)
 	FOnInventoryUpdated OnInventoryUpdated;
@@ -57,16 +67,20 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	int32 InventorySize;
 
+	UPROPERTY(EditDefaultsOnly)
+	int32 HotbarSlots;
+
 	virtual void BeginPlay() override;
+
 
 private:
 	UPROPERTY(VisibleAnywhere)
 	FInventory Inventory;
 
 	int32 CurrFocusedSlot;
-	int32 HotbarSlots;
 
-	IWieldInterface* CurrentWieldInterface;
+	UPROPERTY()
+	TWeakObjectPtr<AWorldItem> CurrentWieldActor;
 
 	USceneComponent* RightHand;
 	USceneComponent* LeftHand;

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Curves/CurveFloat.h"
+#include <Camera/CameraComponent.h>
 #include "AirMovementComponent.generated.h"
 
 class AAirChar;
@@ -25,8 +26,11 @@ public:
 	void StartJump();
 	void EndJump();
 
+	void SetCameraComponent(UCameraComponent* InCameraComponent) { OwnerCamera = InCameraComponent; }
+
 	float GetModifiedMoveSpeed(const float InVal);
 	void GetModifiedSprintFromCurve(float& InVal);
+	bool GetIsSprinting() const { return IsSprinting; }
 
 	void ToggleSprint();
 	void ApplyCameraShakes();
@@ -54,4 +58,5 @@ private:
 
 private:
 	AAirChar * OwningCharacter;
+	UCameraComponent* OwnerCamera;
 };

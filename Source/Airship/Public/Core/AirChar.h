@@ -9,6 +9,7 @@
 #include "InteractionComponent.h"
 #include "AirMovementComponent.h"
 #include "AirInventory.h"
+#include <Camera/CameraComponent.h>
 
 #include "AirChar.generated.h"
 
@@ -23,19 +24,33 @@ public:
 	UFUNCTION(BlueprintPure, Category = Inventory)
 	UAirInventory* GetInventory() { return InventoryComponent; }
 
+	virtual void Tick(float DeltaSeconds) override;
+	virtual void BeginPlay() override;
+
 public:
 	// Sets default values for this character's properties
 	AAirChar();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Char)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Hands)
+	UCameraComponent* Camera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Hands)
 	USceneComponent* RightHand;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Char)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Hands)
 	USceneComponent* LeftHand;
+
+	UPROPERTY(EditDefaultsOnly, Category = Hands)
+	float HandBlendTime;
+
+	UPROPERTY(EditDefaultsOnly, Category = Hands)
+	float HandOffset;
 
 	UHealthComponent* HealthComponent;
 	UInteractionComponent* InteractionComponent;
 	UAirMovementComponent* MovementComponent;
+
+	UPROPERTY(EditDefaultsOnly)
 	UAirInventory* InventoryComponent;
 
 	FOnCharLanded OnCharLanded;
@@ -48,4 +63,7 @@ protected:
 
 	FVector RightHandTargetLocation;
 	FVector LeftHandTargetLocation;	
+
+private:
+	bool ShouldLowerHands();
 };

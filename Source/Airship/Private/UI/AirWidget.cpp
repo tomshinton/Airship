@@ -2,6 +2,11 @@
 
 #include "AirWidget.h"
 
+void UAirWidget::Build()
+{
+	OnBuild();
+}
 
-
-
+void UAirWidget::OnBuild_Implementation()
+{
+}
