@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "WorldItem.h"
-
+#include "AirInventory.h"
 
 AWorldItem::AWorldItem()
 {

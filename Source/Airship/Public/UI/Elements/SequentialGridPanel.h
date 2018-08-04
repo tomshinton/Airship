@@ -16,6 +16,8 @@ class AIRSHIP_API USequentialGridPanel : public UUniformGridPanel
 
 	USequentialGridPanel();
 
+public:
+
 	UPROPERTY(EditAnywhere, Category = "Layout", meta = (ClampMin = "1", UIMin = "1"))
 	int32 Columns;
 

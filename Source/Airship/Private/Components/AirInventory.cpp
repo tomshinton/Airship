@@ -7,6 +7,7 @@
 UAirInventory::UAirInventory()
 	: HotbarSlots(0)
 	, InventorySize()
+	, InventoryName("Default Inventory Name")
 {
 
 }
@@ -184,8 +185,8 @@ void UAirInventory::Wield()
 
 		if (UWorld* World = GetOwner()->GetWorld())
 		{
-			FVector Location = GetOwner()->GetActorLocation();
-			FRotator Rotation = GetOwner()->GetActorRotation();
+			FVector Location = RightHand->GetComponentLocation();
+			FRotator Rotation = RightHand->GetComponentRotation();
 			FActorSpawnParameters SpawnInfo;
 
 			AWorldItem* NewWieldItem = Cast<AWorldItem>(World->SpawnActor<AWorldItem>(CurrentFocusedItem.GetItemClass(), Location, Rotation, SpawnInfo));
@@ -193,6 +194,7 @@ void UAirInventory::Wield()
 			{
 				CurrentWieldActor = NewWieldItem;
 				CurrentWieldActor->AttachToComponent(RightHand, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+				CurrentWieldActor->SetAssociatedInventoryComponent(this);
 
 				if(IWieldInterface* NewSpawnedItemInterface = Cast<IWieldInterface>(CurrentWieldActor.Get()))
 				{

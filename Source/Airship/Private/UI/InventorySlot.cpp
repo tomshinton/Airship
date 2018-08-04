@@ -39,13 +39,27 @@ bool UInventorySlot::OnInventorySlotDrop(UInventorySlotDragOperation* Operation)
 	return true;
 }
 
+void UInventorySlot::SetInventorySlot(const int32 InSlot, bool InIsHotbarSlot)
+{
+	InventorySlot = InSlot;
+	IsHotBarSlot = InIsHotbarSlot;
+	
+	UpdateSlotVisuals();
+}
+
 void UInventorySlot::Build()
 {
 	Super::Build();
 
 	if (AAirChar* LocalChar = Cast<AAirChar>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
 	{
-		LinkedInventory = LocalChar->GetInventory();
+
+		if (!LinkedInventory.IsValid())
+		{
+			UE_LOG(LogTemp, Error, TEXT("Build called on inventory slot before having its LinkedInventory set!"));
+		}
+
+
 		if (LinkedInventory.Get())
 		{
 			LinkedInventory->OnSlotFocusUpdated.AddDynamic(this, &UInventorySlot::PlayerFocusChanged);

@@ -8,6 +8,8 @@
 #include <Components/StaticMeshComponent.h>
 #include "WorldItem.generated.h"
 
+class UAirInventory;
+
 UCLASS()
 class AIRSHIP_API AWorldItem : public AActor, public IWieldInterface
 {
@@ -18,10 +20,12 @@ public:
 	AWorldItem();
 
 	UPROPERTY(EditDefaultsOnly)
-		USceneComponent* ItemRoot;
+	USceneComponent* ItemRoot;
 	
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* ItemMesh;
+	
+	void SetAssociatedInventoryComponent(UAirInventory* InInventoryComponent) { AssociatedInventoryComponent = InInventoryComponent; }
 
 public:
 	//Start WieldInterface
@@ -32,4 +36,8 @@ public:
 	virtual void StartWield() override;
 	virtual void EndWield() override;
 	//End WieldInterface
+
+protected:
+	UPROPERTY()
+	UAirInventory* AssociatedInventoryComponent;
 };

@@ -82,3 +82,13 @@ void AAirHUD::SetIsAiming(const bool InIsAiming)
 	}
 }
 
+void AAirHUD::ReturnControlToHUD() const
+{
+	if (AAirController* LocalController = Cast<AAirController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+	{
+		HUDWidget->SetUserFocus(LocalController);
+		LocalController->bShowMouseCursor = false;
+		UWidgetBlueprintLibrary::SetInputMode_GameOnly(LocalController);
+	}
+}
+

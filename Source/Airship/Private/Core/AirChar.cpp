@@ -10,7 +10,7 @@
 // Sets default values
 AAirChar::AAirChar()
 	: LeftHandTargetLocation(FVector(40.f, 30.f, 40.f))
-	, RightHandTargetLocation(FVector(40.f, -30.f, 40.f))
+	, RightHandTargetTransform(FVector(40.f, -30.f, 40.f))
 	, HandBlendTime(1.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -20,11 +20,7 @@ AAirChar::AAirChar()
 
 	RightHand = CreateDefaultSubobject<USceneComponent>(TEXT("RightHandComponent"));
 	RightHand->SetupAttachment(Camera);
-	RightHand->SetRelativeLocation(FVector(RightHandTargetLocation));
-
-	LeftHand = CreateDefaultSubobject<USceneComponent>(TEXT("LeftHandComponent"));
-	LeftHand->SetupAttachment(Camera);
-	RightHand->SetRelativeLocation(LeftHandTargetLocation);
+	RightHand->SetRelativeLocation(FVector(RightHandTargetTransform.GetLocation()));
 
 	MovementComponent = CreateDefaultSubobject<UAirMovementComponent>(TEXT("MovementComponent"));
 	MovementComponent->SetCameraComponent(Camera);
@@ -39,26 +35,33 @@ void AAirChar::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	FVector NewRightHandLoc = RightHandTargetLocation;
-	FVector NewLeftHandLoc = LeftHandTargetLocation;
+	FTransform NewRightHandTransform = RightHandTargetTransform;
 
-	if (ShouldLowerHands())
+	if (InventoryComponent->GetIsAiming())
 	{
-		NewRightHandLoc.Z -= HandOffset;
-		NewLeftHandLoc.Z -= HandOffset;
+		FVector NewLocation = NewRightHandTransform.GetLocation();
+		NewLocation.Y = 0;
+
+		NewRightHandTransform.SetLocation(NewLocation);
+	}
+	else if (ShouldLowerHands())
+	{
+		FVector NewLocation = NewRightHandTransform.GetLocation();
+		NewLocation.Z -= HandOffset;
+		
+		NewRightHandTransform.SetLocation(NewLocation);
 	}
 
-	RightHand->SetRelativeLocation(FMath::VInterpTo(RightHand->RelativeLocation, NewRightHandLoc, DeltaSeconds, HandBlendTime));
-	LeftHand->SetRelativeLocation(FMath::VInterpTo(LeftHand->RelativeLocation, NewLeftHandLoc, DeltaSeconds, HandBlendTime));
+	RightHand->SetRelativeLocation(FMath::VInterpTo(RightHand->RelativeLocation, NewRightHandTransform.GetLocation(), DeltaSeconds, HandBlendTime));
 }
 
 void AAirChar::BeginPlay()
 {
 	Super::BeginPlay();
+	RightHandTargetTransform = RightHand->GetRelativeTransform();
 
-	LeftHandTargetLocation = LeftHand->RelativeLocation;
-	RightHandTargetLocation = RightHand->RelativeLocation;
 }
+
 void AAirChar::Landed(const FHitResult& Hit)
 {
 	OnCharLanded.Broadcast();

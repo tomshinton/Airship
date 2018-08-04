@@ -33,10 +33,13 @@ public:
 	bool OnInventorySlotDrop(UInventorySlotDragOperation* Payload);
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
-	void SetInventorySlot(const int32 InSlot, bool InIsHotbarSlot) { InventorySlot = InSlot; IsHotBarSlot = InIsHotbarSlot; };
+	void SetInventorySlot(const int32 InSlot, bool InIsHotbarSlot);
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	UAirInventory* GetLinkedInventory() const { return LinkedInventory.Get(); }
+
+	UFUNCTION(BlueprintCallable, Category = Inventory)
+	void SetLinkedInventory(UAirInventory* InInventory) { LinkedInventory = InInventory; };
 
 	UPROPERTY(EditAnywhere, Category = Inventory)
 	int32 InventorySlot;

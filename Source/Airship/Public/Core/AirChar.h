@@ -61,7 +61,7 @@ protected:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	FVector RightHandTargetLocation;
+	FTransform RightHandTargetTransform;
 	FVector LeftHandTargetLocation;	
 
 private:

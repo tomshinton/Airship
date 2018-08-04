@@ -16,6 +16,6 @@ class AIRSHIP_API IInteractionInterface
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = Interaction)
-	void OnInteract();
+
+	virtual void OnInteract(AActor* InteractingActor) = 0;
 };

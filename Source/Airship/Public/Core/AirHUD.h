@@ -22,6 +22,9 @@ public:
 
 	void SetIsAiming(const bool InIsAiming);
 
+	UFUNCTION()
+	void ReturnControlToHUD() const;
+
 	UPROPERTY(EditDefaultsOnly, Category = Classes)
 	TSubclassOf<UAirWidget> HUD;
 

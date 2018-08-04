@@ -2,6 +2,9 @@
 
 #include <Kismet/BlueprintFunctionLibrary.h>
 #include "AirWidget.h"
+#include <UObjectIterator.h>
+#include "AirController.h"
+#include "AirHUD.h"
 #include "UMGFunctions.generated.h"
 
 UCLASS()
@@ -24,5 +27,19 @@ public:
 		return nullptr;
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "AirUMG | Control")
+	static void ReturnControlToHUD()
+	{
+		for (TObjectIterator<AAirController> Itr; Itr; ++Itr)
+		{
+			if (AAirController* Controller = *Itr)
+			{
+				if (AAirHUD* FoundHUD = Cast<AAirHUD>(Controller->GetHUD()))
+				{
+					FoundHUD->ReturnControlToHUD();
+				}
+			}
+		}
+	}
 };
 

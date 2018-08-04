@@ -20,9 +20,9 @@ void UInteractionComponent::StartInteraction()
 {
 	if (HoveredActor)
 	{
-		if (HoveredActor->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
+		if (IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(HoveredActor))
 		{
-			IInteractionInterface::Execute_OnInteract(HoveredActor);
+			InteractionInterface->OnInteract(GetOwner());
 		}
 	}
 }

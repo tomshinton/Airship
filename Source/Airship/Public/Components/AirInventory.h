@@ -23,6 +23,11 @@ class AIRSHIP_API UAirInventory : public UActorComponent
 
 public:
 
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Name)
+	FString InventoryName;
+	
+public:
+
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void AddItem(const FName ID, const int32 Quantity);
 
@@ -47,7 +52,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = Inventory)
 	void GetHotbarBounds(bool& HasHotbarSlots, int32& HotbarStart, int32& HotbarEnd);
 
-	void SetHandComponents(USceneComponent* InLeftHand, USceneComponent* InRightHand) {	LeftHand = InLeftHand; RightHand = InRightHand;	}
+	void SetHandComponents(USceneComponent* InLeftHand, USceneComponent* InRightHand) { RightHand = InRightHand;	}
 
 	FInventoryItem GetItemBySlot(const int32 ID);
 	FName GetItemNameBySlot(const int32 ID);
@@ -56,6 +61,9 @@ public:
 
 	void FocusNextItem();
 	void FocusLastItem();
+
+	void SetIsAiming(const bool InAiming) { IsAiming = InAiming; }
+	bool GetIsAiming() const { return IsAiming; }
 
 	/************************************************************************/
 	/* Interaction                                                          */
@@ -82,7 +90,6 @@ public:
 
 	virtual void BeginPlay() override;
 
-
 private:
 	UPROPERTY(VisibleAnywhere)
 	FInventory Inventory;
@@ -93,5 +100,6 @@ private:
 	TWeakObjectPtr<AWorldItem> CurrentWieldActor;
 
 	USceneComponent* RightHand;
-	USceneComponent* LeftHand;
+
+	bool IsAiming;
 };
