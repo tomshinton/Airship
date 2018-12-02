@@ -33,9 +33,6 @@ struct FClip
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
 	int32 CurrentClip;
-
-protected:
-	//How many pieces of ammo do we currently have loaded into this slot?
 };
 
 USTRUCT(Blueprintable, BlueprintType)

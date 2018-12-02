@@ -13,6 +13,11 @@
 				"UMG",
 				"CoreUObject"
 			]
+		},
+		{
+			"Name": "AirEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit"
 		}
 	]
 }

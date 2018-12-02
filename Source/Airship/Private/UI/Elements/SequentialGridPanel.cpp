@@ -25,9 +25,11 @@ void USequentialGridPanel::AddChildrenInSequence(UWidget* Content)
 	}
 }
 
+#if WITH_EDITOR
 const FText USequentialGridPanel::GetPaletteCategory()
 {
 	return LOCTEXT("", "Inventory Elements");
 }
+#endif //WITH_EDITOR
 
 #undef LOCTEXT_NAMESPACE

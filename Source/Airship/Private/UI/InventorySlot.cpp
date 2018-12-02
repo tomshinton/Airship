@@ -7,10 +7,21 @@
 #include <WidgetBlueprintLibrary.h>
 #include "Utils/Functions/BindingFunctions.h"
 #include "InventorySlotDragOperation.h"
+#include "AirSettings.h"
+#include <Engine/DataTable.h>
+#include "Utils/Datatypes/InventoryItems.h"
+
+#include <Image.h>
+#include <TextBlock.h>
+#include "DragAndDropVisual.h"
 
 void UInventorySlot::UpdateFocused_Implementation(){}
 void UInventorySlot::UpdateFocusCleared_Implementation(){}
-void UInventorySlot::UpdateSlotVisuals_Implementation() {}
+
+void UInventorySlot::UpdateSlotVisuals_Implementation() 
+{
+	BuildSlotVisuals();
+}
 
 FInventoryItem UInventorySlot::GetLinkedItem()
 {
@@ -101,5 +112,90 @@ void UInventorySlot::PlayerInventoryChanged()
 		LinkedInventoryItem = LinkedInventory->GetItemBySlot(InventorySlot);
 		UpdateSlotVisuals();
 	}
+}
+
+void UInventorySlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
+{
+	if (IsPopulated && DragAndDropVisual)
+	{
+		if (UDragAndDropVisual* DragAndDropWidget = CreateWidget<UDragAndDropVisual>(GetWorld(), DragAndDropVisual))
+		{
+			DragAndDropWidget->SetVisual(QuantityText->GetText(), ItemIcon->Brush);
+
+			if (UInventorySlotDragOperation* DragOp = Cast<UInventorySlotDragOperation>(UWidgetBlueprintLibrary::CreateDragDropOperation(UInventorySlotDragOperation::StaticClass())))
+			{
+				DragOp->DefaultDragVisual = DragAndDropWidget;
+				DragOp->IncomingSlot = this;
+				DragOp->SourceInventory = LinkedInventory.Get();
+
+				OutOperation = DragOp;
+			}
+		}
+	}
+}
+
+bool UInventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	if (UInventorySlotDragOperation* DropOp = Cast<UInventorySlotDragOperation>(InOperation))
+	{
+		OnInventorySlotDrop(DropOp);
+		return true;
+	}
+
+	return false;
+}
+
+void UInventorySlot::BuildSlotVisuals()
+{
+	if (UAirSettings* GameSettings = GetMutableDefault<UAirSettings>())
+	{
+		if (UDataTable* InventoryDataTable = Cast<UDataTable>(GameSettings->InventoryLookup.TryLoad()))
+		{
+			FString ContextString = "Item Lookup";
+			FInventoryItemRow* FoundRow = InventoryDataTable->FindRow<FInventoryItemRow>(LinkedInventoryItem.ItemID, ContextString, true);
+
+			if (FoundRow)
+			{
+				BuildFromValidData(FoundRow);
+			}
+			else
+			{
+				BuildFromInvalidData();
+			}
+		}
+	}
+}
+
+void UInventorySlot::BuildFromValidData(FInventoryItemRow* Row)
+{
+	ItemIcon->SetVisibility(ESlateVisibility::Visible);
+	QuantityText->SetVisibility(ESlateVisibility::Visible);
+	ClipText->SetVisibility(ESlateVisibility::Visible);
+
+	ItemIcon->SetBrushFromTexture(Row->ItemIcon, true);
+
+	const FString QuantityString = FString::FromInt(LinkedInventoryItem.Quantity);
+	QuantityText->SetText(FText::FromString(QuantityString));
+
+	if (Row->Clip.ClipSize > 0)
+	{
+		const FString ClipString = FString::FromInt(LinkedInventoryItem.Clip.CurrentClip) + "/" + FString::FromInt(Row->Clip.ClipSize);
+		ClipText->SetText(FText::FromString(ClipString));
+	}
+	else
+	{
+		ClipText->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	IsPopulated = true;
+}
+
+void UInventorySlot::BuildFromInvalidData()
+{
+	ItemIcon->SetVisibility(ESlateVisibility::Hidden);
+	QuantityText->SetVisibility(ESlateVisibility::Hidden);
+	ClipText->SetVisibility(ESlateVisibility::Hidden);
+
+	IsPopulated = false;
 }
 

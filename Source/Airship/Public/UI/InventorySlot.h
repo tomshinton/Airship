@@ -9,6 +9,9 @@
 #include "InventorySlot.generated.h"
 
 class UInventorySlotPayload;
+class UTextBlock;
+class UImage;
+class UDragAndDropVisual;
 
 UCLASS()
 class AIRSHIP_API UInventorySlot : public UAirWidget
@@ -16,6 +19,16 @@ class AIRSHIP_API UInventorySlot : public UAirWidget
 	GENERATED_BODY()
 
 public:
+
+	//Elements
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* ClipText;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* ItemIcon;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* QuantityText;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Inventory)
 	void UpdateFocused();
@@ -49,16 +62,33 @@ public:
 	
 	virtual void Build() override;
 
+	UPROPERTY(VisibleAnywhere, Category = Inventory)
+	bool IsPopulated;
+
 protected:
-	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = DragAndDrop)
+	TSubclassOf<UDragAndDropVisual> DragAndDropVisual;
+
 	UFUNCTION()
 	void PlayerFocusChanged(int32 InSlot);
 
 	UFUNCTION()
 	void PlayerInventoryChanged();
 
+	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
+
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+
 private:
+	
 	bool IsFocused;
+
+	void BuildSlotVisuals();
+
+	void BuildFromValidData(FInventoryItemRow* Row);
+
+	void BuildFromInvalidData();
 
 	FInventoryItem LinkedInventoryItem;
 	UPROPERTY()

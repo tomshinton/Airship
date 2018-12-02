@@ -9,6 +9,6 @@ public class AirshipEditorTarget : TargetRules
 	{
 		Type = TargetType.Editor;
 
-		ExtraModuleNames.AddRange( new string[] { "Airship" } );
+		ExtraModuleNames.AddRange( new string[] { "AirEditor" } );
 	}
 }

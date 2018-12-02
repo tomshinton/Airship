@@ -26,6 +26,6 @@ public:
 
 #if WITH_EDITOR
 		virtual const FText GetPaletteCategory() override;
-#endif
+#endif //WITH_EDITOR
 	
 };
