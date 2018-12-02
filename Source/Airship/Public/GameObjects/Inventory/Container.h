@@ -9,6 +9,10 @@
 #include "TransferWindowBase.h"
 #include "Container.generated.h"
 
+//////////////////////////////////////////////////////////////////////////
+// Base class for all containers, so barrels, chests, lockboxes, etc.
+//////////////////////////////////////////////////////////////////////////
+
 UCLASS()
 class AIRSHIP_API AContainer : public AActor, public IInteractionInterface
 {

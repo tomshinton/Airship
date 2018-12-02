@@ -27,7 +27,9 @@ UDataTable* UInventoryFunctions::GetDataTable()
 
 FInventoryItem UInventoryFunctions::AddItemFromID(FInventory& Inventory, const FName ItemID, const int32 Quantity)
 {
-	if (FInventoryItemRow* NewItemInfo = GetItemInfo(ItemID))
+	FInventoryItemRow* NewItemInfo = GetItemInfo(ItemID);
+
+	if (NewItemInfo)
 	{
 		int32 QuantityLeft = Quantity;
 
@@ -55,7 +57,7 @@ FInventoryItem UInventoryFunctions::AddItemFromID(FInventory& Inventory, const F
 
 			for (int32 i = 0; i < StacksToMake; i++)
 			{
-				FInventoryItem NewStack = FInventoryItem(ItemID, (NewItemInfo->Stacks ? FMath::Clamp(QuantityLeft, 0, NewItemInfo->StackSize) : 1));
+				FInventoryItem NewStack = FInventoryItem(ItemID, (NewItemInfo->Stacks ? FMath::Clamp(QuantityLeft, 0, NewItemInfo->StackSize) : 1), NewItemInfo->Clip);
 
 				for (FInventoryItem& ExistingSlot : Inventory.Inventory)
 				{
@@ -73,14 +75,14 @@ FInventoryItem UInventoryFunctions::AddItemFromID(FInventory& Inventory, const F
 
 					if (!InventoryHasEmptySlots(Inventory))
 					{
-						return FInventoryItem(ItemID, QuantityLeft);
+						return FInventoryItem(ItemID, QuantityLeft, NewItemInfo->Clip);
 					}
 				}
 			}
 		}
 	}
 	//Leftover from add
-	return FInventoryItem(ItemID, Quantity);
+	return FInventoryItem(ItemID, Quantity, NewItemInfo->Clip);
 }
 
 FInventoryItem UInventoryFunctions::RemoveItem(FInventory& Inventory, const FName ItemID, const int32 Quantity)
@@ -88,7 +90,9 @@ FInventoryItem UInventoryFunctions::RemoveItem(FInventory& Inventory, const FNam
 	int32 QuantityLeft = Quantity;
 	int32 AmountRemoved = 0;
 
-	if (FInventoryItemRow* NewItemInfo = GetItemInfo(ItemID))
+	FInventoryItemRow* NewItemInfo = GetItemInfo(ItemID);
+
+	if (NewItemInfo)
 	{
 		for (int32 i = Inventory.Inventory.Num() - 1; i >= 0; i--)
 		{
@@ -109,7 +113,7 @@ FInventoryItem UInventoryFunctions::RemoveItem(FInventory& Inventory, const FNam
 		}
 	}
 
-	return AmountRemoved > 0 ? FInventoryItem(ItemID, AmountRemoved) : FInventoryItem();
+	return AmountRemoved > 0 ? FInventoryItem(ItemID, AmountRemoved, NewItemInfo->Clip) : FInventoryItem();
 }
 
 bool UInventoryFunctions::InventoryHasEmptySlots(FInventory& Inventory)

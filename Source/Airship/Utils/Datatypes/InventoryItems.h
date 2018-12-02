@@ -4,8 +4,39 @@
 #include "../Functions/InventoryFunctions.h"
 #include "WorldItem.h"
 
-
 #include "InventoryItems.generated.h"
+
+USTRUCT(Blueprintable, BlueprintType)
+struct FClip
+{
+	GENERATED_BODY()
+
+	explicit FClip()
+	: CurrentClip(0)
+	{}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
+	FName AmmoName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
+	int32 ClipSize;
+
+	void SetClipCount(const int32 NewClip)
+	{
+		CurrentClip = FMath::Clamp<int32>(NewClip, 0, ClipSize);
+	}
+
+	int32 GetClipCount() const
+	{
+		return CurrentClip;
+	}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
+	int32 CurrentClip;
+
+protected:
+	//How many pieces of ammo do we currently have loaded into this slot?
+};
 
 USTRUCT(Blueprintable, BlueprintType)
 struct FInventoryItemRow : public FTableRowBase
@@ -20,44 +51,48 @@ public:
 	{}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
-		FName ItemName;
+	bool IsNullSlot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
-		FString ItemNameReadable;
+	FName ItemName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
-		FString ItemDescription;
+	FString ItemNameReadable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
-		UTexture2D* ItemIcon;
+	FString ItemDescription;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
-		TSubclassOf<AWorldItem> ItemClass;
+	UTexture2D* ItemIcon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
-		bool Stacks;
+	TSubclassOf<AWorldItem> ItemClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
-		int32 StackSize;
+	bool Stacks;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
-		bool IsNullSlot;
+	int32 StackSize;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
+	FClip Clip;
 };
 
 USTRUCT(BlueprintType)
 struct FInventoryItem
 {
-
 	GENERATED_BODY()
 
 	FInventoryItem()
 		: ItemID("Item")
 		, Quantity(0)
+		, Clip(FClip())
 	{}
 
-	FInventoryItem(const FName InItemID, const int32 InQuantity)
+	FInventoryItem(const FName InItemID, const int32 InQuantity, const FClip InClip)
 		: ItemID(InItemID)
 		, Quantity(InQuantity)
+		, Clip(InClip)
 	{
 		ItemInfo = *UInventoryFunctions::GetItemInfo(ItemID);
 	}
@@ -69,6 +104,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	int32 Quantity;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	FClip Clip;
+	
 	bool IsItemValid()
 	{
 		return ItemInfo.IsNullSlot;
@@ -83,6 +121,11 @@ public:
 	TSubclassOf<AWorldItem> GetItemClass()
 	{
 		return ItemInfo.ItemClass;
+	}
+
+	FClip& GetItemClip() 
+	{
+		return Clip;
 	}
 
 private:
@@ -103,7 +146,7 @@ struct FInventory
 	GENERATED_BODY()
 
 	FInventory()
-		: Inventory()
+		: Inventory(TArray<FInventoryItem>())
 		, InventorySize(32)
 	{}
 

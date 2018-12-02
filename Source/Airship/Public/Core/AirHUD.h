@@ -6,7 +6,9 @@
 #include "GameFramework/HUD.h"
 #include "AirHUD.generated.h"
 
+class UUserWidget;
 class UAirWidget;
+class UAirHUDBase;
 
 UCLASS()
 class AIRSHIP_API AAirHUD : public AHUD
@@ -19,6 +21,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void ToggleInventoryScreen();
+
+	UFUNCTION(BlueprintCallable, Category = Inventory)
+	void AddInventoryScreen(UUserWidget* InNewInventoryScreen, AAirController* InController);
 
 	void SetIsAiming(const bool InIsAiming);
 
@@ -37,10 +42,14 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	TWeakObjectPtr<UAirWidget> HUDWidget;
+	TWeakObjectPtr<UAirHUDBase> HUDWidget;
 	TWeakObjectPtr<UAirWidget> InventoryScreenWidget;
 	TWeakObjectPtr<UUserWidget> CrosshairWidget;
 
 	bool InventoryIsVisible;
 	bool IsAiming;
+
+private:
+
+	void ClearInventoryPanel();
 };

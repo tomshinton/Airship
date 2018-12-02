@@ -8,13 +8,11 @@
 #include "Utils/Functions/UMGFunctions.h"
 
 AContainer::AContainer()
+	: Mesh(CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ContainerMesh")))
+	, Inventory(CreateDefaultSubobject<UAirInventory>(TEXT("Inventory")))
 {
 	PrimaryActorTick.bCanEverTick = false;
-
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ContainerMesh"));
 	RootComponent = Mesh;
-
-	Inventory = CreateDefaultSubobject<UAirInventory>(TEXT("Inventory"));
 }
 
 void AContainer::OnInteract(AActor* InteractingActor)
@@ -30,11 +28,10 @@ void AContainer::OnInteract(AActor* InteractingActor)
 				
 				if (AAirController* LocalController = Cast<AAirController>(UGameplayStatics::GetPlayerController(World, 0)))
 				{
-					TransferUI->SetUserFocus(LocalController);
-					LocalController->bShowMouseCursor = true;
-					UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(LocalController, TransferUI, EMouseLockMode::LockAlways);
-					
-					TransferUI->AddToViewport(1);
+					if (AAirHUD* AirHud = Cast<AAirHUD>(LocalController->GetHUD()))
+					{
+						AirHud->AddInventoryScreen(TransferUI, LocalController);
+					}
 				}
 			}
 		}

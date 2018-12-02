@@ -6,27 +6,31 @@
 #include <DrawDebugHelpers.h>
 #include "AirHUD.h"
 #include "AirController.h"
+#include "AirMovementComponent.h"
+#include "InteractionComponent.h"
+#include "HealthComponent.h"
+#include "AirInventory.h"
 
 // Sets default values
 AAirChar::AAirChar()
 	: LeftHandTargetLocation(FVector(40.f, 30.f, 40.f))
 	, RightHandTargetTransform(FVector(40.f, -30.f, 40.f))
 	, HandBlendTime(1.f)
+	, Camera(CreateDefaultSubobject<UCameraComponent>(TEXT("Camera")))
+	, RightHand(CreateDefaultSubobject<USceneComponent>(TEXT("RightHandComponent")))
+	, MovementComponent(CreateDefaultSubobject<UAirMovementComponent>(TEXT("MovementComponent")))
+	, HealthComponent(CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent")))
+	, InteractionComponent(CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent")))
+	, InventoryComponent(CreateDefaultSubobject<UAirInventory>(TEXT("InventoryComponent")))
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(RootComponent);
 
-	RightHand = CreateDefaultSubobject<USceneComponent>(TEXT("RightHandComponent"));
 	RightHand->SetupAttachment(Camera);
 	RightHand->SetRelativeLocation(FVector(RightHandTargetTransform.GetLocation()));
 
-	MovementComponent = CreateDefaultSubobject<UAirMovementComponent>(TEXT("MovementComponent"));
 	MovementComponent->SetCameraComponent(Camera);
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
-	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
-	InventoryComponent = CreateDefaultSubobject<UAirInventory>(TEXT("InventoryComponent"));
 	InventoryComponent->InventorySize = 20;
 	InventoryComponent->SetHandComponents(LeftHand, RightHand);
 }
@@ -101,6 +105,7 @@ void AAirChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("EndPrimary", IE_Released, InventoryComponent, &UAirInventory::EndPrimary);
 	PlayerInputComponent->BindAction("StartSecondary", IE_Pressed, InventoryComponent, &UAirInventory::StartSecondary);
 	PlayerInputComponent->BindAction("EndSecondary", IE_Released, InventoryComponent, &UAirInventory::EndSecondary);
+	PlayerInputComponent->BindAction("Reload", IE_Pressed, InventoryComponent, &UAirInventory::Reload);
 }
 
 bool AAirChar::ShouldLowerHands()
@@ -112,10 +117,6 @@ bool AAirChar::ShouldLowerHands()
 
 	return false;
 }
-
-
-
-
 
 
 

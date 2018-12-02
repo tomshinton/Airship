@@ -7,6 +7,9 @@
 #include "AirController.h"
 #include <Kismet/GameplayStatics.h>
 #include <WidgetBlueprintLibrary.h>
+#include "AirHUDBase.h"
+#include <CanvasPanelSlot.h>
+#include <WidgetLayoutLibrary.h>
 
 AAirHUD::AAirHUD(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
@@ -18,7 +21,7 @@ void AAirHUD::BeginPlay()
 	{
 		if (HUD)
 		{
-			HUDWidget = UUMGFunctions::CreateAirWidget(World, HUD);
+			HUDWidget = Cast<UAirHUDBase>(UUMGFunctions::CreateAirWidget(World, HUD));
 			HUDWidget->SetOwningHUD(this);
 
 			HUDWidget->AddToViewport(-1);
@@ -37,31 +40,64 @@ void AAirHUD::BeginPlay()
 	}
 }
 
+void AAirHUD::ClearInventoryPanel()
+{
+	if (UAirHUDBase* HUDWidgetPtr = HUDWidget.Get())
+	{
+		if (AAirController* LocalController = Cast<AAirController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+		{
+			HUDWidgetPtr->RemoveInventoryWidgetFromPanel();
+			HUDWidgetPtr->SetUserFocus(LocalController);
+			LocalController->bShowMouseCursor = false;
+			UWidgetBlueprintLibrary::SetInputMode_GameOnly(LocalController);
+		}
+	}
+}
+
 void AAirHUD::ToggleInventoryScreen()
 {
-	if (UAirWidget* InventoryWidgetPtr = InventoryScreenWidget.Get())
+	if (UAirHUDBase* HUDWidgetPtr = HUDWidget.Get())
 	{
 		if (UWorld* World = GetWorld())
 		{
 			if (AAirController* LocalController = Cast<AAirController>(UGameplayStatics::GetPlayerController(World, 0)))
 			{
-				if (InventoryWidgetPtr->IsInViewport())
+				if (HUDWidgetPtr->IsInventoryPanelPopulated())
 				{
-					InventoryWidgetPtr->RemoveFromParent();
-					HUDWidget->SetUserFocus(LocalController);
-					LocalController->bShowMouseCursor = false;
-					UWidgetBlueprintLibrary::SetInputMode_GameOnly(LocalController);
+					ClearInventoryPanel();	
 				}
-				else
+				else if (UAirWidget* InventoryWidgetPtr = InventoryScreenWidget.Get())
 				{
-					InventoryWidgetPtr->AddToViewport(1);
-					InventoryWidgetPtr->SetUserFocus(LocalController);
-					InventoryWidgetPtr->SetKeyboardFocus();
-					LocalController->bShowMouseCursor = true;
-					UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(LocalController, InventoryWidgetPtr, EMouseLockMode::LockAlways);
+					AddInventoryScreen(InventoryWidgetPtr, LocalController);
 				}
 			}
 		}
+	}
+}
+
+void AAirHUD::AddInventoryScreen(UUserWidget* InNewInventoryScreen, AAirController* InController)
+{
+	if (UAirHUDBase* HUDWidgetPtr = HUDWidget.Get())
+	{
+		if (HUDWidgetPtr->IsInventoryPanelPopulated())
+		{
+			ClearInventoryPanel();
+		}
+
+		HUDWidgetPtr->AddInventoryWidgetToPanel(InNewInventoryScreen);
+		
+		if (UCanvasPanelSlot* InventoryAsCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(InNewInventoryScreen))
+		{
+			InventoryAsCanvasSlot->SetAutoSize(true);
+
+			InventoryAsCanvasSlot->SetAnchors(FAnchors(0,0,1, 1));
+			InventoryAsCanvasSlot->SetOffsets(FMargin(0, 0, 0, 0));
+		}
+
+		InNewInventoryScreen->SetUserFocus(InController);
+		InNewInventoryScreen->SetKeyboardFocus();
+		InController->bShowMouseCursor = true;
+		UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(InController, InNewInventoryScreen, EMouseLockMode::LockAlways);
 	}
 }
 

@@ -9,9 +9,10 @@
 #include "InventorySlot.h"
 #include "TransferWindowBase.generated.h"
 
-/**
- * 
- */
+//////////////////////////////////////////////////////////////////////////
+// Base for all Transfer windows.  These are inventory screens that can display 2 DIFFERENT inventories, and allow for transfer between them
+//////////////////////////////////////////////////////////////////////////
+
 UCLASS()
 class AIRSHIP_API UTransferWindowBase : public UAirWidget
 {

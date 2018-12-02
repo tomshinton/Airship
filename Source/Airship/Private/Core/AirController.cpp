@@ -16,6 +16,7 @@ AAirController::AAirController()
 void AAirController::Possess(APawn* aPawn)
 {
 	Super::Possess(aPawn);
+
 	if (UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().SetTimer(LookAtTimerHandle, this, &AAirController::LookAt, LookAtFrequency, true, 0.f);

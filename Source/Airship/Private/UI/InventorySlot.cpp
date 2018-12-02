@@ -33,10 +33,17 @@ bool UInventorySlot::OnInventorySlotDrop(UInventorySlotDragOperation* Operation)
 	FInventoryItem OtherInventoryItem = Operation->IncomingSlot->GetLinkedItem();
 	FInventoryItem ThisInventoryItem = LinkedInventoryItem;
 
-	OtherInventory->SetItemBySlot(ThisInventoryItem, OtherSlotNum);
-	ThisInventory->SetItemBySlot(OtherInventoryItem, ThisSlotNum);
+	if (OtherInventory && ThisInventory)
+	{
+		OtherInventory->SetItemBySlot(ThisInventoryItem, OtherSlotNum);
+		ThisInventory->SetItemBySlot(OtherInventoryItem, ThisSlotNum);
 
-	return true;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void UInventorySlot::SetInventorySlot(const int32 InSlot, bool InIsHotbarSlot)

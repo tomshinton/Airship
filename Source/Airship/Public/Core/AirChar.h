@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 
-#include "Components/HealthComponent.h"
-#include "InteractionComponent.h"
-#include "AirMovementComponent.h"
-#include "AirInventory.h"
-#include <Camera/CameraComponent.h>
-
 #include "AirChar.generated.h"
+
+class UCameraComponent;
+class UAirInventory;
+class UAirMovementComponent;
+class UInteractionComponent;
+class UHealthComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharLanded);
 
@@ -58,12 +58,13 @@ public:
 	virtual void Landed(const FHitResult& Hit) override;
 
 protected:
-	// Called to bind functionality to input
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	FTransform RightHandTargetTransform;
 	FVector LeftHandTargetLocation;	
 
 private:
+
 	bool ShouldLowerHands();
 };

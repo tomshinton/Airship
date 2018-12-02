@@ -32,4 +32,5 @@ public:
 
 protected:
 	TWeakObjectPtr<AAirHUD> OwningHUD;
+
 };

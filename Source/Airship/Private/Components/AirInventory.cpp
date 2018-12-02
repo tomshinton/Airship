@@ -4,12 +4,13 @@
 #include "WorldItem.h"
 #include <GameFramework/Character.h>
 
+DEFINE_LOG_CATEGORY_STATIC(AirInventoryLog, Log, Log);
+
 UAirInventory::UAirInventory()
 	: HotbarSlots(0)
 	, InventorySize()
 	, InventoryName("Default Inventory Name")
 {
-
 }
 
 void UAirInventory::BeginPlay()
@@ -234,5 +235,34 @@ void UAirInventory::EndSecondary()
 	if (IWieldInterface* CurrentWieldInterface = Cast<IWieldInterface>(CurrentWieldActor.Get()))
 	{
 		CurrentWieldInterface->EndSecondary();
+	}
+}
+
+void UAirInventory::Reload()
+{
+	FInventoryItem& CurrItem = Inventory.Inventory[CurrFocusedSlot];
+	FClip& Clip = CurrItem.Clip;
+
+	if (Clip.ClipSize > 0 && Clip.GetClipCount() < Clip.ClipSize)
+	{
+		const int32 RoomLeft = Clip.ClipSize - Clip.GetClipCount();
+		UE_LOG(AirInventoryLog, Log, TEXT("Currently loading %i %s(s) into %s"), RoomLeft, *Clip.AmmoName.ToString(), *CurrItem.ItemID.ToString());
+
+		const int32 NumRemovedFromInventory = UInventoryFunctions::RemoveItem(Inventory, Clip.AmmoName, RoomLeft).Quantity;
+
+		UE_LOG(AirInventoryLog, Log, TEXT("Removed %i items, ready to load into item"), NumRemovedFromInventory);
+
+		const int32 NewClipCount = Clip.GetClipCount() + NumRemovedFromInventory;
+		Clip.SetClipCount(NewClipCount);
+
+		if (OnInventoryUpdated.IsBound())
+		{
+			OnInventoryUpdated.Broadcast();
+			Wield();
+		}
+	}
+	else
+	{
+		UE_LOG(AirInventoryLog, Log, TEXT("Clip full"));
 	}
 }

@@ -52,7 +52,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = Inventory)
 	void GetHotbarBounds(bool& HasHotbarSlots, int32& HotbarStart, int32& HotbarEnd);
 
-	void SetHandComponents(USceneComponent* InLeftHand, USceneComponent* InRightHand) { RightHand = InRightHand;	}
+	void SetHandComponents(USceneComponent* InLeftHand, USceneComponent* InRightHand) { RightHand = InRightHand; }
+
+	UFUNCTION()
+	void Reload();
 
 	FInventoryItem GetItemBySlot(const int32 ID);
 	FName GetItemNameBySlot(const int32 ID);
