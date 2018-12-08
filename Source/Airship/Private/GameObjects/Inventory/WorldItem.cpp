@@ -3,6 +3,8 @@
 #include "WorldItem.h"
 #include "AirInventory.h"
 
+const FName AWorldItem::BarrelSocketName = FName("BarrelSocket");
+
 AWorldItem::AWorldItem()
 {
 	ItemRoot = CreateDefaultSubobject<USceneComponent>(TEXT("ItemRoot"));
@@ -23,7 +25,7 @@ void AWorldItem::StartPrimary()
 
 void AWorldItem::EndPrimary()
 {
-	
+
 }
 
 void AWorldItem::StartSecondary()
@@ -33,7 +35,7 @@ void AWorldItem::StartSecondary()
 
 void AWorldItem::EndSecondary()
 {
-	
+
 }
 
 void AWorldItem::StartWield()
@@ -47,3 +49,20 @@ void AWorldItem::EndWield()
 	Destroy();
 }
 
+TOptional<FTransform> AWorldItem::GetBarrelTransform() const
+{
+	TArray<UActorComponent*> ActorComponents = GetComponentsByClass(USceneComponent::StaticClass());
+
+	for (UActorComponent* ActorComp : ActorComponents)
+	{
+		if (USceneComponent* SceneComp = Cast<USceneComponent>(ActorComp))
+		{
+			if (SceneComp->DoesSocketExist(BarrelSocketName))
+			{
+				return SceneComp->GetSocketTransform(BarrelSocketName);
+			}
+		}
+	}
+
+	return TOptional<FTransform>();
+}

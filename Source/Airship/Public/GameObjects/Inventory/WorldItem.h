@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "WieldInterface.h"
 #include <Components/StaticMeshComponent.h>
+#include "Utils/Datatypes/InventoryItems.h"
 #include "WorldItem.generated.h"
 
 class UAirInventory;
@@ -15,6 +16,9 @@ class AIRSHIP_API AWorldItem : public AActor, public IWieldInterface
 {
 	GENERATED_BODY()
 	
+public:
+	static const FName BarrelSocketName;
+
 public:	
 	// Sets default values for this actor's properties
 	AWorldItem();
@@ -25,8 +29,6 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* ItemMesh;
 	
-	void SetAssociatedInventoryComponent(UAirInventory* InInventoryComponent) { AssociatedInventoryComponent = InInventoryComponent; }
-
 public:
 	//Start WieldInterface
 	virtual void StartPrimary() override;
@@ -37,7 +39,11 @@ public:
 	virtual void EndWield() override;
 	//End WieldInterface
 
+	void SetAssociatedInventory(UAirInventory* InInventory) { AssociatedInventoryComponent = InInventory; }
+
 protected:
+	
 	UPROPERTY()
 	UAirInventory* AssociatedInventoryComponent;
+	TOptional<FTransform> GetBarrelTransform() const;
 };

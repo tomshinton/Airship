@@ -14,6 +14,7 @@ class AWorldItem;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSlotFocusUpdated, const int32, Slot);
 
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class AIRSHIP_API UAirInventory : public UActorComponent
 {
@@ -57,6 +58,9 @@ public:
 	UFUNCTION()
 	void Reload();
 
+	UFUNCTION()
+	void ReduceCurrentClip(const int32 InAmountToReduce);
+
 	FInventoryItem GetItemBySlot(const int32 ID);
 	FName GetItemNameBySlot(const int32 ID);
 
@@ -64,6 +68,8 @@ public:
 
 	void FocusNextItem();
 	void FocusLastItem();
+
+	int32 GetCurrentFocusedSlot() const { return CurrFocusedSlot; }
 
 	void SetIsAiming(const bool InAiming) { IsAiming = InAiming; }
 	bool GetIsAiming() const { return IsAiming; }

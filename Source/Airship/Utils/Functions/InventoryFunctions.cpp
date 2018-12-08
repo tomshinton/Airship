@@ -34,7 +34,7 @@ FInventoryItem UInventoryFunctions::AddItemFromID(FInventory& Inventory, const F
 		int32 QuantityLeft = Quantity;
 
 		//Top up existing slots
-		for (FInventoryItem& ExistingStack : Inventory.Inventory)
+		for (FInventoryItem& ExistingStack : Inventory.ItemSlots)
 		{
 			if (ExistingStack.ItemID == ItemID && (NewItemInfo->Stacks ? ExistingStack.Quantity < NewItemInfo->StackSize : false))
 			{
@@ -59,7 +59,7 @@ FInventoryItem UInventoryFunctions::AddItemFromID(FInventory& Inventory, const F
 			{
 				FInventoryItem NewStack = FInventoryItem(ItemID, (NewItemInfo->Stacks ? FMath::Clamp(QuantityLeft, 0, NewItemInfo->StackSize) : 1), NewItemInfo->Clip);
 
-				for (FInventoryItem& ExistingSlot : Inventory.Inventory)
+				for (FInventoryItem& ExistingSlot : Inventory.ItemSlots)
 				{
 					if (ExistingSlot.ItemID == "Item")
 					{
@@ -94,9 +94,9 @@ FInventoryItem UInventoryFunctions::RemoveItem(FInventory& Inventory, const FNam
 
 	if (NewItemInfo)
 	{
-		for (int32 i = Inventory.Inventory.Num() - 1; i >= 0; i--)
+		for (int32 i = Inventory.ItemSlots.Num() - 1; i >= 0; i--)
 		{
-			FInventoryItem& CurrInventoryItem = Inventory.Inventory[i];
+			FInventoryItem& CurrInventoryItem = Inventory.ItemSlots[i];
 
 			if (CurrInventoryItem.ItemID == ItemID && QuantityLeft > 0)
 			{
@@ -120,7 +120,7 @@ bool UInventoryFunctions::InventoryHasEmptySlots(FInventory& Inventory)
 {
 	int32 EmptySlots = 0;
 
-	for (const FInventoryItem& ExistingSlot : Inventory.Inventory)
+	for (const FInventoryItem& ExistingSlot : Inventory.ItemSlots)
 	{
 		if (ExistingSlot.ItemID == "Item")
 		{
@@ -137,7 +137,7 @@ void UInventoryFunctions::Audit(FName ItemID, int32& Stacks, int32& Total, FInve
 	Total = 0;
 	Stacks = 0;
 
-	for (FInventoryItem& ExistingSlot : InInventory.Inventory)
+	for (FInventoryItem& ExistingSlot : InInventory.ItemSlots)
 	{
 		if (ExistingSlot.ItemID == ItemID)
 		{

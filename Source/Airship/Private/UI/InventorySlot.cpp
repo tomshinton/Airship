@@ -152,7 +152,7 @@ void UInventorySlot::BuildSlotVisuals()
 		if (UDataTable* InventoryDataTable = Cast<UDataTable>(GameSettings->InventoryLookup.TryLoad()))
 		{
 			FString ContextString = "Item Lookup";
-			FInventoryItemRow* FoundRow = InventoryDataTable->FindRow<FInventoryItemRow>(LinkedInventoryItem.ItemID, ContextString, true);
+			FInventoryItemRow* FoundRow = InventoryDataTable->FindRow<FInventoryItemRow>(LinkedInventoryItem.ItemID, ContextString, false);
 
 			if (FoundRow)
 			{

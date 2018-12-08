@@ -19,7 +19,7 @@ void UAirInventory::BeginPlay()
 
 	for (int32 i = 0; i < InventorySize; i++)
 	{
-		Inventory.Inventory.Add(FInventoryItem());
+		Inventory.ItemSlots.Add(FInventoryItem());
 	}
 
 	if (!Cast<ACharacter>(GetOwner()))
@@ -85,7 +85,7 @@ void UAirInventory::Audit(FName ItemID, int32& Stacks, int32& Total)
 
 void UAirInventory::SwapSlots(const int32 FirstSlot, const int32 SecondSlot)
 {
-	Inventory.Inventory.Swap(FirstSlot, SecondSlot);
+	Inventory.ItemSlots.Swap(FirstSlot, SecondSlot);
 
 	if (OnInventoryUpdated.IsBound())
 	{
@@ -123,9 +123,9 @@ void UAirInventory::GetHotbarBounds(bool& HasHotbarSlots, int32& HotbarStart, in
 
 FInventoryItem UAirInventory::GetItemBySlot(const int32 ID)
 {
-	if (Inventory.Inventory.Num() -1 >= ID)
+	if (Inventory.ItemSlots.Num() -1 >= ID)
 	{
-		return Inventory.Inventory[ID];
+		return Inventory.ItemSlots[ID];
 	}
 
 	return FInventoryItem();
@@ -133,9 +133,9 @@ FInventoryItem UAirInventory::GetItemBySlot(const int32 ID)
 
 FName UAirInventory::GetItemNameBySlot(const int32 Slot)
 {
-	if (Inventory.Inventory.Num() - 1 >= Slot)
+	if (Inventory.ItemSlots.Num() - 1 >= Slot)
 	{
-		const FInventoryItem FoundSlot = Inventory.Inventory[Slot];
+		const FInventoryItem FoundSlot = Inventory.ItemSlots[Slot];
 		return FoundSlot.ItemID;
 	}
 
@@ -144,7 +144,7 @@ FName UAirInventory::GetItemNameBySlot(const int32 Slot)
 
 void UAirInventory::SetItemBySlot(FInventoryItem InItem, const int32 InSlot)
 {
-	Inventory.Inventory[InSlot] = InItem;
+	Inventory.ItemSlots[InSlot] = InItem;
 
 	if (OnInventoryUpdated.IsBound())
 	{
@@ -174,7 +174,7 @@ void UAirInventory::Wield()
 {
 	if (Cast<ACharacter>(GetOwner()))
 	{
-		FInventoryItem CurrentFocusedItem = Inventory.Inventory[CurrFocusedSlot];
+		FInventoryItem CurrentFocusedItem = Inventory.ItemSlots[CurrFocusedSlot];
 
 		if (CurrentWieldActor.Get())
 		{
@@ -186,20 +186,26 @@ void UAirInventory::Wield()
 
 		if (UWorld* World = GetOwner()->GetWorld())
 		{
-			FVector Location = RightHand->GetComponentLocation();
-			FRotator Rotation = RightHand->GetComponentRotation();
-			FActorSpawnParameters SpawnInfo;
+			const UClass* CurrentWieldClass = CurrentFocusedItem.GetItemClass();
 
-			AWorldItem* NewWieldItem = Cast<AWorldItem>(World->SpawnActor<AWorldItem>(CurrentFocusedItem.GetItemClass(), Location, Rotation, SpawnInfo));
-			if(NewWieldItem)
+			if (CurrentWieldClass)
 			{
-				CurrentWieldActor = NewWieldItem;
-				CurrentWieldActor->AttachToComponent(RightHand, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-				CurrentWieldActor->SetAssociatedInventoryComponent(this);
+				const FVector Location = RightHand->GetComponentLocation();
+				const FRotator Rotation = RightHand->GetComponentRotation();
+				const FActorSpawnParameters SpawnInfo;
 
-				if(IWieldInterface* NewSpawnedItemInterface = Cast<IWieldInterface>(CurrentWieldActor.Get()))
+				AWorldItem* NewWieldItem = Cast<AWorldItem>(World->SpawnActor<AWorldItem>(CurrentFocusedItem.GetItemClass(), Location, Rotation, SpawnInfo));
+				if (NewWieldItem)
 				{
-					NewSpawnedItemInterface->StartWield();
+					CurrentWieldActor = NewWieldItem;
+					CurrentWieldActor->AttachToComponent(RightHand, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+
+					CurrentWieldActor->SetAssociatedInventory(this);
+
+					if (IWieldInterface* NewSpawnedItemInterface = Cast<IWieldInterface>(CurrentWieldActor.Get()))
+					{
+						NewSpawnedItemInterface->StartWield();
+					}
 				}
 			}
 		}
@@ -240,7 +246,7 @@ void UAirInventory::EndSecondary()
 
 void UAirInventory::Reload()
 {
-	FInventoryItem& CurrItem = Inventory.Inventory[CurrFocusedSlot];
+	FInventoryItem& CurrItem = Inventory.ItemSlots[CurrFocusedSlot];
 	FClip& Clip = CurrItem.Clip;
 
 	if (Clip.ClipSize > 0 && Clip.GetClipCount() < Clip.ClipSize)
@@ -264,5 +270,17 @@ void UAirInventory::Reload()
 	else
 	{
 		UE_LOG(AirInventoryLog, Log, TEXT("Clip full"));
+	}
+}
+
+void UAirInventory::ReduceCurrentClip(const int32 InAmountToReduce)
+{
+	const int32 CurrentClip = Inventory.ItemSlots[CurrFocusedSlot].Clip.CurrentClip;
+	const int32 ClipSize = Inventory.ItemSlots[CurrFocusedSlot].Clip.ClipSize;
+	Inventory.ItemSlots[CurrFocusedSlot].Clip.CurrentClip = FMath::Clamp<int32>(CurrentClip - InAmountToReduce, 0, ClipSize);
+
+	if (OnInventoryUpdated.IsBound())
+	{
+		OnInventoryUpdated.Broadcast();
 	}
 }

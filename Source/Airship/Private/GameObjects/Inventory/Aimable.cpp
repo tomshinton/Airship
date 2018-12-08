@@ -6,10 +6,13 @@
 #include "AirInventory.h"
 
 #include "WorldItem.h"
+#include "Projectiles/ProjectileBase.h"
+
+const float AAimable::MaxFireDistance = 50000.f;
 
 AAimable::AAimable()
+	: Scope(CreateDefaultSubobject<UScope>(TEXT("Scope")))
 {
-	Scope = CreateDefaultSubobject<UScope>(TEXT("Scope"));
 	Scope->SetupAttachment(RootComponent);
 }
 
@@ -50,12 +53,84 @@ void AAimable::EndSecondary()
 	}
 }
 
+FVector AAimable::GetFireDirection() const
+{
+	if (AssociatedInventoryComponent->GetIsAiming())
+	{
+		if (UWorld* World = GetWorld())
+		{
+			if (APlayerController* PlayerController = World->GetFirstPlayerController())
+			{
+				if (Scope)
+				{
+					const FVector WorldLocation = Scope->GetComponentLocation();
+					const FVector WorldDirection = Scope->GetForwardVector();
+					const FVector AimEnd = WorldLocation + (WorldDirection * MaxFireDistance);
+					const FVector AimStart = GetBarrelTransform().GetValue().GetLocation();
+
+					return (AimEnd - AimStart).GetSafeNormal();
+				}
+			}
+		}
+	}
+	else
+	{
+		if (GetBarrelTransform().IsSet())
+		{
+			const FRotator BarrelRotation = GetBarrelTransform().GetValue().Rotator();
+			return BarrelRotation.Vector().GetSafeNormal();
+		}
+	}
+
+	return GetActorRotation().Vector().GetSafeNormal();
+}
+
 void AAimable::StartPrimary()
 {
-	GEngine->AddOnScreenDebugMessage(1, 1, FColor::White, "Aimable start primary");
+	if(IsFirable)
+	{
+		StartFire();
+	}
 }
 
 void AAimable::EndPrimary()
 {
-	GEngine->AddOnScreenDebugMessage(1, 1, FColor::White, "Aimable end primary");
+	if (IsFirable && HasFired)
+	{
+		EndFire();
+	}
+}
+
+void AAimable::StartFire()
+{
+	if (AssociatedInventoryComponent)
+	{
+		const int32 CurrentSlot = AssociatedInventoryComponent->GetCurrentFocusedSlot();
+		const FInventoryItem& CurrentFocusedItem = AssociatedInventoryComponent->GetItemBySlot(CurrentSlot);
+
+		if(CurrentFocusedItem.Clip.AmmoName != "")
+		{
+			AssociatedInventoryComponent->ReduceCurrentClip(FireCost);
+		}
+
+		const TSubclassOf<AProjectileBase> AmmoClass = CurrentFocusedItem.Clip.AmmoClass;
+		if (AmmoClass && CurrentFocusedItem.Clip.GetClipCount() > 0)
+		{
+			if (UWorld* World = GetWorld())
+			{
+				if (GetBarrelTransform().IsSet())
+				{
+					if (AProjectileBase* Projectile = World->SpawnActor<AProjectileBase>(AmmoClass, GetBarrelTransform().GetValue(), FActorSpawnParameters()))
+					{
+						Projectile->OnFire(GetFireDirection());
+					}
+				}
+			}
+		}
+	}
+}
+
+void AAimable::EndFire()
+{
+
 }

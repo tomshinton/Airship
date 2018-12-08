@@ -2,9 +2,11 @@
 
 #include "Engine/DataTable.h"
 #include "../Functions/InventoryFunctions.h"
-#include "WorldItem.h"
 
 #include "InventoryItems.generated.h"
+
+class AProjectileBase;
+class AWorldItem;
 
 USTRUCT(Blueprintable, BlueprintType)
 struct FClip
@@ -17,6 +19,9 @@ struct FClip
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
 	FName AmmoName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
+	TSubclassOf<AProjectileBase> AmmoClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
 	int32 ClipSize;
@@ -143,14 +148,14 @@ struct FInventory
 	GENERATED_BODY()
 
 	FInventory()
-		: Inventory(TArray<FInventoryItem>())
+		: ItemSlots(TArray<FInventoryItem>())
 		, InventorySize(32)
 	{}
 
 public:
 	UPROPERTY(VisibleAnywhere)
-	TArray<FInventoryItem> Inventory;
+	TArray<FInventoryItem> ItemSlots;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemSlots)
 	int32 InventorySize;
 };
