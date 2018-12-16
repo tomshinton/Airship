@@ -31,7 +31,7 @@ public:
 	void ReturnControlToHUD() const;
 
 	UPROPERTY(EditDefaultsOnly, Category = Classes)
-	TSubclassOf<UAirWidget> HUD;
+	TSubclassOf<UAirHUDBase> HUD;
 
 	UPROPERTY(EditDefaultsOnly, Category = Classes)
 	TSubclassOf<UAirWidget> InventoryScreen;
@@ -42,9 +42,14 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	TWeakObjectPtr<UAirHUDBase> HUDWidget;
-	TWeakObjectPtr<UAirWidget> InventoryScreenWidget;
-	TWeakObjectPtr<UUserWidget> CrosshairWidget;
+	UPROPERTY()
+	UAirHUDBase* HUDWidget;
+
+	UPROPERTY()
+	UAirWidget* InventoryScreenWidget;
+
+	UPROPERTY()
+	UUserWidget* CrosshairWidget;
 
 	bool InventoryIsVisible;
 	bool IsAiming;

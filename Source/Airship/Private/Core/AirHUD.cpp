@@ -42,12 +42,12 @@ void AAirHUD::BeginPlay()
 
 void AAirHUD::ClearInventoryPanel()
 {
-	if (UAirHUDBase* HUDWidgetPtr = HUDWidget.Get())
+	if (HUDWidget)
 	{
 		if (AAirController* LocalController = Cast<AAirController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
 		{
-			HUDWidgetPtr->RemoveInventoryWidgetFromPanel();
-			HUDWidgetPtr->SetUserFocus(LocalController);
+			HUDWidget->RemoveInventoryWidgetFromPanel();
+			HUDWidget->SetUserFocus(LocalController);
 			LocalController->bShowMouseCursor = false;
 			UWidgetBlueprintLibrary::SetInputMode_GameOnly(LocalController);
 		}
@@ -56,19 +56,19 @@ void AAirHUD::ClearInventoryPanel()
 
 void AAirHUD::ToggleInventoryScreen()
 {
-	if (UAirHUDBase* HUDWidgetPtr = HUDWidget.Get())
+	if (HUDWidget)
 	{
 		if (UWorld* World = GetWorld())
 		{
 			if (AAirController* LocalController = Cast<AAirController>(UGameplayStatics::GetPlayerController(World, 0)))
 			{
-				if (HUDWidgetPtr->IsInventoryPanelPopulated())
+				if (HUDWidget->IsInventoryPanelPopulated())
 				{
 					ClearInventoryPanel();	
 				}
-				else if (UAirWidget* InventoryWidgetPtr = InventoryScreenWidget.Get())
+				else if (InventoryScreenWidget)
 				{
-					AddInventoryScreen(InventoryWidgetPtr, LocalController);
+					AddInventoryScreen(InventoryScreenWidget, LocalController);
 				}
 			}
 		}
@@ -77,14 +77,14 @@ void AAirHUD::ToggleInventoryScreen()
 
 void AAirHUD::AddInventoryScreen(UUserWidget* InNewInventoryScreen, AAirController* InController)
 {
-	if (UAirHUDBase* HUDWidgetPtr = HUDWidget.Get())
+	if (HUDWidget)
 	{
-		if (HUDWidgetPtr->IsInventoryPanelPopulated())
+		if (HUDWidget->IsInventoryPanelPopulated())
 		{
 			ClearInventoryPanel();
 		}
 
-		HUDWidgetPtr->AddInventoryWidgetToPanel(InNewInventoryScreen);
+		HUDWidget->AddInventoryWidgetToPanel(InNewInventoryScreen);
 		
 		if (UCanvasPanelSlot* InventoryAsCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(InNewInventoryScreen))
 		{
@@ -105,7 +105,7 @@ void AAirHUD::SetIsAiming(const bool InIsAiming)
 {
 	IsAiming = InIsAiming;
 
-	if (CrosshairWidget.Get())
+	if (CrosshairWidget)
 	{
 		if (IsAiming)
 		{
