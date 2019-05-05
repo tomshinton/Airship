@@ -15,6 +15,28 @@
 			]
 		},
 		{
+			"Name": "AirCore",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"UMG",
+				"CoreUObject",
+				"AirUI"
+			]
+		},		
+		{
+			"Name": "AirUI",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"UMG",
+				"CoreUObject",
+				"AirCore"
+			]
+		},
+		{
 			"Name": "AirEditor",
 			"Type": "Editor",
 			"LoadingPhase": "PostEngineInit"

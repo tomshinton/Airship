@@ -10,7 +10,7 @@ public class AirEditor : ModuleRules
 
         PrivateIncludePaths.AddRange(new string[] { "AirEditor/Private" });
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Airship", "Core", "CoreUObject", "Engine", "InputCore" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Airship", "AirCore", "Core", "CoreUObject", "Engine", "InputCore" });
 
         PrivateDependencyModuleNames.AddRange(new string[] { });
     }
