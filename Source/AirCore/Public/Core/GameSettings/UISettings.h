@@ -2,19 +2,21 @@
 
 #pragma once
 
-#include "AirSettings.generated.h"
+class UAirHUDBase;
+
+#include "UISettings.generated.h"
 
 ///////////////////////////////////////////////////////////////////////////
 // GameSettings asset for global assets - accessed via UnmutableDefaults
 //////////////////////////////////////////////////////////////////////////
 
 UCLASS(config = Game, defaultconfig, MinimalAPI)
-class UAirSettings : public UObject
+class UUISettings : public UObject
 {
 	GENERATED_BODY()
 
 public:
 
-	UPROPERTY(EditAnywhere, config, Category = "Inventory", meta = (AllowedClasses = "DataTable"))
-	FStringAssetReference InventoryLookup;
+	UPROPERTY(EditAnywhere, config, Category = "UI")
+	TSubclassOf<UAirHUDBase> HUDWidget;
 };

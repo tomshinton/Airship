@@ -5,6 +5,7 @@
 #include "Modules/ModuleManager.h"
 #include "UnrealEd.h"
 #include "AirSettings.h"
+#include "UISettings.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(AirEditorLog, All, All)
 
@@ -28,8 +29,11 @@ private:
 	/** Callback for when the settings were saved. */
 	bool HandleSettingsSaved()
 	{
-		UAirSettings* Settings = GetMutableDefault<UAirSettings>();
-		Settings->SaveConfig();
+		UAirSettings* AirSettings = GetMutableDefault<UAirSettings>();
+		AirSettings->SaveConfig();
+
+		UUISettings* UISettings = GetMutableDefault<UUISettings>();
+		UISettings->SaveConfig();
 
 		return true;
 	}

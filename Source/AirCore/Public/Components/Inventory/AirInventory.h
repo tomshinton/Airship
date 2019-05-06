@@ -105,7 +105,7 @@ private:
 	int32 CurrFocusedSlot;
 
 	UPROPERTY()
-	TWeakObjectPtr<AWorldItem> CurrentWieldActor;
+	AWorldItem* CurrentWieldActor;
 
 	USceneComponent* RightHand;
 

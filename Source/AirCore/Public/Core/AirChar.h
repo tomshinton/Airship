@@ -22,7 +22,7 @@ class AAirChar : public ACharacter
 
 public:
 	UFUNCTION(BlueprintPure, Category = Inventory)
-	UAirInventory* GetInventory() { return InventoryComponent; }
+	UAirInventory* GetInventory() const { return InventoryComponent; }
 
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void BeginPlay() override;

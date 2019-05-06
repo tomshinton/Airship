@@ -29,15 +29,6 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* QuantityText;
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Inventory)
-	void UpdateFocused();
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Inventory)
-	void UpdateFocusCleared();
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Inventory)
-	void UpdateSlotVisuals();
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = Inventory)
 	FInventoryItem GetLinkedItem();
@@ -49,7 +40,7 @@ public:
 	void SetInventorySlot(const int32 InSlot, bool InIsHotbarSlot);
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
-	UAirInventory* GetLinkedInventory() const { return LinkedInventory.Get(); }
+	UAirInventory* GetLinkedInventory() const { return LinkedInventory; }
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void SetLinkedInventory(UAirInventory* InInventory) { LinkedInventory = InInventory; };
@@ -60,8 +51,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = Inventory)
 	bool IsHotBarSlot;
 	
-	virtual void Build() override;
-
 	UPROPERTY(VisibleAnywhere, Category = Inventory)
 	bool IsPopulated;
 
@@ -80,6 +69,9 @@ protected:
 
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
+
+	virtual void NativeConstruct() override;
+
 private:
 	
 	bool IsFocused;
@@ -91,6 +83,4 @@ private:
 	void BuildFromInvalidData();
 
 	FInventoryItem LinkedInventoryItem;
-	UPROPERTY()
-	TWeakObjectPtr<UAirInventory> LinkedInventory;
 };

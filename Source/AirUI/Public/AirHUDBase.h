@@ -6,6 +6,7 @@
 #include "AirHUDBase.generated.h"
 
 class UCanvasPanel;
+class UHotbar;
 
 //////////////////////////////////////////////////////////////////////////
 // Base for AirHud, the main Hud of the game.  Holds containers for all contextual widgets like ActiveInventory and Hotbars
@@ -18,19 +19,8 @@ class UAirHUDBase : public UAirWidget
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "Containers")
-	void SetInventoryPanel(UCanvasPanel* InPanel) { InventoryPanel = InPanel; };
-	AIRUI_API void AddInventoryWidgetToPanel(UUserWidget* InWidget);
-	AIRUI_API void RemoveInventoryWidgetFromPanel();
-	AIRUI_API bool IsInventoryPanelPopulated() const;
-	void SetInventoryPanelVisiblity(const ESlateVisibility InNewVisibility);
-
-	virtual void Build() override;
+	UPROPERTY(EditDefaultsOnly, Category = Composite, meta = (BindWidget))
+	UHotbar* Hotbar;
 	
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = Containers)
-	UCanvasPanel* InventoryPanel;
-
-	UPROPERTY(EditDefaultsOnly, Category = Containers)
-	UCanvasPanel* ClipPanel;
 };

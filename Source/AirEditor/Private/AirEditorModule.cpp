@@ -6,7 +6,6 @@
 #include <ISettingsContainer.h>
 #include <Internationalization.h>
 #include <ISettingsSection.h>
-#include "AirSettings.h"
 
 IMPLEMENT_MODULE(FAirEditorModule, AirEditor);
 DEFINE_LOG_CATEGORY(AirEditorLog)
@@ -30,11 +29,14 @@ void FAirEditorModule::RegisterSettings()
 		ISettingsContainerPtr SettingsContainer = SettingsModule->GetContainer("Project");
 
 		SettingsContainer->DescribeCategory("Airship Settings", FText::FromString("Airship Settings"), FText::FromString("Base gameplay settings for Airship"));
-		ISettingsSectionPtr SettingsSection = SettingsModule->RegisterSettings("Project", "Airship Settings", "General", FText::FromString("Airship Settings"),  FText::FromString("Base gameplay settings for Airship"), GetMutableDefault<UAirSettings>());
+		
+		ISettingsSectionPtr SettingsSection = SettingsModule->RegisterSettings("Project", "Airship Settings", "General", FText::FromString("Airship Settings"), FText::FromString("Base gameplay settings for Airship"), GetMutableDefault<UAirSettings>());
+		ISettingsSectionPtr UISettingsSection = SettingsModule->RegisterSettings("Project", "Airship Settings", "UI", FText::FromString("Airship UI Settings"), FText::FromString("UI Settings"), GetMutableDefault<UUISettings>());
 
-		if (SettingsSection.IsValid())
+		if (SettingsSection.IsValid() && UISettingsSection.IsValid())
 		{
 			SettingsSection->OnModified().BindRaw(this, &FAirEditorModule::HandleSettingsSaved);
+			UISettingsSection->OnModified().BindRaw(this, &FAirEditorModule::HandleSettingsSaved);
 		}
 	}
 }

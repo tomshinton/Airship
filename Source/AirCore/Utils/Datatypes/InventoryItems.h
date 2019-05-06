@@ -67,7 +67,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
 	UTexture2D* ItemIcon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo, meta = (AllowedClasses = WorldItem))
 	TSubclassOf<AWorldItem> ItemClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)

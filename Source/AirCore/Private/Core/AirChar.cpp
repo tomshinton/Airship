@@ -32,7 +32,10 @@ AAirChar::AAirChar()
 
 	MovementComponent->SetCameraComponent(Camera);
 	InventoryComponent->InventorySize = 20;
+	InventoryComponent->HotbarSlots = 10;
 	InventoryComponent->SetHandComponents(LeftHand, RightHand);
+
+	bUseControllerRotationYaw = false;
 }
 
 void AAirChar::Tick(float DeltaSeconds)
@@ -92,14 +95,6 @@ void AAirChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("FocusNextItem", IE_Pressed, InventoryComponent, &UAirInventory::FocusNextItem);
 	PlayerInputComponent->BindAction("FocusLastItem", IE_Pressed, InventoryComponent, &UAirInventory::FocusLastItem);
-
-	if (AAirController* OwningController = Cast<AAirController>(GetController()))
-	{
-		if (AAirHUD* SpawnedHUD = Cast<AAirHUD>(OwningController->GetHUD()))
-		{
-			PlayerInputComponent->BindAction("ToggleInventory", IE_Pressed, SpawnedHUD, &AAirHUD::ToggleInventoryScreen);
-		}
-	}
 
 	PlayerInputComponent->BindAction("StartPrimary", IE_Pressed, InventoryComponent, &UAirInventory::StartPrimary);
 	PlayerInputComponent->BindAction("EndPrimary", IE_Released, InventoryComponent, &UAirInventory::EndPrimary);

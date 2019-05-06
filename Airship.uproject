@@ -24,7 +24,7 @@
 				"CoreUObject",
 				"AirUI"
 			]
-		},		
+		},
 		{
 			"Name": "AirUI",
 			"Type": "Runtime",

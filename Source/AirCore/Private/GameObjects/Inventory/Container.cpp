@@ -28,10 +28,7 @@ void AContainer::OnInteract(AActor* InteractingActor)
 				
 				if (AAirController* LocalController = Cast<AAirController>(UGameplayStatics::GetPlayerController(World, 0)))
 				{
-					if (AAirHUD* AirHud = Cast<AAirHUD>(LocalController->GetHUD()))
-					{
-						AirHud->AddInventoryScreen(TransferUI, LocalController);
-					}
+
 				}
 			}
 		}

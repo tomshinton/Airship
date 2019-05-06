@@ -1,6 +1,7 @@
 #include "InventoryFunctions.h"
 #include "../Datatypes/InventoryItems.h"
 #include "ConstructorHelpers.h"
+#include "AirSettings.h"
 
 FInventoryItemRow* UInventoryFunctions::GetItemInfo(FName ItemID)
 {
@@ -20,9 +21,14 @@ FInventoryItemRow* UInventoryFunctions::GetItemInfo(FName ItemID)
 
 UDataTable* UInventoryFunctions::GetDataTable()
 {
-	const FString ItemInfoDataTable = "DataTable'/Game/Data/DataTables/ItemData.ItemData'";
-	UDataTable* Table = LoadObject<UDataTable>(NULL, *ItemInfoDataTable);
-	return Table;
+	if (UAirSettings* GameSettings = GetMutableDefault<UAirSettings>())
+	{
+		if (UDataTable* InventoryDataTable = Cast<UDataTable>(GameSettings->InventoryLookup.TryLoad()))
+		{
+			return InventoryDataTable;
+		}
+	}
+	return nullptr;
 }
 
 FInventoryItem UInventoryFunctions::AddItemFromID(FInventory& Inventory, const FName ItemID, const int32 Quantity)

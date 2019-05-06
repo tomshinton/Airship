@@ -18,11 +18,6 @@ AAimable::AAimable()
 
 void AAimable::StartSecondary()
 {
-	if (AAirHUD* HUD = Cast<AAirHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD()))
-	{
-		HUD->SetIsAiming(true);
-	}
-
 	if (AssociatedInventoryComponent)
 	{
 		AssociatedInventoryComponent->SetIsAiming(true);
@@ -36,11 +31,6 @@ void AAimable::StartSecondary()
 
 void AAimable::EndSecondary()
 {
-	if (AAirHUD* HUD = Cast<AAirHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD()))
-	{
-		HUD->SetIsAiming(false);
-	}
-
 	if (AssociatedInventoryComponent)
 	{
 		AssociatedInventoryComponent->SetIsAiming(false);

@@ -8,7 +8,7 @@ DEFINE_LOG_CATEGORY_STATIC(AirInventoryLog, Log, Log);
 
 UAirInventory::UAirInventory()
 	: HotbarSlots(0)
-	, InventorySize()
+	, InventorySize(20)
 	, InventoryName("Default Inventory Name")
 {
 }
@@ -176,9 +176,9 @@ void UAirInventory::Wield()
 	{
 		FInventoryItem CurrentFocusedItem = Inventory.ItemSlots[CurrFocusedSlot];
 
-		if (CurrentWieldActor.Get())
+		if (CurrentWieldActor)
 		{
-			if (IWieldInterface* CurrentWieldInterface = Cast<IWieldInterface>(CurrentWieldActor.Get()))
+			if (IWieldInterface* CurrentWieldInterface = Cast<IWieldInterface>(CurrentWieldActor))
 			{
 				CurrentWieldInterface->EndWield();
 			}
@@ -202,7 +202,7 @@ void UAirInventory::Wield()
 
 					CurrentWieldActor->SetAssociatedInventory(this);
 
-					if (IWieldInterface* NewSpawnedItemInterface = Cast<IWieldInterface>(CurrentWieldActor.Get()))
+					if (IWieldInterface* NewSpawnedItemInterface = Cast<IWieldInterface>(CurrentWieldActor))
 					{
 						NewSpawnedItemInterface->StartWield();
 					}
@@ -214,7 +214,7 @@ void UAirInventory::Wield()
 
 void UAirInventory::StartPrimary()
 {
-	if (IWieldInterface* CurrentWieldInterface = Cast<IWieldInterface>(CurrentWieldActor.Get()))
+	if (IWieldInterface* CurrentWieldInterface = Cast<IWieldInterface>(CurrentWieldActor))
 	{
 		CurrentWieldInterface->StartPrimary();
 	}
@@ -222,7 +222,7 @@ void UAirInventory::StartPrimary()
 
 void UAirInventory::EndPrimary()
 {
-	if (IWieldInterface* CurrentWieldInterface = Cast<IWieldInterface>(CurrentWieldActor.Get()))
+	if (IWieldInterface* CurrentWieldInterface = Cast<IWieldInterface>(CurrentWieldActor))
 	{
 		CurrentWieldInterface->EndPrimary();
 	}
@@ -230,7 +230,7 @@ void UAirInventory::EndPrimary()
 
 void UAirInventory::StartSecondary()
 {
-	if (IWieldInterface* CurrentWieldInterface = Cast<IWieldInterface>(CurrentWieldActor.Get()))
+	if (IWieldInterface* CurrentWieldInterface = Cast<IWieldInterface>(CurrentWieldActor))
 	{
 		CurrentWieldInterface->StartSecondary();
 	}
@@ -238,7 +238,7 @@ void UAirInventory::StartSecondary()
 
 void UAirInventory::EndSecondary()
 {
-	if (IWieldInterface* CurrentWieldInterface = Cast<IWieldInterface>(CurrentWieldActor.Get()))
+	if (IWieldInterface* CurrentWieldInterface = Cast<IWieldInterface>(CurrentWieldActor))
 	{
 		CurrentWieldInterface->EndSecondary();
 	}

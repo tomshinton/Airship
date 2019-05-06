@@ -15,17 +15,37 @@
 #include <TextBlock.h>
 #include "DragAndDropVisual.h"
 
-void UInventorySlot::UpdateFocused_Implementation(){}
-void UInventorySlot::UpdateFocusCleared_Implementation(){}
-
-void UInventorySlot::UpdateSlotVisuals_Implementation() 
+namespace InventorySlotAnimations
 {
+	const FName FocusName = "Focus";
+}
+
+void UInventorySlot::NativeConstruct()
+{
+	Super::NativeConstruct();
+
 	BuildSlotVisuals();
+
+	if (!LinkedInventory)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Build called on inventory slot before having its LinkedInventory set!"));
+	}
+
+	if (LinkedInventory)
+	{
+		LinkedInventory->OnSlotFocusUpdated.AddDynamic(this, &UInventorySlot::PlayerFocusChanged);
+		LinkedInventory->OnInventoryUpdated.AddDynamic(this, &UInventorySlot::PlayerInventoryChanged);
+
+		const int32 FocusedSlot = LinkedInventory->GetCurrentFocusedSlot();
+		PlayerFocusChanged(FocusedSlot);
+
+		LinkedInventoryItem = LinkedInventory->GetItemBySlot(InventorySlot);
+	}
 }
 
 FInventoryItem UInventorySlot::GetLinkedItem()
 {
-	if (LinkedInventory.Get())
+	if (LinkedInventory)
 	{
 		return LinkedInventoryItem;
 	}
@@ -35,7 +55,7 @@ FInventoryItem UInventorySlot::GetLinkedItem()
 
 bool UInventorySlot::OnInventorySlotDrop(UInventorySlotDragOperation* Operation)
 {
-	UAirInventory* ThisInventory = LinkedInventory.Get();
+	UAirInventory* ThisInventory = LinkedInventory;
 	UAirInventory* OtherInventory = Operation->SourceInventory;
 
 	const int32 ThisSlotNum = InventorySlot;
@@ -61,31 +81,6 @@ void UInventorySlot::SetInventorySlot(const int32 InSlot, bool InIsHotbarSlot)
 {
 	InventorySlot = InSlot;
 	IsHotBarSlot = InIsHotbarSlot;
-	
-	UpdateSlotVisuals();
-}
-
-void UInventorySlot::Build()
-{
-	Super::Build();
-
-	if (AAirChar* LocalChar = Cast<AAirChar>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
-	{
-
-		if (!LinkedInventory.IsValid())
-		{
-			UE_LOG(LogTemp, Error, TEXT("Build called on inventory slot before having its LinkedInventory set!"));
-		}
-
-
-		if (LinkedInventory.Get())
-		{
-			LinkedInventory->OnSlotFocusUpdated.AddDynamic(this, &UInventorySlot::PlayerFocusChanged);
-			LinkedInventory->OnInventoryUpdated.AddDynamic(this, &UInventorySlot::PlayerInventoryChanged);
-
-			LinkedInventoryItem = LinkedInventory->GetItemBySlot(InventorySlot);
-		}
-	}
 }
 
 void UInventorySlot::PlayerFocusChanged(int32 InSlot)
@@ -95,22 +90,24 @@ void UInventorySlot::PlayerFocusChanged(int32 InSlot)
 		if (InSlot == InventorySlot)
 		{
 			IsFocused = true;
-			UpdateFocused();
+
+			PlayAnimation(GetAnimationByName(InventorySlotAnimations::FocusName));
 		}
 		else if (IsFocused)
 		{
 			IsFocused = false;
-			UpdateFocusCleared();
+
+			PlayAnimation(GetAnimationByName(InventorySlotAnimations::FocusName), 0.f, 1, EUMGSequencePlayMode::Reverse, 3.f);
 		}
 	}
 }
 
 void UInventorySlot::PlayerInventoryChanged()
 {
-	if (LinkedInventory.Get())
+	if (LinkedInventory)
 	{
 		LinkedInventoryItem = LinkedInventory->GetItemBySlot(InventorySlot);
-		UpdateSlotVisuals();
+		BuildSlotVisuals();
 	}
 }
 
@@ -126,7 +123,7 @@ void UInventorySlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPo
 			{
 				DragOp->DefaultDragVisual = DragAndDropWidget;
 				DragOp->IncomingSlot = this;
-				DragOp->SourceInventory = LinkedInventory.Get();
+				DragOp->SourceInventory = LinkedInventory;
 
 				OutOperation = DragOp;
 			}
