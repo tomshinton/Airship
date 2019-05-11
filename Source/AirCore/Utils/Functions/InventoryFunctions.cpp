@@ -63,10 +63,11 @@ FInventoryItem UInventoryFunctions::AddItemFromID(FInventory& Inventory, const F
 
 			for (int32 i = 0; i < StacksToMake; i++)
 			{
-				FInventoryItem NewStack = FInventoryItem(ItemID, (NewItemInfo->Stacks ? FMath::Clamp(QuantityLeft, 0, NewItemInfo->StackSize) : 1), NewItemInfo->Clip);
-
 				for (FInventoryItem& ExistingSlot : Inventory.ItemSlots)
 				{
+					const int32 NewStackSize = (NewItemInfo->Stacks ? FMath::Clamp(QuantityLeft, 0, NewItemInfo->StackSize) : 1);
+					FInventoryItem NewStack = FInventoryItem(ItemID, NewStackSize, NewItemInfo->Clip);
+					
 					if (ExistingSlot.ItemID == "Item")
 					{
 						//this is an empty slot - fill it
@@ -78,7 +79,7 @@ FInventoryItem UInventoryFunctions::AddItemFromID(FInventory& Inventory, const F
 					{
 						return FInventoryItem();
 					}
-
+				
 					if (!InventoryHasEmptySlots(Inventory))
 					{
 						return FInventoryItem(ItemID, QuantityLeft, NewItemInfo->Clip);

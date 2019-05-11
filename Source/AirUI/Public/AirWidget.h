@@ -38,6 +38,8 @@ protected:
 
 	virtual void NativeConstruct() override;
 
+	virtual void SetLinkedInventory(UAirInventory* InInventory) { LinkedInventory = InInventory; };
+
 	void BuildAnimationMap();
 	UWidgetAnimation* GetAnimationByName(const FName InKey);
 

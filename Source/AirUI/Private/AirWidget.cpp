@@ -25,7 +25,7 @@ void UAirWidget::NativeConstruct()
 			if (AAirChar* FirstCharFound = Cast<AAirChar>(FirstPlayerController->GetPawn()))
 			{
 				LocalChar = FirstCharFound;
-				LinkedInventory = FirstCharFound->GetInventory();
+				SetLinkedInventory(FirstCharFound->GetInventory());
 			}
 		}
 	}
