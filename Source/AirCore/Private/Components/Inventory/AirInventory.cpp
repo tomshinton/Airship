@@ -7,9 +7,9 @@
 DEFINE_LOG_CATEGORY_STATIC(AirInventoryLog, Log, Log);
 
 UAirInventory::UAirInventory()
-	: HotbarSlots(0)
+	: InventoryName("Default Inventory Name")
 	, InventorySize(20)
-	, InventoryName("Default Inventory Name")
+	, HotbarSlots(0)
 {
 }
 

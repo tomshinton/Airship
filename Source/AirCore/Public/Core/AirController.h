@@ -19,7 +19,6 @@ class AAirController : public APlayerController
 	AAirController();
 
 public:
-	virtual void Possess(APawn* aPawn) override;
 
 	FOnLookAtChange OnLookAtChanged;
 

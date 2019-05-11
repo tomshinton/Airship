@@ -13,15 +13,15 @@
 
 // Sets default values
 AAirChar::AAirChar()
-	: LeftHandTargetLocation(FVector(40.f, 30.f, 40.f))
-	, RightHandTargetTransform(FVector(40.f, -30.f, 40.f))
-	, HandBlendTime(1.f)
-	, Camera(CreateDefaultSubobject<UCameraComponent>(TEXT("Camera")))
+	: Camera(CreateDefaultSubobject<UCameraComponent>(TEXT("Camera")))
 	, RightHand(CreateDefaultSubobject<USceneComponent>(TEXT("RightHandComponent")))
-	, MovementComponent(CreateDefaultSubobject<UAirMovementComponent>(TEXT("MovementComponent")))
+	, HandBlendTime(1.f)
 	, HealthComponent(CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent")))
 	, InteractionComponent(CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent")))
+	, MovementComponent(CreateDefaultSubobject<UAirMovementComponent>(TEXT("MovementComponent")))
 	, InventoryComponent(CreateDefaultSubobject<UAirInventory>(TEXT("InventoryComponent")))
+	, RightHandTargetTransform(FVector(40.f, -30.f, 40.f))
+	, LeftHandTargetLocation(FVector(40.f, 30.f, 40.f))
 {
 	PrimaryActorTick.bCanEverTick = true;
 

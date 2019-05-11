@@ -6,11 +6,11 @@
 
 // Sets default values for this component's properties
 UHealthComponent::UHealthComponent()
-	: DamageHistoryLimit(5)
-	, MaxHealth(100.f)
+	: MaxHealth(100.f)
 	, CurrentHealth(MaxHealth)
-	, MaxFallDamage(MaxHealth)
+	, DamageHistoryLimit(5)
 	, MaxZVelocity(2500.f)
+	, MaxFallDamage(MaxHealth)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 

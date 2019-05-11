@@ -12,7 +12,7 @@ public class AirshipTarget : TargetRules
 		ExtraModuleNames.AddRange( new string[] { "Airship" } );
 		ExtraModuleNames.AddRange( new string[] { "AirCore" } );
 
-        if (Target.Type == TargetType.Editor)
+        if (Type == TargetRules.TargetType.Editor)
         {
             ExtraModuleNames.AddRange(
                 new string[]

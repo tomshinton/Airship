@@ -7,20 +7,10 @@
 DECLARE_CYCLE_STAT(TEXT("ControllerLookAt"), STAT_LookAt, STATGROUP_ControllerFunctions);
 
 AAirController::AAirController()
-	: LookAtDistance(10000.f)
-	, LookAtFrequency(1/15.f)
+	: LookAtFrequency(1.f/15.f)
+	, LookAtDistance(10000.f)
 {
 
-}
-
-void AAirController::Possess(APawn* aPawn)
-{
-	Super::Possess(aPawn);
-
-	if (UWorld* World = GetWorld())
-	{
-		World->GetTimerManager().SetTimer(LookAtTimerHandle, this, &AAirController::LookAt, LookAtFrequency, true, 0.f);
-	}
 }
 
 void AAirController::LookAt()

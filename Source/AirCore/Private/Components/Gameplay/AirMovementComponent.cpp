@@ -12,10 +12,10 @@ UAirMovementComponent::UAirMovementComponent()
 	, TurnSpeed(1.f)
 	, TiltCameraSpeed(.5f)
 	, StrafeSpeed(350.f)
+	, MaxTurnValue(3.f)
 	, ForwardSpeed(400.f)
 	, BackwardsSpeed(200.f)
 	, SprintModifier(1.5f)
-	, MaxTurnValue(3.f)
 {
 	static ConstructorHelpers::FObjectFinder<UCurveFloat> BankingCurveRef(TEXT("CurveFloat'/Game/Data/Curves/C_Player_Banking.C_Player_Banking'"));
 	if (BankingCurveRef.Object)
