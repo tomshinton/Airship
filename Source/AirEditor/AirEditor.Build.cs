@@ -5,7 +5,7 @@ using UnrealBuildTool;
 public class AirEditor : ModuleRules
 {
 	public AirEditor(ReadOnlyTargetRules Target) : base(Target)
-    {
+    { 
         PublicIncludePaths.AddRange(new string[] { "AirEditor/Public" });
 
         PrivateIncludePaths.AddRange(new string[] { "AirEditor/Private" });

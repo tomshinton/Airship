@@ -14,11 +14,8 @@ public class AirshipTarget : TargetRules
 
         if (Type == TargetRules.TargetType.Editor)
         {
-            ExtraModuleNames.AddRange(
-                new string[]
-                {
-                    "AirEditor"
-                });
+            ExtraModuleNames.AddRange( new string[] { "AirEditor" } );
+            ExtraModuleNames.AddRange( new string[] { "AirTesting" });
         }
     }
 }

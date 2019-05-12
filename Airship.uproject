@@ -37,6 +37,11 @@
 			]
 		},
 		{
+			"Name": "AirTesting",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit"
+		},
+		{
 			"Name": "AirEditor",
 			"Type": "Editor",
 			"LoadingPhase": "PostEngineInit"
