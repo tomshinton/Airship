@@ -19,8 +19,14 @@ void AAirHUD::BeginPlay()
 			if (UISettings->HUDWidget)
 			{
 				HUDWidget = CreateWidget<UAirHUDBase>(World, UISettings->HUDWidget);
+				HUDWidget->SetupBinding(CachedInputComponent);
 				HUDWidget->AddToViewport(0);
 			}
 		}
 	}
+}
+
+void AAirHUD::CachePlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	CachedInputComponent = PlayerInputComponent;
 }

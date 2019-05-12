@@ -65,5 +65,9 @@ void UHealthComponent::BeginPlay()
 	{
 		OwningChar->OnCharLanded.AddDynamic(this, &UHealthComponent::TakeFallDamage);
 	}
+
+	Super::BeginPlay();
 }
+
+
 

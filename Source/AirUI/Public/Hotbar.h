@@ -26,6 +26,9 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UHorizontalBox*	Bar;
 
+
+	virtual void SynchronizeProperties() override;
+
 protected:
 	virtual void NativeConstruct() override;
 

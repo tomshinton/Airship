@@ -64,9 +64,8 @@ void AAirChar::Tick(float DeltaSeconds)
 
 void AAirChar::BeginPlay()
 {
-	Super::BeginPlay();
 	RightHandTargetTransform = RightHand->GetRelativeTransform();
-
+	Super::BeginPlay();
 }
 
 void AAirChar::Landed(const FHitResult& Hit)
@@ -101,6 +100,19 @@ void AAirChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("StartSecondary", IE_Pressed, InventoryComponent, &UAirInventory::StartSecondary);
 	PlayerInputComponent->BindAction("EndSecondary", IE_Released, InventoryComponent, &UAirInventory::EndSecondary);
 	PlayerInputComponent->BindAction("Reload", IE_Pressed, InventoryComponent, &UAirInventory::Reload);
+
+	DeferUIBinding(PlayerInputComponent);
+}
+
+void AAirChar::DeferUIBinding(UInputComponent* PlayerInputComponent)
+{
+	if (AAirController* AirController = Cast<AAirController>(GetController()))
+	{
+		if (AAirHUD* AirHUD = Cast<AAirHUD>(AirController->GetHUD()))
+		{
+			AirHUD->CachePlayerInputComponent(PlayerInputComponent);
+		}
+	}
 }
 
 bool AAirChar::ShouldLowerHands()

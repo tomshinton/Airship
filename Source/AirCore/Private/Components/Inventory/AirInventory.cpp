@@ -28,6 +28,8 @@ void UAirInventory::BeginPlay()
 	}
 
 	OnSlotFocusUpdated.Broadcast(0);
+
+	Super::BeginPlay();
 }
 
 void UAirInventory::AddItem(const FName ID, const int32 Quantity)

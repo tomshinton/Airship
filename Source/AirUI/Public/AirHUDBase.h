@@ -7,6 +7,7 @@
 
 class UCanvasPanel;
 class UHotbar;
+class UInventoryPanel;
 
 //////////////////////////////////////////////////////////////////////////
 // Base for AirHud, the main Hud of the game.  Holds containers for all contextual widgets like ActiveInventory and Hotbars
@@ -21,6 +22,13 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = Composite, meta = (BindWidget))
 	UHotbar* Hotbar;
-	
+
+	UPROPERTY(EditDefaultsOnly, Category = Composite, meta = (BindWidget))
+	UInventoryPanel* PlayerInventoryPanel;
+
+	AIRUI_API void SetupBinding(UInputComponent* InInputComponent);
+
 protected:
+
+	virtual void NativeConstruct() override;
 };

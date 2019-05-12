@@ -15,10 +15,7 @@
 #include <TextBlock.h>
 #include "DragAndDropVisual.h"
 
-namespace InventorySlotAnimations
-{
-	const FName FocusName = "Focus";
-}
+const FName UInventorySlot::Anim_Focus = FName("Focus");
 
 void UInventorySlot::NativeConstruct()
 {
@@ -91,13 +88,13 @@ void UInventorySlot::PlayerFocusChanged(int32 InSlot)
 		{
 			IsFocused = true;
 
-			PlayAnimation(GetAnimationByName(InventorySlotAnimations::FocusName));
+			PlayAnimation(GetAnimationByName(UInventorySlot::Anim_Focus));
 		}
 		else if (IsFocused)
 		{
 			IsFocused = false;
 
-			PlayAnimation(GetAnimationByName(InventorySlotAnimations::FocusName), 0.f, 1, EUMGSequencePlayMode::Reverse, 3.f);
+			PlayAnimation(GetAnimationByName(UInventorySlot::Anim_Focus), 0.f, 1, EUMGSequencePlayMode::Reverse, 3.f);
 		}
 	}
 }

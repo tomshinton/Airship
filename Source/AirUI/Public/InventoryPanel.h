@@ -15,6 +15,10 @@ class AIRUI_API UInventoryPanel : public UAirWidget
 	
 public:
 
+	static const FName Anim_Show;
+
+public:
+
 	UInventoryPanel(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(meta = (BindWidget))
@@ -22,9 +26,16 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Slots")
 	int32 Columns;
+
+	UPROPERTY(EditAnywhere, Category = "Slots")
+	int32 Slots;
 	
 	UPROPERTY(EditAnywhere, Category = "Slots")
 	TSubclassOf<UInventorySlot> SlotClass;
+
+	virtual void SynchronizeProperties() override;
+
+
 
 protected:
 

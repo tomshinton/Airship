@@ -6,6 +6,7 @@
 #include "AirHUD.generated.h"
 
 class UAirHUDBase;
+class UInputComponent;
 
 UCLASS(MinimalAPI)
 class AAirHUD : public AHUD
@@ -14,10 +15,16 @@ class AAirHUD : public AHUD
 
 	AAirHUD(const FObjectInitializer& ObjectInitializer);
 
+public:
+	void CachePlayerInputComponent(UInputComponent* PlayerInputComponent);
+
 protected:
 
 	virtual void BeginPlay() override;
 
 	UPROPERTY()
 	UAirHUDBase* HUDWidget;
+
+	UPROPERTY()
+	UInputComponent* CachedInputComponent;
 };

@@ -14,6 +14,8 @@ void UInteractionComponent::BeginPlay()
 			OwningController->OnLookAtChanged.AddDynamic(this, &UInteractionComponent::UpdateHoveredActor);
 		}
 	}
+
+	Super::BeginPlay();
 }
 
 void UInteractionComponent::StartInteraction()

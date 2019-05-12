@@ -5,10 +5,40 @@
 
 DEFINE_LOG_CATEGORY_STATIC(InventoryPanelLog, Log, Log);
 
+const FName UInventoryPanel::Anim_Show = FName("Show");
+
 UInventoryPanel::UInventoryPanel(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, Columns(1)
+	, Columns(4)
 {}
+
+void UInventoryPanel::SynchronizeProperties()
+{
+	Super::SynchronizeProperties();
+
+	if (PanelBody && Slots > 0 && SlotClass && Columns > 0)
+	{
+		PanelBody->ClearChildren();
+
+		for (int32 i = 0; i < Slots; i++)
+		{
+			if (UInventorySlot* NewSlot = CreateWidget<UInventorySlot>(GetWorld(), SlotClass))
+			{
+				NewSlot->InventorySlot = i;
+				NewSlot->IsHotBarSlot = false;
+				NewSlot->SetLinkedInventory(LinkedInventory);
+
+				UGridSlot* AddedChild = PanelBody->AddChildToGrid(NewSlot);
+
+				const int32 TargetRow = i / Columns;
+				const int32 TargetColumn = (i % Columns);
+
+				AddedChild->SetRow(TargetRow);
+				AddedChild->SetColumn(TargetColumn);
+			}
+		}
+	}
+}
 
 void UInventoryPanel::NativeConstruct()
 {
@@ -16,26 +46,13 @@ void UInventoryPanel::NativeConstruct()
 
 	if (LinkedInventory && PanelBody)
 	{
-		if (Columns > 0)
+		TArray<UWidget*> ChildWidgets = PanelBody->GetAllChildren();
+
+		for (UWidget* Widget : ChildWidgets)
 		{
-			for (int32 i = 0; i < LinkedInventory->GetInventorySize(); i++)
+			if (UInventorySlot* ChildSlot = Cast<UInventorySlot>(Widget))
 			{
-				if (UInventorySlot* NewSlot = CreateWidget<UInventorySlot>(GetWorld(), SlotClass))
-				{
-					NewSlot->InventorySlot = i;
-					NewSlot->IsHotBarSlot = false;
-					NewSlot->SetLinkedInventory(LinkedInventory);
-
-					UGridSlot* AddedChild = PanelBody->AddChildToGrid(NewSlot);
-
-					int32 TotalSlots = LinkedInventory->GetInventorySize();
-
-					const int32 TargetRow = i / Columns;
-					const int32 TargetColumn = (i % Columns);
-
-					AddedChild->SetRow(TargetRow);
-					AddedChild->SetColumn(TargetColumn);
-				}
+				ChildSlot->SetLinkedInventory(LinkedInventory);
 			}
 		}
 	}

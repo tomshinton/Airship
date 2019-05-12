@@ -66,5 +66,7 @@ protected:
 
 private:
 
+	void DeferUIBinding(UInputComponent* PlayerInputComponent);
+
 	bool ShouldLowerHands();
 };

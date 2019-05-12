@@ -20,6 +20,8 @@ class UInventorySlot : public UAirWidget
 
 public:
 
+	static const FName Anim_Focus;
+
 	//Elements
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ClipText;
@@ -68,7 +70,6 @@ protected:
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
-
 
 	virtual void NativeConstruct() override;
 

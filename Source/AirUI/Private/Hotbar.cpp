@@ -12,14 +12,14 @@ UHotbar::UHotbar(const FObjectInitializer& ObjectInitializer)
 
 }
 
-void UHotbar::NativeConstruct()
+void UHotbar::SynchronizeProperties()
 {
-	Super::NativeConstruct();
-
-	SetHotbarSlotCount();
+	Super::SynchronizeProperties();
 
 	if (SlotsToAdd > 0 && Bar && SlotClass)
 	{
+		Bar->ClearChildren();
+
 		for (int32 i = 0; i < SlotsToAdd; i++)
 		{
 			if (UInventorySlot* NewSlot = CreateWidget<UInventorySlot>(GetWorld(), SlotClass))
@@ -29,6 +29,33 @@ void UHotbar::NativeConstruct()
 				NewSlot->SetLinkedInventory(LinkedInventory);
 
 				Bar->AddChild(NewSlot);
+			}
+		}
+	}
+}
+
+void UHotbar::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	SetHotbarSlotCount();
+
+	if (LinkedInventory && Bar)
+	{
+		TArray<UWidget*> ChildWidgets = Bar->GetAllChildren();
+
+		for (UWidget* Widget : ChildWidgets)
+		{
+			if (UInventorySlot* ChildSlot = Cast<UInventorySlot>(Widget))
+			{
+				if (ChildSlot->InventorySlot > HotbarSlotCount)
+				{
+					ChildSlot->RemoveFromParent();
+				}
+				else
+				{
+					ChildSlot->SetLinkedInventory(LinkedInventory);
+				}
 			}
 		}
 	}
