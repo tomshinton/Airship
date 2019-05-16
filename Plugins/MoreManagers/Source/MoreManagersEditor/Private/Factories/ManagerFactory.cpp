@@ -2,12 +2,17 @@
 
 #include "MoreManagers/Public/ManagerCore/Manager.h"
 #include "MoreManagersEditor/Public/Factories/ManagerFactory.h"
+#include "Modules/ModuleManager.h"
 
-#include <AssetTypeCategories.h>
-#include <Engine/Blueprint.h>
-#include <Internationalization.h>
-#include <KismetEditorUtilities.h>
-#include <Engine/BlueprintGeneratedClass.h>
+#include <Developer/AssetTools/Private/AssetTools.h>
+#include <Developer/AssetTools/Public/AssetTypeCategories.h>
+#include <Developer/AssetTools/Public/AssetToolsModule.h>
+#include <Editor/UnrealEd/Public/Kismet2/KismetEditorUtilities.h>
+#include <Runtime/Core/Public/Internationalization/Internationalization.h>
+#include <Runtime/Engine/Classes/Engine/Blueprint.h>
+#include <Runtime/Engine/Classes/Engine/BlueprintGeneratedClass.h>
+
+#include "MoreManagersEditorModule.h"
 
 #define LOCTEXT_NAMESPACE "MoreManagers"
 
@@ -21,7 +26,8 @@ UManagerFactory::UManagerFactory()
 
 uint32 UManagerFactory::GetMenuCategories() const
 {
-	return EAssetTypeCategories::Misc;
+	FMoreManagersEditorModule& MoreManagersEditorModule = FModuleManager::LoadModuleChecked<FMoreManagersEditorModule>("MoreManagersEditor");
+	return MoreManagersEditorModule.GetMoreManagerCategoryBit();
 }
 
 FText UManagerFactory::GetDisplayName() const
