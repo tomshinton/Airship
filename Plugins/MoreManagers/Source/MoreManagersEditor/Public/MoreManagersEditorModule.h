@@ -14,6 +14,9 @@ class FMoreManagersEditorModule : public IModuleInterface
 {
 
 public:
+
+	TSharedPtr<FSlateStyleSet> StyleSet;
+
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 
@@ -24,4 +27,5 @@ private:
 	EAssetTypeCategories::Type MoreManagerCategoryBit;
 
 	void RegisterAssetCategory();
+	void SetModuleIcon();
 };
