@@ -5,6 +5,8 @@
 #include "Engine/GameInstance.h"
 #include "MM_GameInst.generated.h"
 
+class UManagerComponent;
+
 UCLASS()
 class MOREMANAGERS_API UMM_GameInst : public UGameInstance
 {
@@ -12,4 +14,10 @@ class MOREMANAGERS_API UMM_GameInst : public UGameInstance
 
 public:
 	UMM_GameInst();
+
+	UPROPERTY()
+	UManagerComponent* ManagerComponent;
+
+	virtual void StartGameInstance() override;
+	virtual FGameInstancePIEResult StartPlayInEditorGameInstance(ULocalPlayer* LocalPlayer, const FGameInstancePIEParameters& Params) override;
 };
