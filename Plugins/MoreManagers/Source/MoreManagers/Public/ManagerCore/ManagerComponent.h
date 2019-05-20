@@ -35,5 +35,8 @@ private:
 	UPROPERTY()
 	TMap<TSubclassOf<UManager>, UManager*> ManagerMap;
 
+	UPROPERTY()
+	UWorld* CachedWorld;
+
 	TFunction<void()> ManagerSpinupCallback;
 };

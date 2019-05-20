@@ -10,4 +10,11 @@ UCLASS(Blueprintable)
 class MOREMANAGERS_API UTestManager : public UManager
 {
 	GENERATED_BODY()
+
+	UTestManager();
+
+	virtual void Tick() override;
+
+private:
+	int32 TickCount;
 };

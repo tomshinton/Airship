@@ -17,6 +17,7 @@ void UMM_GameInst::StartGameInstance()
 {
 	if (ManagerComponent)
 	{
+		ManagerComponent->CachedWorld = GetWorld();
 		ManagerComponent->SpinupManager();
 	}
 }
@@ -27,6 +28,7 @@ FGameInstancePIEResult UMM_GameInst::StartPlayInEditorGameInstance(ULocalPlayer*
 
 	if (ManagerComponent)
 	{
+		ManagerComponent->CachedWorld = GetWorld();
 		ManagerComponent->SpinupManager();
 	}
 

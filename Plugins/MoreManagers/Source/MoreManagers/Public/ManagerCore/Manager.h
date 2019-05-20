@@ -26,12 +26,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Instantiation)
 	void SetupComplete();
 
-private:
+protected:
 
-	virtual void Start(const TFunction<void()>& OnSetupCompleteCallback);
-	virtual void Tick();
+	UPROPERTY(EditDefaultsOnly, Category = Tick)
+	bool IsTickEnabled;
 
-	TFunction<void()> SetupCompleteCallback;
+	UPROPERTY(EditDefaultsOnly, Category = Tick, meta = (EditCondition = IsTickEnabled))
+	float TickFrequency;
 
 	UPROPERTY(EditDefaultsOnly, Category = Instantiation)
 	bool ShouldDeferCompleteCallback;
@@ -39,9 +40,29 @@ private:
 	UFUNCTION(BlueprintPure, Category = Tick)
 	bool GetIsTickEnabled() const;
 
-	UPROPERTY(EditDefaultsOnly, Category = Tick)
-	bool IsTickEnabled;
+	UFUNCTION(BlueprintPure, Category = Tick)
+	float GetDeltaTime();
 
-	UPROPERTY(EditDefaultsOnly, Category = Tick, meta = (EditCondition = IsTickEnabled))
-	float TickFrequency;
+	UFUNCTION(BlueprintPure, Category = Tick)
+	UWorld* GetWorld() const;
+
+	virtual void Tick();
+
+	float CachedDeltaTime;
+
+private:
+
+	virtual void Start(const TFunction<void()>& OnSetupCompleteCallback, UWorld* const WorldContext);
+
+	void BeginTick();
+
+	bool bHasBeganStart;
+
+	FTimerHandle TickHandle;
+	TFunction<void()> SetupCompleteCallback;
+
+	UPROPERTY()
+	UWorld* CachedWorld;
+
+	float TimeOfLastTick;
 };

@@ -22,9 +22,6 @@ UManagerComponent::UManagerComponent()
 	}
 
 	RequestedManagers.Emplace(UTestManager::StaticClass());
-	RequestedManagers.Emplace(UTestManager::StaticClass());
-	RequestedManagers.Emplace(UTestManager::StaticClass());
-	RequestedManagers.Emplace(UTestManager::StaticClass());
 
 	TotalManagersToSpinUp = RequestedManagers.Num();
 }
@@ -43,11 +40,11 @@ void UManagerComponent::SpinupManager()
 			ManagerMap.Add(RequestedManagers[0], NewManager);
 			RequestedManagers.RemoveAt(0);
 
-			NewManager->Start(ManagerSpinupCallback);
+			NewManager->Start(ManagerSpinupCallback, CachedWorld);
 		}
 	}
 	else
 	{
-		ensureMsgf(ManagerMap.Num() > TotalManagersToSpinUp, TEXT("Span up %i managers, based on MoreManagers Invoke list (%i) - there are duplicate Manager classes in the Invoke List"), ManagerMap.Num(), TotalManagersToSpinUp);
+		ensureMsgf(ManagerMap.Num() >= TotalManagersToSpinUp, TEXT("Span up %i managers, based on MoreManagers Invoke list (%i) - there are duplicate Manager classes in the Invoke List"), ManagerMap.Num(), TotalManagersToSpinUp);
 	}
 }
