@@ -2,13 +2,28 @@
 
 #include "MoreManagersEditorModule.h"
 
+#include "MoreManagersEditor/Public/InvokeTool/InvokeToolCommands.h"
+#include "MoreManagersEditor/Public/InvokeTool/InvokeToolCustomization.h"
+
 #include <Developer/AssetTools/Public/AssetToolsModule.h>
+#include <Editor/LevelEditor/Public/LevelEditor.h>
+#include <Editor/PropertyEditor/Public/PropertyEditorDelegates.h>
+#include <Editor/PropertyEditor/Public/PropertyEditorModule.h>
 #include <Runtime/Core/Public/Internationalization/Internationalization.h>
 #include <Runtime/Projects/Public/Interfaces/IPluginManager.h>
+#include <Runtime/Slate/Public/Framework/Commands/UIAction.h>
+#include <Runtime/Slate/Public/Framework/MultiBox/MultiBoxExtender.h>
 #include <Runtime/SlateCore/Public/Brushes/SlateImageBrush.h>
 
 IMPLEMENT_MODULE(FMoreManagersEditorModule, MoreManagersEditor);
+
 DEFINE_LOG_CATEGORY(MoreManagersEditorLog)
+DEFINE_LOG_CATEGORY(InvokeToolLog)
+
+namespace ToolbarExtensionNames
+{
+	const FName InvokeToolHook = TEXT("Game");
+}
 
 #define LOCTEXT_NAMESPACE "MoreManagers"
 
@@ -18,6 +33,8 @@ void FMoreManagersEditorModule::StartupModule()
 	
 	RegisterAssetCategory();
 	SetModuleIcon();
+
+	RegisterInvokeTool();
 }
 
 void FMoreManagersEditorModule::ShutdownModule()
@@ -44,6 +61,56 @@ void FMoreManagersEditorModule::SetModuleIcon()
 		StyleSet->Set("ClassThumbnail.Manager", ThumbnailBrush);
 		FSlateStyleRegistry::RegisterSlateStyle(*StyleSet);
 	}
+}
+
+void FMoreManagersEditorModule::RegisterInvokeTool()
+{
+	//Register InvokeTool Customization
+	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+	PropertyModule.RegisterCustomClassLayout("InvokeTool", FOnGetDetailCustomizationInstance::CreateStatic(&FInvokeToolCustomization::MakeInstance));
+
+	PropertyModule.NotifyCustomizationModuleChanged();
+
+	FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
+
+	FInvokeToolCommands::Register();
+	TSharedPtr<FUICommandList> CommandList = MakeShareable(new FUICommandList);
+
+	CommandList->MapAction(FInvokeToolCommands::Get().ShowInvokeTool, FExecuteAction::CreateRaw(this, &FMoreManagersEditorModule::ShowInvokeTool));
+	
+	struct Tools
+	{
+		static void AddMenuCommands(FToolBarBuilder& ToolbarBuilder)
+		{
+			ToolbarBuilder.AddToolBarButton(FInvokeToolCommands::Get().ShowInvokeTool);
+		}
+	};
+
+	TSharedRef<FExtender> ToolbarExtender(new FExtender());
+	ToolbarExtender->AddToolBarExtension(ToolbarExtensionNames::InvokeToolHook, EExtensionHook::Before, CommandList.ToSharedRef(), FToolBarExtensionDelegate::CreateStatic(&Tools::AddMenuCommands));
+	LevelEditorModule.GetToolBarExtensibilityManager()->AddExtender(ToolbarExtender);
+}
+
+void FMoreManagersEditorModule::ShowInvokeTool()
+{
+	UE_LOG(InvokeToolLog, Log, TEXT("InvokeTool: Summoning Tool"));
+
+	UInvokeTool* ToolInstance = NewObject<UInvokeTool>(GetTransientPackage());
+	ToolInstance->AddToRoot();
+
+	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+
+	TArray<UObject*> ObjectsToView;
+	ObjectsToView.Add(ToolInstance);
+
+	TSharedRef<SWindow> Window = PropertyModule.CreateFloatingDetailsView(ObjectsToView, false);
+
+	Window->SetTitle(LOCTEXT("InvokeTool", "MoreManagers Invoke Tool"));
+
+	Window->SetOnWindowClosed(FOnWindowClosed::CreateLambda([ToolInstance](const TSharedRef<SWindow>& Window)
+	{
+		ToolInstance->RemoveFromRoot();
+	}));
 }
 
 #undef LOCTEXT_NAMESPACE

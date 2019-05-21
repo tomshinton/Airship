@@ -34,7 +34,8 @@
 			"AdditionalDependencies": [
 				"MoreManagers",
 				"UnrealEd",
-				"Slate"
+				"Slate",
+				"PropertyEditor"
 			]
 		}
 	]

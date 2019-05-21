@@ -23,7 +23,8 @@ public class MoreManagersEditor : ModuleRules
             "UnrealEd",
             "Slate",
             "SlateCore",
-            "Projects"
+            "Projects",
+            "PropertyEditor"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "MoreManagers" });
