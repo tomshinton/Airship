@@ -103,9 +103,11 @@ void FMoreManagersEditorModule::ShowInvokeTool()
 	TArray<UObject*> ObjectsToView;
 	ObjectsToView.Add(ToolInstance);
 
-	TSharedRef<SWindow> Window = PropertyModule.CreateFloatingDetailsView(ObjectsToView, false);
+	TSharedRef<SWindow> Window = SNew(SWindow)
+		.Title(LOCTEXT("InvokeTool", "MoreManagers Invoke Tool"))
+		.ClientSize(FVector2D(400, 400));
 
-	Window->SetTitle(LOCTEXT("InvokeTool", "MoreManagers Invoke Tool"));
+	GEditor->EditorAddModalWindow(Window);
 
 	Window->SetOnWindowClosed(FOnWindowClosed::CreateLambda([ToolInstance](const TSharedRef<SWindow>& Window)
 	{
