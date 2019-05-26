@@ -7,10 +7,12 @@
 
 #include <Developer/AssetTools/Public/AssetToolsModule.h>
 #include <Editor/LevelEditor/Public/LevelEditor.h>
+#include <Editor/MainFrame/Public/Interfaces/IMainFrameModule.h>
 #include <Editor/PropertyEditor/Public/PropertyEditorDelegates.h>
 #include <Editor/PropertyEditor/Public/PropertyEditorModule.h>
 #include <Runtime/Core/Public/Internationalization/Internationalization.h>
 #include <Runtime/Projects/Public/Interfaces/IPluginManager.h>
+#include <Runtime/Slate/Public/Framework/Application/SlateApplication.h>
 #include <Runtime/Slate/Public/Framework/Commands/UIAction.h>
 #include <Runtime/Slate/Public/Framework/MultiBox/MultiBoxExtender.h>
 #include <Runtime/SlateCore/Public/Brushes/SlateImageBrush.h>
@@ -105,9 +107,22 @@ void FMoreManagersEditorModule::ShowInvokeTool()
 
 	TSharedRef<SWindow> Window = SNew(SWindow)
 		.Title(LOCTEXT("InvokeTool", "MoreManagers Invoke Tool"))
-		.ClientSize(FVector2D(400, 400));
+		.ClientSize(FVector2D(400, 400))
+		.Content()
+		[
+			SNew(SVerticalBox)
+			+ SVerticalBox::Slot().AutoHeight().Padding(20).HAlign(HAlign_Center)
+			[
+				SNew(STextBlock).Text(LOCTEXT("show", "Come on,show it!"))
+			]
+		];
+		
 
-	GEditor->EditorAddModalWindow(Window);
+	IMainFrameModule& MainFrame = FModuleManager::LoadModuleChecked<IMainFrameModule>("MainFrame");
+
+	TSharedPtr<SWindow> ParentWindow = MainFrame.GetParentWindow();
+
+	FSlateApplication::Get().AddModalWindow(Window, ParentWindow, false);
 
 	Window->SetOnWindowClosed(FOnWindowClosed::CreateLambda([ToolInstance](const TSharedRef<SWindow>& Window)
 	{

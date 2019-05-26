@@ -14,17 +14,18 @@ public class MoreManagersEditor : ModuleRules
 
         PublicDependencyModuleNames.AddRange(new string[]
         {
+            "AssetTools",
             "Core",
             "CoreUObject",
             "Engine",
             "InputCore",
-            "AssetTools",
+            "MainFrame",
             "MoreManagers",
-            "UnrealEd",
+            "Projects",
+            "PropertyEditor",
             "Slate",
             "SlateCore",
-            "Projects",
-            "PropertyEditor"
+            "UnrealEd"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "MoreManagers" });
