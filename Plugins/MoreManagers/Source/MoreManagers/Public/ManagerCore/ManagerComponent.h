@@ -6,7 +6,7 @@
 
 #include "ManagerComponent.generated.h"
 
-class UMM_GameInst;
+class AMM_GameState;
 
 DECLARE_LOG_CATEGORY_EXTERN(ManagerComponentLog, Log, All);
 
@@ -15,7 +15,7 @@ class MOREMANAGERS_API UManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-	friend UMM_GameInst;
+	friend AMM_GameState;
 
 public:
 

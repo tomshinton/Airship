@@ -6,7 +6,7 @@ class UManagerComponent;
 
 #include "Manager.generated.h"
 
-UCLASS(Blueprintable, Abstract)
+UCLASS(Blueprintable)
 class MOREMANAGERS_API UManager : public UObject
 {
 	GENERATED_BODY()

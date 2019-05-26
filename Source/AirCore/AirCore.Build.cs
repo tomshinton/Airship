@@ -10,7 +10,9 @@ public class AirCore : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG" });
 
-		PublicIncludePaths.AddRange(new string[] {"AirCore/Public"});
+        PublicDependencyModuleNames.AddRange(new string[] { "MoreManagers" });
+
+        PublicIncludePaths.AddRange(new string[] {"AirCore/Public"});
 		PrivateIncludePaths.AddRange(new string[] {"AirCore/Private"});
 	}
 }

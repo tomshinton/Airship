@@ -1,7 +1,7 @@
 // Copyright 2019 Tom Shinton. All Rights Reserved.
 
+#include "MoreManagers/Public/ManagerCore/InvokeList.h"
 #include "MoreManagers/Public/ManagerCore/ManagerComponent.h"
-#include "MoreManagers/Public/ManagerCore/TestManager.h"
 
 #include <Runtime/Core/Public/Misc/AssertionMacros.h>
 
@@ -21,8 +21,7 @@ UManagerComponent::UManagerComponent()
 		};
 	}
 
-	RequestedManagers.Emplace(UTestManager::StaticClass());
-
+	RequestedManagers = UInvokeList::GetList();
 	TotalManagersToSpinUp = RequestedManagers.Num();
 }
 
@@ -45,6 +44,6 @@ void UManagerComponent::SpinupManager()
 	}
 	else
 	{
-		ensureMsgf(ManagerMap.Num() >= TotalManagersToSpinUp, TEXT("Span up %i managers, based on MoreManagers Invoke list (%i) - there are duplicate Manager classes in the Invoke List"), ManagerMap.Num(), TotalManagersToSpinUp);
+		UE_LOG(ManagerComponentLog, Log, TEXT("Span up %i managers, based on MoreManagers Invoke list (%i));
 	}
 }

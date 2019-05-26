@@ -2,13 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
-#include "AirWidget.h"
+#include <GameFramework\GameMode.h>
 #include "AirGameMode.generated.h"
 
 UCLASS()
-class AAirGameMode : public AGameModeBase
+class AAirGameMode : public AGameMode
 {
 	GENERATED_BODY()
 
