@@ -118,6 +118,7 @@ void FMoreManagersEditorModule::ShowInvokeTool()
 			[
 				SNew(STextBlock)
 				.Text(LOCTEXT("InvokeToolTitle", "MoreManagers Invoke Tool"))
+				.LineHeightPercentage(5.f)
 			]
 		];
 		
