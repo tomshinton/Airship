@@ -11,6 +11,7 @@ UManagerComponent::UManagerComponent()
 	: TotalManagersToSpinUp(0)
 	, RequestedManagers()
 	, ManagerMap()
+	, DeferredTickFrequency(1.f / 30.f) //approximate 30fps
 	, ManagerSpinupCallback(nullptr)
 {
 	if (!ManagerSpinupCallback)
@@ -23,6 +24,11 @@ UManagerComponent::UManagerComponent()
 
 	RequestedManagers = UInvokeList::GetList();
 	TotalManagersToSpinUp = RequestedManagers.Num();
+
+	DeferTickFunctionHelper = [this](const TFunction<void()>& TickFunction)
+	{
+		PushTickFunctionOntoStack(TickFunction);
+	};
 }
 
 void UManagerComponent::OnManagerSetupComplete(const UManager* FinishedManager)
@@ -48,7 +54,7 @@ void UManagerComponent::SpinupManager()
 			ManagerMap.Add(RequestedManagers[0], nullptr);
 			RequestedManagers.RemoveAt(0);
 
-			NewManager->Start(ManagerSpinupCallback, CachedWorld);
+			NewManager->Start(ManagerSpinupCallback, DeferTickFunctionHelper, CachedWorld);
 		}
 	}
 	else
@@ -81,6 +87,33 @@ void UManagerComponent::EmplaceManager(const UManager* FinishedManager)
 				ManagerMap[Manager.Key] = const_cast<UManager*>(FinishedManager);
 				UE_LOG(ManagerComponentLog, Log, TEXT("%s Emplaced in ManagerMap as key %s"), *FinishedManager->GetName(), *Manager.Key->GetName());
 			}
+		}
+	}
+}
+
+void UManagerComponent::PushTickFunctionOntoStack(const TFunction<void()>& InTickFunction)
+{
+	DeferredTickFunctions.Add(InTickFunction);
+
+	if (!DeferredTickHandle.IsValid())
+	{
+		if (CachedWorld)
+		{
+			CachedWorld->GetTimerManager().SetTimer(DeferredTickHandle, this, &UManagerComponent::DeferredTick, DeferredTickFrequency, true, 0.f);
+		}
+	}
+}
+
+void UManagerComponent::DeferredTick()
+{
+	if(DeferredTickFunctions.IsValidIndex(CurrManagerIndex))
+	{
+		DeferredTickFunctions[CurrManagerIndex]();
+		CurrManagerIndex++;
+
+		if (CurrManagerIndex > DeferredTickFunctions.Num() - 1)
+		{
+			CurrManagerIndex = 0;
 		}
 	}
 }

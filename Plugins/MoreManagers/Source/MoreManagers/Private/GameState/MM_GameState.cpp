@@ -23,7 +23,11 @@ void AMM_GameState::BeginPlay()
 
 	if (ManagerComponent)
 	{
-		ManagerComponent->SpinupManager();
+		if (UWorld* World = GetWorld())
+		{
+			ManagerComponent->SetCachedWorld(World);
+			ManagerComponent->SpinupManager();
+		}
 	}
 }
 

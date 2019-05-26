@@ -58,7 +58,7 @@ void FMoreManagersEditorModule::RegisterUnmutableSettings()
 	{
 		ISettingsContainerPtr SettingsContainer = SettingsModule->GetContainer("Project");
 		ISettingsSectionPtr InvokeListSection = SettingsModule->RegisterSettings("Project", "MoreManagers", "Invoke",
-			LOCTEXT("MoreManagersSettings", "InvokeList"),
+			LOCTEXT("MoreManagersSettings", "Invoke List"),
 			LOCTEXT("MoreManagersSettingsDescription", "MoreManagers Invoke List - What classes do we need to spin up, and in what order?"),
 			GetMutableDefault<UInvokeList>());
 

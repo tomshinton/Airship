@@ -26,6 +26,8 @@ protected:
 	void OnManagerSetupComplete(const UManager* FinishedClass);
 	void SpinupManager();
 
+	void SetCachedWorld(UWorld* InCachedWorld) { CachedWorld = InCachedWorld; };
+
 private:
 
 	int32 TotalManagersToSpinUp;
@@ -35,6 +37,14 @@ private:
 	UPROPERTY()
 	TMap<TSubclassOf<UManager>, UManager*> ManagerMap;
 
+	TArray<TFunction<void()>> DeferredTickFunctions;
+	TFunction<void(TFunction<void()>)> DeferTickFunctionHelper;
+
+	FTimerHandle DeferredTickHandle;
+
+	float DeferredTickFrequency;
+	int32 CurrManagerIndex;
+
 	UPROPERTY()
 	UWorld* CachedWorld;
 
@@ -42,4 +52,8 @@ private:
 
 	bool GetIsManagerSpanUp(const UManager* FinishedManager) const;
 	void EmplaceManager(const UManager* FinishedManager);
+
+	void PushTickFunctionOntoStack(const TFunction<void()>& InTickFunction);
+
+	void DeferredTick();
 };

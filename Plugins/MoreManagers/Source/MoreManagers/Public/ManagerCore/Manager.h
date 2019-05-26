@@ -31,6 +31,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Tick)
 	bool IsTickEnabled;
 
+	UPROPERTY(EditDefaultsOnly, Category = Tick)
+	bool IsTickDeferred;
+
 	UPROPERTY(EditDefaultsOnly, Category = Tick, meta = (EditCondition = IsTickEnabled))
 	float TickFrequency;
 
@@ -39,6 +42,9 @@ protected:
 
 	UFUNCTION(BlueprintPure, Category = Tick)
 	bool GetIsTickEnabled() const;
+
+	UFUNCTION(BlueprintPure, Category = Tick)
+	bool GetIsTickDeferred() const { return IsTickDeferred; }
 
 	UFUNCTION(BlueprintPure, Category = Tick)
 	float GetDeltaTime();
@@ -52,7 +58,7 @@ protected:
 
 private:
 
-	virtual void Start(const TFunction<void(const UManager*)>& OnSetupCompleteCallback, UWorld* const WorldContext);
+	virtual void Start(const TFunction<void(const UManager*)>& OnSetupCompleteCallback, const TFunction<void(TFunction<void()>)>& DeferTickFunctionHelper, UWorld* const WorldContext);
 
 	void BeginTick();
 
@@ -60,6 +66,7 @@ private:
 
 	FTimerHandle TickHandle;
 	TFunction<void(const UManager*)> SetupCompleteCallback;
+	TFunction<void()> TickFunction;
 
 	UPROPERTY()
 	UWorld* CachedWorld;

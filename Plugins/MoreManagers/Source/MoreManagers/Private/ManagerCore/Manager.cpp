@@ -8,16 +8,25 @@ UManager::UManager()
 	, ShouldDeferCompleteCallback(false)
 	, TickHandle()
 	, SetupCompleteCallback(nullptr)
-{}
+{
+	TickFunction = [this]()
+	{ 
+		Tick();
+	};
+}
 
-void UManager::Start(const TFunction<void(const UManager*)>& OnSetupCompleteCallback, UWorld* const WorldContext)
+void UManager::Start(const TFunction<void(const UManager*)>& OnSetupCompleteCallback, const TFunction<void(TFunction<void()>)>& DeferTickFunctionHelper, UWorld* const WorldContext)
 {
 	CachedWorld = WorldContext;
 	SetupCompleteCallback = OnSetupCompleteCallback;
 
 	OnStart();
 
-	if (GetIsTickEnabled())
+	if (GetIsTickDeferred())
+	{
+		DeferTickFunctionHelper(TickFunction);
+	}
+	else if (GetIsTickEnabled())
 	{
 		BeginTick();
 	}
@@ -30,7 +39,7 @@ void UManager::Start(const TFunction<void(const UManager*)>& OnSetupCompleteCall
 
 void UManager::Tick()
 {
-	if (GetIsTickEnabled())
+	if (GetIsTickEnabled() || GetIsTickDeferred())
 	{
 		GetDeltaTime();
 		OnTick(CachedDeltaTime);
@@ -41,7 +50,7 @@ void UManager::BeginTick()
 {
 	if (UWorld* World = GetWorld())
 	{
-		World->GetTimerManager().SetTimer(TickHandle, this, &UManager::Tick, TickFrequency, true, TickFrequency);
+		World->GetTimerManager().SetTimer(TickHandle, this, &UManager::Tick, TickFrequency, true, 0.f);
 	}
 }
 
@@ -56,7 +65,7 @@ void UManager::SetupComplete()
 
 bool UManager::GetIsTickEnabled() const
 {
-	return !FMath::IsNearlyZero(TickFrequency) && IsTickEnabled;
+	return (!FMath::IsNearlyZero(TickFrequency)) && IsTickEnabled;
 }
 
 float UManager::GetDeltaTime()
