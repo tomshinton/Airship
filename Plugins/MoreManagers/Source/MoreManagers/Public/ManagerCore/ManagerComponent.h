@@ -23,7 +23,7 @@ public:
 
 protected:
 
-	void OnManagerSetupComplete();
+	void OnManagerSetupComplete(const UManager* FinishedClass);
 	void SpinupManager();
 
 private:
@@ -38,5 +38,8 @@ private:
 	UPROPERTY()
 	UWorld* CachedWorld;
 
-	TFunction<void()> ManagerSpinupCallback;
+	TFunction<void(const UManager*)> ManagerSpinupCallback;
+
+	bool GetIsManagerSpanUp(const UManager* FinishedManager) const;
+	void EmplaceManager(const UManager* FinishedManager);
 };

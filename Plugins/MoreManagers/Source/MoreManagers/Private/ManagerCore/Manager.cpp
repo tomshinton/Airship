@@ -10,7 +10,7 @@ UManager::UManager()
 	, SetupCompleteCallback(nullptr)
 {}
 
-void UManager::Start(const TFunction<void()>& OnSetupCompleteCallback, UWorld* const WorldContext)
+void UManager::Start(const TFunction<void(const UManager*)>& OnSetupCompleteCallback, UWorld* const WorldContext)
 {
 	CachedWorld = WorldContext;
 	SetupCompleteCallback = OnSetupCompleteCallback;
@@ -24,7 +24,7 @@ void UManager::Start(const TFunction<void()>& OnSetupCompleteCallback, UWorld* c
 
 	if (!ShouldDeferCompleteCallback)
 	{
-		OnSetupCompleteCallback();
+		OnSetupCompleteCallback(this);
 	}
 }
 
@@ -50,7 +50,7 @@ void UManager::SetupComplete()
 	if (SetupCompleteCallback)
 	{
 		bHasBeganStart = true;
-		SetupCompleteCallback();
+		SetupCompleteCallback(this);
 	}
 }
 

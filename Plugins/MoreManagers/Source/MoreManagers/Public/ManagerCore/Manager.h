@@ -52,14 +52,14 @@ protected:
 
 private:
 
-	virtual void Start(const TFunction<void()>& OnSetupCompleteCallback, UWorld* const WorldContext);
+	virtual void Start(const TFunction<void(const UManager*)>& OnSetupCompleteCallback, UWorld* const WorldContext);
 
 	void BeginTick();
 
 	bool bHasBeganStart;
 
 	FTimerHandle TickHandle;
-	TFunction<void()> SetupCompleteCallback;
+	TFunction<void(const UManager*)> SetupCompleteCallback;
 
 	UPROPERTY()
 	UWorld* CachedWorld;
