@@ -28,4 +28,9 @@ private:
 
 	void RegisterAssetCategory();
 	void SetModuleIcon();
+
+	void RegisterUnmutableSettings();
+	void UnregisterUnmutableSettings();
+
+	bool HandleSaved();
 };

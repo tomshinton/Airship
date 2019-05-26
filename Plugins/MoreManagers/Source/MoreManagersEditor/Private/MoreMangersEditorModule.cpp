@@ -2,7 +2,12 @@
 
 #include "MoreManagersEditorModule.h"
 
+#include <MoreManagers/Public/ManagerCore/InvokeList.h>
+
 #include <Developer/AssetTools/Public/AssetToolsModule.h>
+#include <Developer/Settings/Private/SettingsContainer.h>
+#include <Developer/Settings/Public/ISettingsModule.h>
+#include <Developer/Settings/Public/ISettingsSection.h>
 #include <Runtime/Core/Public/Internationalization/Internationalization.h>
 #include <Runtime/Projects/Public/Interfaces/IPluginManager.h>
 #include <Runtime/SlateCore/Public/Brushes/SlateImageBrush.h>
@@ -18,6 +23,7 @@ void FMoreManagersEditorModule::StartupModule()
 	
 	RegisterAssetCategory();
 	SetModuleIcon();
+	RegisterUnmutableSettings();
 }
 
 void FMoreManagersEditorModule::ShutdownModule()
@@ -44,6 +50,39 @@ void FMoreManagersEditorModule::SetModuleIcon()
 		StyleSet->Set("ClassThumbnail.Manager", ThumbnailBrush);
 		FSlateStyleRegistry::RegisterSlateStyle(*StyleSet);
 	}
+}
+
+void FMoreManagersEditorModule::RegisterUnmutableSettings()
+{
+	if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
+	{
+		ISettingsContainerPtr SettingsContainer = SettingsModule->GetContainer("Project");
+		ISettingsSectionPtr InvokeListSection = SettingsModule->RegisterSettings("Project", "MoreManagers", "Invoke",
+			LOCTEXT("MoreManagersSettings", "InvokeList"),
+			LOCTEXT("MoreManagersSettingsDescription", "MoreManagers Invoke List - What classes do we need to spin up, and in what order?"),
+			GetMutableDefault<UInvokeList>());
+
+		if (InvokeListSection.IsValid())
+		{
+			InvokeListSection->OnModified().BindRaw(this, &FMoreManagersEditorModule::HandleSaved);
+		}
+	}
+}
+
+void FMoreManagersEditorModule::UnregisterUnmutableSettings()
+{
+	if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
+	{
+		SettingsModule->UnregisterSettings("Project", "Colony Settings", "AI");
+	}
+}
+
+bool FMoreManagersEditorModule::HandleSaved()
+{
+	UInvokeList* InvokeList = GetMutableDefault<UInvokeList>();
+	InvokeList->SaveConfig();
+
+	return true;
 }
 
 #undef LOCTEXT_NAMESPACE

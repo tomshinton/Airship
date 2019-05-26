@@ -20,6 +20,7 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine",
+				"CoreUObject"
 			],
 			"WhitelistPlatforms" :
 			[
