@@ -7,6 +7,12 @@
 
 class AProjectileBase;
 class AWorldItem;
+class UTexture2D;
+
+namespace InventoryItemStatics
+{
+	const FName DefaultItemName = TEXT("Item");
+}
 
 USTRUCT(Blueprintable, BlueprintType)
 struct AIRCORE_API FClip
@@ -47,9 +53,9 @@ public:
 
 	GENERATED_BODY()
 
-		FInventoryItemRow()
-		: IsNullSlot(true)
-		, ItemIcon(nullptr)
+	FInventoryItemRow()
+	: IsNullSlot(true)
+	, ItemIcon(nullptr)
 	{}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
@@ -86,7 +92,7 @@ struct AIRCORE_API FInventoryItem
 	GENERATED_BODY()
 
 	FInventoryItem()
-		: ItemID("Item")
+		: ItemID(InventoryItemStatics::DefaultItemName)
 		, Quantity(0)
 		, Clip(FClip())
 	{}

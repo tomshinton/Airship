@@ -28,6 +28,8 @@ public:
 	
 public:
 
+	FInventory GetInventory() const { return Inventory; };
+
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void AddItem(const FName ID, const int32 Quantity);
 
