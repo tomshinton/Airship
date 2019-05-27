@@ -11,7 +11,7 @@
 
 class UAirInventory;
 
-UCLASS()
+UCLASS(MinimalAPI)
 class AWorldItem : public AActor, public IWieldInterface
 {
 	GENERATED_BODY()

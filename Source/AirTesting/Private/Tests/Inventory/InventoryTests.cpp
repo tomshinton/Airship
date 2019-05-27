@@ -1,12 +1,14 @@
 #include "BaseFixtures.h"
 #include "AirInventory.h"
 #include <GameFramework\Character.h>
+#include <EngineUtils.h>
+#include "WorldItem.h"
 
 namespace
 {
 	namespace TestItemInfo
 	{
-		const FName TestItemID = "TestActor";
+		const FName TestItemID = "TestItem";
 		const int32 TestQuantity = 1;
 	}
 }
@@ -19,16 +21,41 @@ public:
 	FInventoryTestFixture(const FString& InName, const bool bInComplexTask)
 		: FAirBaseFixture(InName, bInComplexTask) {}
 
+	~FInventoryTestFixture()
+	{
+		SpawnedInventoryComponent = nullptr;
+		CleanUp();
+	}
+
 	void CreateInventory()
 	{
-		ACharacter* OwningCharacter = SpawnActor<ACharacter>();
-		SpawnedInventoryComponent = NewObject<UAirInventory>(OwningCharacter);
-		SpawnedInventoryComponent->RegisterComponent();
+		if (ACharacter* SpawnedCharacter = SpawnActor<ACharacter>())
+		{
+			SpawnedInventoryComponent = NewObject<UAirInventory>(SpawnedCharacter);
+			SpawnedInventoryComponent->RegisterComponent();
 
-		USceneComponent* RightHand = NewObject<USceneComponent>(OwningCharacter);
-		USceneComponent* LeftHand = NewObject<USceneComponent>(OwningCharacter);
+			USceneComponent* RightHand = NewObject<USceneComponent>(SpawnedCharacter);
+			USceneComponent* LeftHand = NewObject<USceneComponent>(SpawnedCharacter);
 
-		SpawnedInventoryComponent->SetHandComponents(LeftHand, RightHand);
+			SpawnedInventoryComponent->SetHandComponents(LeftHand, RightHand);
+		}
+	}
+
+	int32 GetWorldItems() const
+	{
+		int32 FoundItems = 0;
+		if (GetTestWorld())
+		{
+			for (TActorIterator<AWorldItem> Itr(GetTestWorld()); Itr; ++Itr)
+			{
+				if (AWorldItem* Item = *Itr)
+				{
+					FoundItems++;
+				}
+			}
+		}
+
+		return FoundItems;
 	}
 
 	UAirInventory* SpawnedInventoryComponent;
@@ -49,6 +76,7 @@ bool FBeginPlayCalledOnInventory_InventoryInitialisedAtCorrectSize::RunTest(cons
 		TestEqual("Expected default ItemID", Item.ItemID, InventoryItemStatics::DefaultItemName);
 	}
 
+	CleanUp();
 	return true;
 }
 
@@ -71,6 +99,7 @@ bool FBeginPlayCalledOnInventory_OnSlotFocusedUpdateCalled::RunTest(const FStrin
 
 	SpawnedInventoryComponent->BeginPlay();
 
+	CleanUp();
 	return HasBroadcastCorrectly;
 }
 
@@ -88,10 +117,12 @@ bool FAddItemCalled_ValidItemBeingPassedIn_ItemAddedToInventory::RunTest(const F
 	{
 		if (Slot.ItemID == TestItemInfo::TestItemID && Slot.Quantity == TestItemInfo::TestQuantity)
 		{
+			CleanUp();
 			return true;
 		}
 	}
 
+	CleanUp();
 	return false;
 }
 
@@ -110,6 +141,7 @@ bool FAddItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled::RunTest(const 
 
 	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, TestItemInfo::TestQuantity);
 
+	CleanUp();
 	return HasBroadcastCorrectly;
 }
 
@@ -120,7 +152,10 @@ bool FAddItemCalled_CurrentFocusHasWieldable_WieldAttempted::RunTest(const FStri
 	SpawnedInventoryComponent->BeginPlay();
 	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, TestItemInfo::TestQuantity);
 
+	const int32 WorldItemNum = GetWorldItems();
 
+	TestTrue("Expected there to be at least 1 spawned wieldable in the world", WorldItemNum > 0);
 
+	CleanUp();
 	return true;
 }
