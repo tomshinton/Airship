@@ -16,7 +16,7 @@ public:
 	{
 		if (UWorld* World = FAutomationEditorCommonUtils::CreateNewMap())
 		{
-			T* NewActor = World->SpawnActor(T::StaticClass());
+			T* NewActor = World->SpawnActor<T>(AActor::StaticClass());
 
 			if (NewActor)
 			{

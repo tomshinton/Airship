@@ -11,8 +11,8 @@
 
 class AWorldItem;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSlotFocusUpdated, const int32, Slot);
+DECLARE_MULTICAST_DELEGATE(FOnInventoryUpdated);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSlotFocusUpdated, const int32);
 
 UCLASS(MinimalAPI)
 class UAirInventory : public UActorComponent
@@ -31,7 +31,7 @@ public:
 	FInventory GetInventory() const { return Inventory; };
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
-	void AddItem(const FName ID, const int32 Quantity);
+	AIRCORE_API void AddItem(const FName ID, const int32 Quantity);
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void RemoveItem(const FName ID, const int32 Quantity);
@@ -86,10 +86,7 @@ public:
 	void StartSecondary();
 	void EndSecondary();
 
-	UPROPERTY(BlueprintAssignable)
 	FOnInventoryUpdated OnInventoryUpdated;
-
-	UPROPERTY(BlueprintAssignable)
 	FOnSlotFocusUpdated OnSlotFocusUpdated;
 
 	UPROPERTY(EditDefaultsOnly)

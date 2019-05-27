@@ -30,8 +30,15 @@ void UInventorySlot::NativeConstruct()
 
 	if (LinkedInventory)
 	{
-		LinkedInventory->OnSlotFocusUpdated.AddDynamic(this, &UInventorySlot::PlayerFocusChanged);
-		LinkedInventory->OnInventoryUpdated.AddDynamic(this, &UInventorySlot::PlayerInventoryChanged);
+		LinkedInventory->OnSlotFocusUpdated.AddLambda([this](const int32 NewSlot)
+		{
+			PlayerFocusChanged(NewSlot);
+		});
+
+		LinkedInventory->OnInventoryUpdated.AddLambda([this]()
+		{
+			PlayerInventoryChanged();
+		});
 
 		const int32 FocusedSlot = LinkedInventory->GetCurrentFocusedSlot();
 		PlayerFocusChanged(FocusedSlot);
