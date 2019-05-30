@@ -58,31 +58,31 @@ public:
 	, ItemIcon(nullptr)
 	{}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = ItemInfo)
 	bool IsNullSlot;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = ItemInfo)
 	FName ItemName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = ItemInfo)
 	FString ItemNameReadable;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = ItemInfo)
 	FString ItemDescription;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = ItemInfo)
 	UTexture2D* ItemIcon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo, meta = (AllowedClasses = WorldItem))
-	TSubclassOf<AWorldItem> ItemClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = ItemInfo)
+	TSubclassOf<class AWorldItem> ItemClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = ItemInfo)
 	bool Stacks;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = ItemInfo)
 	int32 StackSize;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInfo)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = ItemInfo)
 	FClip Clip;
 };
 

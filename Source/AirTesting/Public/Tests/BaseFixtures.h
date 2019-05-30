@@ -8,6 +8,11 @@ DEFINE_LOG_CATEGORY_STATIC(AutomationRunnerLog, Log, Log);
 
 #if WITH_DEV_AUTOMATION_TESTS
 
+namespace BaseFixturePrivate
+{
+	const FName TestWorldName = TEXT("TestWorld");
+}
+
 class FAirBaseFixture : public FAutomationTestBase
 {
 
@@ -17,12 +22,24 @@ public:
 		: FAutomationTestBase(InName, bInComplexTask)
 	{}
 	
+	virtual void BeginTest() override
+	{
+		UE_LOG(AutomationRunnerLog, Log, TEXT("BeginTest"));
+
+		GameWorld = UWorld::CreateWorld(EWorldType::Game, true, BaseFixturePrivate::TestWorldName);
+	}
+
+	virtual void EndTest() override 
+	{
+		GameWorld = nullptr;
+	}
+
 	template<class T>
 	T* SpawnActor()
 	{
-		if (GetTestWorld())
+		if (GameWorld)
 		{
-			T* NewActor = GetTestWorld()->SpawnActor<T>(T::StaticClass());
+			T* NewActor = GameWorld->SpawnActor<T>(T::StaticClass());
 
 			if (NewActor)
 			{
@@ -37,33 +54,9 @@ public:
 		return nullptr;
 	}
 
-	void CleanUp()
-	{
-		for (AActor* SpawnedActor : SpawnedActors)
-		{
-			SpawnedActor->Destroy();
-		}
-
-		SpawnedActors.Empty();
-	}
-
-	static UWorld* GetTestWorld()
-	{
-		UWorld* TestWorld = nullptr;
-		const TIndirectArray<FWorldContext>& WorldContexts = GEngine->GetWorldContexts();
-		for (const FWorldContext& Context : WorldContexts)
-		{
-			if(Context.World() != nullptr)
-			{
-				TestWorld = Context.World();
-				break;
-			}
-		}
-
-		return TestWorld;
-	}
 
 	TArray<AActor*> SpawnedActors;
+	UWorld* GameWorld;
 
 	static const int TestFlags = EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter;
 };

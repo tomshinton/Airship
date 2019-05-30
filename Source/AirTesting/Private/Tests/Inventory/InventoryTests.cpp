@@ -21,10 +21,21 @@ public:
 	FInventoryTestFixture(const FString& InName, const bool bInComplexTask)
 		: FAirBaseFixture(InName, bInComplexTask) {}
 
-	~FInventoryTestFixture()
+	virtual void BeginTest() override
 	{
-		SpawnedInventoryComponent = nullptr;
-		CleanUp();
+		FAirBaseFixture::BeginTest();
+
+		CreateInventory();
+	}
+
+	virtual void EndTest() override
+	{
+		if (SpawnedInventoryComponent)
+		{
+			SpawnedInventoryComponent = nullptr;
+		}
+
+		FAirBaseFixture::EndTest();
 	}
 
 	void CreateInventory()
@@ -44,9 +55,9 @@ public:
 	int32 GetWorldItems() const
 	{
 		int32 FoundItems = 0;
-		if (GetTestWorld())
+		if (GameWorld)
 		{
-			for (TActorIterator<AWorldItem> Itr(GetTestWorld()); Itr; ++Itr)
+			for (TActorIterator<AWorldItem> Itr(GameWorld); Itr; ++Itr)
 			{
 				if (AWorldItem* Item = *Itr)
 				{
@@ -64,7 +75,6 @@ public:
 IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FBeginPlayCalledOnInventory_InventoryInitialisedAtCorrectSize, FInventoryTestFixture, "Air.InventoryComponent.BeginPlay.BeginPlayCalledOnInventory_InventoryInitialisedAtCorrectSize", FAirBaseFixture::TestFlags)
 bool FBeginPlayCalledOnInventory_InventoryInitialisedAtCorrectSize::RunTest(const FString& Parameters)
 {
-	CreateInventory();
 	SpawnedInventoryComponent->BeginPlay();
 
 	const FInventory PlayerInventory = SpawnedInventoryComponent->GetInventory();
@@ -76,15 +86,12 @@ bool FBeginPlayCalledOnInventory_InventoryInitialisedAtCorrectSize::RunTest(cons
 		TestEqual("Expected default ItemID", Item.ItemID, InventoryItemStatics::DefaultItemName);
 	}
 
-	CleanUp();
 	return true;
 }
 
 IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FBeginPlayCalledOnInventory_OnSlotFocusedUpdateCalled, FInventoryTestFixture, "Air.InventoryComponent.BeginPlay.BeginPlayCalledOnInventory_OnSlotFocusedUpdateCalled", FAirBaseFixture::TestFlags)
 bool FBeginPlayCalledOnInventory_OnSlotFocusedUpdateCalled::RunTest(const FString& Parameters)
 {
-	CreateInventory();
-
 	bool HasBroadcastCorrectly = false;
 
 	SpawnedInventoryComponent->OnSlotFocusUpdated.AddLambda([this, &HasBroadcastCorrectly](const int32 FocusedSlot)
@@ -99,14 +106,12 @@ bool FBeginPlayCalledOnInventory_OnSlotFocusedUpdateCalled::RunTest(const FStrin
 
 	SpawnedInventoryComponent->BeginPlay();
 
-	CleanUp();
 	return HasBroadcastCorrectly;
 }
 
 IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FAddItemCalled_ValidItemBeingPassedIn_ItemAddedToInventory, FInventoryTestFixture, "Air.InventoryComponent.AddItem.AddItemCalled_ValidItemBeingPassedIn_ItemAddedToInventory", FAirBaseFixture::TestFlags)
 bool FAddItemCalled_ValidItemBeingPassedIn_ItemAddedToInventory::RunTest(const FString& Parameters)
 {
-	CreateInventory();
 	SpawnedInventoryComponent->BeginPlay();
 
 	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, TestItemInfo::TestQuantity);
@@ -117,19 +122,16 @@ bool FAddItemCalled_ValidItemBeingPassedIn_ItemAddedToInventory::RunTest(const F
 	{
 		if (Slot.ItemID == TestItemInfo::TestItemID && Slot.Quantity == TestItemInfo::TestQuantity)
 		{
-			CleanUp();
 			return true;
 		}
 	}
 
-	CleanUp();
 	return false;
 }
 
 IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FAddItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled, FInventoryTestFixture, "Air.InventoryComponent.AddItem.AddItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled", FAirBaseFixture::TestFlags)
 bool FAddItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled::RunTest(const FString& Parameters)
 {
-	CreateInventory();
 	SpawnedInventoryComponent->BeginPlay();
 
 	bool HasBroadcastCorrectly = false;
@@ -141,14 +143,12 @@ bool FAddItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled::RunTest(const 
 
 	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, TestItemInfo::TestQuantity);
 
-	CleanUp();
 	return HasBroadcastCorrectly;
 }
 
 IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FAddItemCalled_CurrentFocusHasWieldable_WieldAttempted, FInventoryTestFixture, "Air.InventoryComponent.AddItem.AddItemCalled_CurrentFocusHasWieldable_WieldAttempted", FAirBaseFixture::TestFlags)
 bool FAddItemCalled_CurrentFocusHasWieldable_WieldAttempted::RunTest(const FString& Parameters)
 {
-	CreateInventory();
 	SpawnedInventoryComponent->BeginPlay();
 	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, TestItemInfo::TestQuantity);
 
@@ -156,6 +156,5 @@ bool FAddItemCalled_CurrentFocusHasWieldable_WieldAttempted::RunTest(const FStri
 
 	TestTrue("Expected there to be at least 1 spawned wieldable in the world", WorldItemNum > 0);
 
-	CleanUp();
 	return true;
 }
