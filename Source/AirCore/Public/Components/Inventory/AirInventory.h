@@ -34,7 +34,7 @@ public:
 	AIRCORE_API void AddItem(const FName ID, const int32 Quantity);
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
-	void RemoveItem(const FName ID, const int32 Quantity);
+	AIRCORE_API void RemoveItem(const FName ID, const int32 Quantity);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = Inventory)
 	int32 GetInventorySize() const { return InventorySize; }
@@ -67,13 +67,17 @@ public:
 
 	AIRCORE_API void SetItemBySlot(FInventoryItem InItem, const int32 InSlot);
 
-	void FocusNextItem();
-	void FocusLastItem();
+	AIRCORE_API void FocusNextItem();
+	AIRCORE_API void FocusLastItem();
 
 	int32 GetCurrentFocusedSlot() const { return CurrFocusedSlot; }
 
 	void SetIsAiming(const bool InAiming) { IsAiming = InAiming; }
 	bool GetIsAiming() const { return IsAiming; }
+
+#if WITH_DEV_AUTOMATION_TESTS
+	void SetCurrentFocusSlot(const int32 NewFocusedSlot) { CurrFocusedSlot = NewFocusedSlot; };
+#endif //WITH_DEV_AUTOMATION_TESTS
 
 	/************************************************************************/
 	/* Interaction                                                          */

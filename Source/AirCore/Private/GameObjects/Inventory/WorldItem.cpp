@@ -45,7 +45,6 @@ void AWorldItem::StartWield()
 
 void AWorldItem::EndWield()
 {
-	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	Destroy();
 }
 

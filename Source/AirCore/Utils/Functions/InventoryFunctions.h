@@ -7,7 +7,7 @@ struct FInventoryItemRow;
 struct FInventoryItem;
 struct FInventory;
 
-UCLASS()
+UCLASS(MinimalAPI)
 class UInventoryFunctions : public UObject
 {
 	GENERATED_BODY()
@@ -18,10 +18,13 @@ public:
 	static UDataTable* GetDataTable();
 
 	static FInventoryItem AddItemFromID(FInventory& Inventory, const FName ItemID, const int32 Quantity);
-	static FInventoryItem RemoveItem(FInventory& Inventory, const FName ItemID, const int32 Quantity);
+	AIRCORE_API static FInventoryItem RemoveItem(FInventory& Inventory, const FName ItemID, const int32 Quantity);
 	static void TransferItems(FName ItemID, int32 Quantity, FInventory& OutInventory, FInventory& InInventory);
 
 	static bool InventoryHasEmptySlots(FInventory& Inventory);
 	static void Audit(FName ItemID, int32& Stacks, int32& Total, FInventory& InInventory);
+	
+	AIRCORE_API static bool InventoryContains(const FInventory& Inventory, const FName ItemID, const int32 Quantity);
+	AIRCORE_API static int32 GetNumItemsInInventory(const FInventory& Inventory, const FName ItemID);
 };
 

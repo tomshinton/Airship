@@ -154,6 +154,41 @@ void UInventoryFunctions::Audit(FName ItemID, int32& Stacks, int32& Total, FInve
 	}
 }
 
+bool UInventoryFunctions::InventoryContains(const FInventory& Inventory, const FName ItemID, const int32 Quantity)
+{
+	int32 AmountFound = 0;
+	for (const FInventoryItem& Item : Inventory.ItemSlots)
+	{
+		if (Item.ItemID == ItemID)
+		{
+			AmountFound += Item.Quantity;
+		}
+	}
+
+	if (AmountFound == Quantity)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+int32 UInventoryFunctions::GetNumItemsInInventory(const FInventory& Inventory, const FName ItemID)
+{
+	int32 AmountFound = 0;
+	for (const FInventoryItem& Item : Inventory.ItemSlots)
+	{
+		if (Item.ItemID == ItemID)
+		{
+			AmountFound += Item.Quantity;
+		}
+	}
+	
+	return AmountFound;
+}
+
 void UInventoryFunctions::TransferItems(FName ItemID, int32 Quantity, FInventory& OutInventory, FInventory& InInventory)
 {
 	FInventoryItem RemovedItem = RemoveItem(OutInventory, ItemID, Quantity);

@@ -176,6 +176,11 @@ void UAirInventory::Wield()
 {
 	if (Cast<ACharacter>(GetOwner()))
 	{
+		if (Inventory.ItemSlots.Num() <= 0)
+		{
+			return;
+		}
+
 		FInventoryItem CurrentFocusedItem = Inventory.ItemSlots[CurrFocusedSlot];
 
 		if (CurrentWieldActor)
@@ -184,6 +189,8 @@ void UAirInventory::Wield()
 			{
 				CurrentWieldInterface->EndWield();
 			}
+
+			CurrentWieldActor = nullptr;
 		}
 
 		if (UWorld* World = GetOwner()->GetWorld())
