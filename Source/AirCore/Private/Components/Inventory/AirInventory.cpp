@@ -32,7 +32,7 @@ void UAirInventory::BeginPlay()
 	Super::BeginPlay();
 }
 
-void UAirInventory::AddItem(const FName ID, const int32 Quantity)
+void UAirInventory::AddItem(const FName& ID, const int32& Quantity)
 {
 	UInventoryFunctions::AddItemFromID(Inventory, ID, Quantity);
 
@@ -44,7 +44,7 @@ void UAirInventory::AddItem(const FName ID, const int32 Quantity)
 	Wield();
 }
 
-void UAirInventory::RemoveItem(const FName ID, const int32 Quantity)
+void UAirInventory::RemoveItem(const FName& ID, const int32& Quantity)
 {
 	UInventoryFunctions::RemoveItem(Inventory, ID, Quantity);
 
@@ -56,36 +56,36 @@ void UAirInventory::RemoveItem(const FName ID, const int32 Quantity)
 	Wield();
 }
 
-void UAirInventory::TransferItem(FName ItemID, int32 Quantity, UAirInventory* RemoveInventory)
+void UAirInventory::TransferItem(const FName& ItemID, const int32& Quantity, UAirInventory* ItemToRemoveItemFrom)
 {
 	if (Quantity > 0 && ItemID != "Item")
 	{
-		UInventoryFunctions::TransferItems(ItemID, Quantity, RemoveInventory->Inventory, Inventory);
+		UInventoryFunctions::TransferItems(ItemID, Quantity, Inventory, ItemToRemoveItemFrom->Inventory);
 
 		if (OnInventoryUpdated.IsBound())
 		{
 			OnInventoryUpdated.Broadcast();
 		}
 
-		if (RemoveInventory->OnInventoryUpdated.IsBound())
+		if (ItemToRemoveItemFrom->OnInventoryUpdated.IsBound())
 		{
-			RemoveInventory->OnInventoryUpdated.Broadcast();
+			ItemToRemoveItemFrom->OnInventoryUpdated.Broadcast();
 		}
 
 		//Do we need to wield from the local inventory?
 		Wield();
 
 		//Does the removal inventory need to wield?
-		RemoveInventory->Wield();
+		ItemToRemoveItemFrom->Wield();
 	}
 }
 
-void UAirInventory::Audit(FName ItemID, int32& Stacks, int32& Total)
+void UAirInventory::Audit(const FName& ItemID, int32& Stacks, int32& Total)
 {
 	UInventoryFunctions::Audit(ItemID, Stacks, Total, Inventory);
 }
 
-void UAirInventory::SwapSlots(const int32 FirstSlot, const int32 SecondSlot)
+void UAirInventory::SwapSlots(const int32& FirstSlot, const int32& SecondSlot)
 {
 	Inventory.ItemSlots.Swap(FirstSlot, SecondSlot);
 
@@ -156,20 +156,22 @@ void UAirInventory::SetItemBySlot(FInventoryItem InItem, const int32 InSlot)
 	Wield();
 }
 
+void UAirInventory::UpdateFocus()
+{
+	OnSlotFocusUpdated.Broadcast(CurrFocusedSlot);
+	Wield();
+}
+
 void UAirInventory::FocusNextItem()
 {
 	CurrFocusedSlot < HotbarSlots-1 ? CurrFocusedSlot++ : CurrFocusedSlot = 0;
-	OnSlotFocusUpdated.Broadcast(CurrFocusedSlot);
-
-	Wield();
+	UpdateFocus();
 }
 
 void UAirInventory::FocusLastItem()
 {
 	CurrFocusedSlot > 0 ? CurrFocusedSlot-- : CurrFocusedSlot = HotbarSlots-1;
-	OnSlotFocusUpdated.Broadcast(CurrFocusedSlot);
-
-	Wield();
+	UpdateFocus();
 }
 
 void UAirInventory::Wield()

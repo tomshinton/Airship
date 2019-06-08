@@ -28,7 +28,8 @@ public:
 	{
 		FAirBaseFixture::BeginTest();
 
-		CreateInventory();
+		SpawnedInventoryComponent = CreateInventory();
+		SpawnedInventoryComponent->BeginPlay();
 	}
 
 	virtual void EndTest()
@@ -41,18 +42,22 @@ public:
 		}
 	}
 
-	void CreateInventory()
+	UAirInventory* CreateInventory()
 	{
 		if (ACharacter* SpawnedCharacter = SpawnActor<ACharacter>())
 		{
-			SpawnedInventoryComponent = NewObject<UAirInventory>(SpawnedCharacter);
-			SpawnedInventoryComponent->RegisterComponent();
+			UAirInventory* NewInventoryComp = NewObject<UAirInventory>(SpawnedCharacter);
+			NewInventoryComp->RegisterComponent();
 
 			USceneComponent* RightHand = NewObject<USceneComponent>(SpawnedCharacter);
 			USceneComponent* LeftHand = NewObject<USceneComponent>(SpawnedCharacter);
 
-			SpawnedInventoryComponent->SetHandComponents(LeftHand, RightHand);
+			NewInventoryComp->SetHandComponents(LeftHand, RightHand);
+		
+			return NewInventoryComp;
 		}
+
+		return nullptr;
 	}
 
 	int32 GetWorldItems() const
@@ -85,8 +90,6 @@ public:
 IMPLEMENT_TEST(FBeginPlayCalledOnInventory_InventoryInitialisedAtCorrectSize)
 bool FBeginPlayCalledOnInventory_InventoryInitialisedAtCorrectSize::RunTest(const FString& Parameters)
 {
-	SpawnedInventoryComponent->BeginPlay();
-
 	const FInventory PlayerInventory = SpawnedInventoryComponent->GetInventory();
 
 	TestEqual("Expected Inventory to be initialized at correct size", SpawnedInventoryComponent->InventorySize, PlayerInventory.InventorySize);
@@ -104,17 +107,20 @@ bool FBeginPlayCalledOnInventory_OnSlotFocusedUpdateCalled::RunTest(const FStrin
 {
 	bool HasBroadcastCorrectly = false;
 
-	SpawnedInventoryComponent->OnSlotFocusUpdated.AddLambda([this, &HasBroadcastCorrectly](const int32 FocusedSlot)
+	ACharacter* NewCharacter = SpawnActor<ACharacter>();
+	UAirInventory* NewInventory = NewObject<UAirInventory>(NewCharacter);
+
+	NewInventory->OnSlotFocusUpdated.AddLambda([this, &HasBroadcastCorrectly](const int32 FocusedSlot)
 	{
 		TestEqual("Expected the initially focused slot to be 0", 0, FocusedSlot);
-		
+
 		if (FocusedSlot == 0)
 		{
 			HasBroadcastCorrectly = true;
 		}
 	});
 
-	SpawnedInventoryComponent->BeginPlay();
+	NewInventory->UpdateFocus();
 
 	return HasBroadcastCorrectly;
 }
@@ -124,8 +130,6 @@ bool FBeginPlayCalledOnInventory_OnSlotFocusedUpdateCalled::RunTest(const FStrin
 IMPLEMENT_TEST(FAddItemCalled_ValidItemBeingPassedIn_ItemAddedToInventory)
 bool FAddItemCalled_ValidItemBeingPassedIn_ItemAddedToInventory::RunTest(const FString& Parameters)
 {
-	SpawnedInventoryComponent->BeginPlay();
-
 	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, TestItemInfo::TestQuantity);
 
 	FInventory PlayerInventory = SpawnedInventoryComponent->GetInventory();
@@ -137,8 +141,6 @@ bool FAddItemCalled_ValidItemBeingPassedIn_ItemAddedToInventory::RunTest(const F
 IMPLEMENT_TEST(FAddItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled)
 bool FAddItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled::RunTest(const FString& Parameters)
 {
-	SpawnedInventoryComponent->BeginPlay();
-
 	bool HasBroadcastCorrectly = false;
 
 	SpawnedInventoryComponent->OnInventoryUpdated.AddLambda([this, &HasBroadcastCorrectly]()
@@ -154,10 +156,37 @@ bool FAddItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled::RunTest(const 
 IMPLEMENT_TEST(FAddItemCalled_CurrentFocusHasWieldable_WieldAttempted)
 bool FAddItemCalled_CurrentFocusHasWieldable_WieldAttempted::RunTest(const FString& Parameters)
 {
-	SpawnedInventoryComponent->BeginPlay();
 	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, TestItemInfo::TestQuantity);
 
 	TestTrue("Expected there to be at least 1 spawned wieldable in the world", GetWorldItems() > 0);
+
+	return true;
+}
+
+IMPLEMENT_TEST(FAddItemCalled_AmountSpansMultipleStacks_ItemSpreadOverStacks)
+bool FAddItemCalled_AmountSpansMultipleStacks_ItemSpreadOverStacks::RunTest(const FString& Parameters)
+{
+	//This item stacks up to 5, so this should be around 4 stacks
+	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, 20);
+
+	TestTrue(TEXT("Expected there to be multiple stacks of the test item in sample inventory"), UInventoryFunctions::GetNumStacksInInventory(SpawnedInventoryComponent->GetInventory(), TestItemInfo::TestItemID) > 1);
+
+	return true;
+}
+
+IMPLEMENT_TEST(FAddItemCalled_ItemFoundInInventoryAlreadyBelowStackLimit_ItemAddedToExistingStack)
+bool FAddItemCalled_ItemFoundInInventoryAlreadyBelowStackLimit_ItemAddedToExistingStack::RunTest(const FString& Parameters)
+{
+	//This item stacks up to 5, this should be 1 stack
+	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, 1);
+
+	TestTrue(TEXT("Expected there to be multiple stacks of the test item in sample inventory"), UInventoryFunctions::GetNumStacksInInventory(SpawnedInventoryComponent->GetInventory(), TestItemInfo::TestItemID) == 1);
+
+	//This item stacks up to 5, so this should be around 4 stacks
+	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, 1);
+
+	//this should be STILL just one stack
+	TestTrue(TEXT("Expected there to be multiple stacks of the test item in sample inventory"), UInventoryFunctions::GetNumStacksInInventory(SpawnedInventoryComponent->GetInventory(), TestItemInfo::TestItemID) == 1);
 
 	return true;
 }
@@ -167,7 +196,6 @@ bool FAddItemCalled_CurrentFocusHasWieldable_WieldAttempted::RunTest(const FStri
 IMPLEMENT_TEST(FRemoveItemCalled_ValidItemRequestingRemoval_ItemRemovedFromInventory)
 bool FRemoveItemCalled_ValidItemRequestingRemoval_ItemRemovedFromInventory::RunTest(const FString& Parameters)
 {
-	SpawnedInventoryComponent->BeginPlay();
 	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, TestItemInfo::TestQuantity);
 
 	TestTrue(TEXT("Expected the player inventory to contain the TestItem"), UInventoryFunctions::InventoryContains(SpawnedInventoryComponent->GetInventory(), TestItemInfo::TestItemID, TestItemInfo::TestQuantity));
@@ -182,8 +210,6 @@ bool FRemoveItemCalled_ValidItemRequestingRemoval_ItemRemovedFromInventory::RunT
 IMPLEMENT_TEST(FRemoveItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled)
 bool FRemoveItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled::RunTest(const FString& Parameters)
 {
-	SpawnedInventoryComponent->BeginPlay();
-
 	bool HasBroadcastCorrectly = false;
 
 	SpawnedInventoryComponent->OnInventoryUpdated.AddLambda([this, &HasBroadcastCorrectly]()
@@ -203,7 +229,6 @@ bool FRemoveItemCalled_ValidItemRequestingRemoval_ItemRemovedFromInventoryAndRet
 	const int32 RequestAmount = 20;
 	const int32 AmountActuallyInInventory = 10;
 
-	SpawnedInventoryComponent->BeginPlay();
 	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, AmountActuallyInInventory);
 
 	TestTrue(TEXT("Expected the player inventory to contain the TestItem"), UInventoryFunctions::InventoryContains(SpawnedInventoryComponent->GetInventory(), TestItemInfo::TestItemID, AmountActuallyInInventory));
@@ -223,7 +248,6 @@ bool FRemoveItemCalled_ValidItemRequestingRemoval_ItemRemovedFromInventoryAndRet
 IMPLEMENT_TEST(FRemoveItemCalled_ValidItemRequestingPartialRemoval_ItemPartiallyRemovedFromInventory)
 bool FRemoveItemCalled_ValidItemRequestingPartialRemoval_ItemPartiallyRemovedFromInventory::RunTest(const FString& Parameters)
 {
-	SpawnedInventoryComponent->BeginPlay();
 	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, TestItemInfo::TestQuantity);
 
 	TestTrue(TEXT("Expected the player inventory to contain the TestItem"), UInventoryFunctions::InventoryContains(SpawnedInventoryComponent->GetInventory(), TestItemInfo::TestItemID, TestItemInfo::TestQuantity));
@@ -246,7 +270,6 @@ bool FFocusChange_ItemWieldedThenFocusChanged_ItemDestroyed::RunTest(const FStri
 	SpawnedInventoryComponent->HotbarSlots = NumHotbarSlots;
 	SpawnedInventoryComponent->SetCurrentFocusSlot(0);
 
-	SpawnedInventoryComponent->BeginPlay();
 	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, TestItemInfo::TestQuantity);
 
 	TestTrue("Expected there to be at least 1 spawned wieldable in the world", GetWorldItems() > 0);
@@ -284,4 +307,81 @@ bool FFocusChange_FocusAtStartOfHotbarAndLastItemCalled_FocusSetToEnd::RunTest(c
 	return true;
 }
 
+IMPLEMENT_TEST(FUpdateFocusCalledOnInventory_OnSlotFocusedUpdateCalled)
+bool FUpdateFocusCalledOnInventory_OnSlotFocusedUpdateCalled::RunTest(const FString& Parameters)
+{
+	bool HasBroadcastCorrectly = false;
+
+	SpawnedInventoryComponent->OnSlotFocusUpdated.AddLambda([this, &HasBroadcastCorrectly](const int32 FocusedSlot)
+	{
+		TestEqual("Expected the initially focused slot to be 0", 0, FocusedSlot);
+
+		if (FocusedSlot == 0)
+		{
+			HasBroadcastCorrectly = true;
+		}
+	});
+
+	SpawnedInventoryComponent->UpdateFocus();
+
+	return HasBroadcastCorrectly;
+}
+
+/** Audit */
+
+IMPLEMENT_TEST(FInventoryWithItem_AuditCalled_CorrectDataReturned)
+bool FInventoryWithItem_AuditCalled_CorrectDataReturned::RunTest(const FString& Parameters)
+{
+	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, TestItemInfo::TestQuantity);
+
+	int32 AuditedStacks = 0;
+	int32 AuditedNum = 0;
+
+	SpawnedInventoryComponent->Audit(TestItemInfo::TestItemID, AuditedStacks, AuditedNum);
+
+	TestEqual(TEXT("Expected at least 1 stack of the item"), AuditedStacks, 1);
+	TestEqual(TEXT("Expected at least 1 item present in the audit"), AuditedNum, TestItemInfo::TestQuantity);
+
+	return true;
+}
+
+/** Transferring */
+
+IMPLEMENT_TEST(FTransferItemCalled_RoomInSecondInventory_ItemMovedSucessfully)
+bool FTransferItemCalled_RoomInSecondInventory_ItemMovedSucessfully::RunTest(const FString& Parameters)
+{
+	UAirInventory* RecipientInventory = CreateInventory();
+	RecipientInventory->BeginPlay();
+
+	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, TestItemInfo::TestQuantity);
+	SpawnedInventoryComponent->TransferItem(TestItemInfo::TestItemID, TestItemInfo::TestQuantity, RecipientInventory);
+
+	TestFalse(TEXT("Expected source inventory to not contain the original item"), UInventoryFunctions::InventoryContains(SpawnedInventoryComponent->GetInventory(), TestItemInfo::TestItemID, TestItemInfo::TestQuantity));
+	TestTrue(TEXT("Expceted the recipient inventory to have the new item"), UInventoryFunctions::InventoryContains(RecipientInventory->GetInventory(), TestItemInfo::TestItemID, TestItemInfo::TestQuantity));
+	
+	return true;
+}
+
+IMPLEMENT_TEST(FTransferItemCalled_NoRoomInSecondInventory_RemainderPutInSourceInventory)
+bool FTransferItemCalled_NoRoomInSecondInventory_RemainderPutInSourceInventory::RunTest(const FString& Parameters)
+{
+	const int32 StackSize = 5;
+	UAirInventory* RecipientInventory = CreateInventory();
+
+	//Only enough room for 1 stack
+	RecipientInventory->InventorySize = 1;
+	RecipientInventory->BeginPlay();
+
+	//Should be about 3 stacks worth
+	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, StackSize * 3);
+	SpawnedInventoryComponent->TransferItem(TestItemInfo::TestItemID, StackSize * 2, RecipientInventory);
+
+	const int32 NumInOldInventory = UInventoryFunctions::GetNumItemsInInventory(SpawnedInventoryComponent->GetInventory(), TestItemInfo::TestItemID);
+	const int32 NumInNewInventory = UInventoryFunctions::GetNumItemsInInventory(RecipientInventory->GetInventory(), TestItemInfo::TestItemID);
+
+	TestEqual(TEXT("Expected 2 stacks worth to still be in the original inventory"), NumInOldInventory, StackSize * 2);
+	TestEqual(TEXT("Expected just 1 stacks worth to be in the new inventory"), NumInNewInventory, StackSize * 1);
+
+	return true;
+}
 #endif //WITH_DEV_AUTOMATION_TESTS

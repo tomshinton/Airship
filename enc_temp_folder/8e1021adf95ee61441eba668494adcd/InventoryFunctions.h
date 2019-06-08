@@ -14,7 +14,7 @@ class UInventoryFunctions : public UObject
 
 public:
 
-	static FInventoryItemRow* GetItemInfo(const FName& ItemID);
+	static FInventoryItemRow* GetItemInfo(const FName ItemID);
 	static UDataTable* GetDataTable();
 
 	static FInventoryItem AddItemFromID(FInventory& Inventory, const FName ItemID, const int32 Quantity);

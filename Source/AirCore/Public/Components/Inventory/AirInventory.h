@@ -31,22 +31,22 @@ public:
 	FInventory GetInventory() const { return Inventory; };
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
-	AIRCORE_API void AddItem(const FName ID, const int32 Quantity);
+	AIRCORE_API void AddItem(const FName& ID, const int32& Quantity);
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
-	AIRCORE_API void RemoveItem(const FName ID, const int32 Quantity);
+	AIRCORE_API void RemoveItem(const FName& ID, const int32& Quantity);
+
+	UFUNCTION(BlueprintCallable, Category = Inventory)
+	AIRCORE_API void TransferItem(const FName& ItemID, const int32& Quantity, UAirInventory* RemoveInventory);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = Inventory)
 	int32 GetInventorySize() const { return InventorySize; }
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
-	void TransferItem(FName ItemID, int32 Quantity, UAirInventory* RemoveInventory);
+	AIRCORE_API void Audit(const FName& ItemID, int32& Stack, int32& Total);
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
-	void Audit(FName ItemID, int32& Stacks, int32& Total);
-
-	UFUNCTION(BlueprintCallable, Category = Inventory)
-	void SwapSlots(const int32 FirstSlot, const int32 SecondSlot);
+	void SwapSlots(const int32& FirstSlot, const int32& SecondSlot);
 
 	UFUNCTION(BlueprintPure, Category = Inventory)
 	void GetBackpackBounds(bool& HasBackpackSlots, int32& BackpackStart, int32& BackpackEnd);
@@ -67,6 +67,7 @@ public:
 
 	AIRCORE_API void SetItemBySlot(FInventoryItem InItem, const int32 InSlot);
 
+	AIRCORE_API void UpdateFocus();
 	AIRCORE_API void FocusNextItem();
 	AIRCORE_API void FocusLastItem();
 
