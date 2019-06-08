@@ -5,8 +5,9 @@
 #include "CoreMinimal.h"
 #include "AirWidget.h"
 #include "AirInventory.h"
-#include "Utils/Datatypes/InventoryItems.h"
 #include "InventorySlot.generated.h"
+
+struct FInventoryItem;
 
 class UInventorySlotPayload;
 class UTextBlock;

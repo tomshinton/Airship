@@ -2,14 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
 #include "WieldInterface.h"
-#include <Components/StaticMeshComponent.h>
-#include "Utils/Datatypes/InventoryItems.h"
 #include "WorldItem.generated.h"
 
 class UAirInventory;
+class UStaticMeshComponent;
 
 UCLASS(MinimalAPI)
 class AWorldItem : public AActor, public IWieldInterface

@@ -1,39 +1,13 @@
 #include "InventoryFunctions.h"
-#include "../Datatypes/InventoryItems.h"
 #include "ConstructorHelpers.h"
 #include "AirSettings.h"
-
-FInventoryItemRow* UInventoryFunctions::GetItemInfo(const FName& ItemID)
-{
-	FInventoryItemRow NewRow;
-	FInventoryItemRow* NewRowPtr = &NewRow;
-	UDataTable* ItemDataTable = GetDataTable();
-	if (ItemDataTable)
-	{
-		int32 NumRows = ItemDataTable->GetRowNames().Num();
-		FString Context;
-
-		NewRowPtr = ItemDataTable->FindRow<FInventoryItemRow>(ItemID, Context, false);
-	}
-
-	return NewRowPtr;
-}
-
-UDataTable* UInventoryFunctions::GetDataTable()
-{
-	if (UAirSettings* GameSettings = UAirSettings::Get())
-	{
-		if (UDataTable* InventoryDataTable = Cast<UDataTable>(GameSettings->InventoryLookup.TryLoad()))
-		{
-			return InventoryDataTable;
-		}
-	}
-	return nullptr;
-}
+#include "InventorySettings.h"
+#include "../Datatypes/Inventory.h"
+#include "../Datatypes/InventoryItem.h"
 
 FInventoryItem UInventoryFunctions::AddItemFromID(FInventory& Inventory, const FName ItemID, const int32 Quantity)
 {
-	FInventoryItemRow* NewItemInfo = GetItemInfo(ItemID);
+	FInventoryItemRow* NewItemInfo = UInventorySettings::GetItemInfo(ItemID);
 
 	if (NewItemInfo)
 	{
@@ -97,7 +71,7 @@ FInventoryItem UInventoryFunctions::RemoveItem(FInventory& InventoryToRemoveFrom
 	int32 QuantityLeft = Quantity;
 	int32 AmountRemoved = 0;
 
-	FInventoryItemRow* NewItemInfo = GetItemInfo(ItemID);
+	FInventoryItemRow* NewItemInfo = UInventorySettings::GetItemInfo(ItemID);
 
 	if (NewItemInfo)
 	{

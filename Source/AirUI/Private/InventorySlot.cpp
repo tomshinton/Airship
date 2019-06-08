@@ -7,13 +7,11 @@
 #include <WidgetBlueprintLibrary.h>
 #include "Utils/Functions/BindingFunctions.h"
 #include "InventorySlotDragOperation.h"
-#include "AirSettings.h"
 #include <Engine/DataTable.h>
-#include "Utils/Datatypes/InventoryItems.h"
-
 #include <Image.h>
 #include <TextBlock.h>
 #include "DragAndDropVisual.h"
+#include "InventorySettings.h"
 
 const FName UInventorySlot::Anim_Focus = FName("Focus");
 
@@ -148,21 +146,18 @@ bool UInventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 
 void UInventorySlot::BuildSlotVisuals()
 {
-	if (UAirSettings* GameSettings = GetMutableDefault<UAirSettings>())
+	if(UDataTable* InventoryDataTable = UInventorySettings::GetItemLookupTable())
 	{
-		if (UDataTable* InventoryDataTable = Cast<UDataTable>(GameSettings->InventoryLookup.TryLoad()))
-		{
-			FString ContextString = "Item Lookup";
-			FInventoryItemRow* FoundRow = InventoryDataTable->FindRow<FInventoryItemRow>(LinkedInventoryItem.ItemID, ContextString, false);
+		const FString ContextString = "Item Lookup";
+		FInventoryItemRow* FoundRow = InventoryDataTable->FindRow<FInventoryItemRow>(LinkedInventoryItem.ItemID, ContextString, false);
 
-			if (FoundRow)
-			{
-				BuildFromValidData(FoundRow);
-			}
-			else
-			{
-				BuildFromInvalidData();
-			}
+		if (FoundRow)
+		{
+			BuildFromValidData(FoundRow);
+		}
+		else
+		{
+			BuildFromInvalidData();
 		}
 	}
 }

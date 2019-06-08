@@ -14,9 +14,6 @@ class UInventoryFunctions : public UObject
 
 public:
 
-	static FInventoryItemRow* GetItemInfo(const FName& ItemID);
-	static UDataTable* GetDataTable();
-
 	static FInventoryItem AddItemFromID(FInventory& Inventory, const FName ItemID, const int32 Quantity);
 	AIRCORE_API static FInventoryItem RemoveItem(FInventory& InventoryToRemoveFrom, const FName ItemID, const int32 Quantity);
 	static void TransferItems(FName ItemID, int32 Quantity, FInventory& InventoryToRemoveFrom, FInventory& InventoryToAddTo);

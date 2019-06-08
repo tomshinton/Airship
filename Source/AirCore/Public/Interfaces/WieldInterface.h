@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Interface.h"
-#include "Utils/Datatypes/InventoryItems.h"
 
 #include "WieldInterface.generated.h"
 

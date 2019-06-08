@@ -3,6 +3,7 @@
 #include "AirInventory.h"
 #include "WorldItem.h"
 #include <GameFramework/Character.h>
+#include "Utils/Functions/InventoryFunctions.h"
 
 DEFINE_LOG_CATEGORY_STATIC(AirInventoryLog, Log, Log);
 

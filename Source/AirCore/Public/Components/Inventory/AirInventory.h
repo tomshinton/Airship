@@ -2,10 +2,8 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
-#include "Utils/Datatypes/InventoryItems.h"
 #include "WieldInterface.h"
+#include "Utils/Datatypes/Inventory.h"
 
 #include "AirInventory.generated.h"
 

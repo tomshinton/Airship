@@ -15,9 +15,6 @@ class UAirSettings : public UObject
 
 public:
 
-	UPROPERTY(EditAnywhere, config, Category = "Inventory", meta = (AllowedClasses = "DataTable"))
-	FStringAssetReference InventoryLookup;
-
 	static UAirSettings* Get()
 	{
 		return GetMutableDefault<UAirSettings>();
