@@ -384,4 +384,50 @@ bool FTransferItemCalled_NoRoomInSecondInventory_RemainderPutInSourceInventory::
 
 	return true;
 }
+
+/** Slot Swapping */
+
+IMPLEMENT_TEST(FValidItemInInventory_SwapSlotCalled_SlotsSwappedCorrectly)
+bool FValidItemInInventory_SwapSlotCalled_SlotsSwappedCorrectly::RunTest(const FString& Parameters)
+{
+	//Should add at index 0
+	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, TestItemInfo::TestQuantity);
+	
+	SpawnedInventoryComponent->SwapSlots(0, 1);
+
+	const FName IDAtFirstSlotAfterSwap = SpawnedInventoryComponent->GetItemNameBySlot(0);
+
+	TestTrue(TEXT("Expected Item to be defaulted"), IDAtFirstSlotAfterSwap == InventoryItemStatics::DefaultItemName);
+
+	return true;
+}
+
+/** Reloading */
+
+IMPLEMENT_TEST(FItemWieldedWithValidClip_ReloadCalled_ItemLoaded)
+bool FItemWieldedWithValidClip_ReloadCalled_ItemLoaded::RunTest(const FString& Parameters)
+{
+	//In this instance, the TestItem's clip can hold other Test Items
+	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, TestItemInfo::TestQuantity);
+
+	TestTrue(TEXT("Expected item to have been spawned in as a wieldable"), GetWorldItems() > 0);
+
+	const int32 NumItemInInventory = UInventoryFunctions::GetNumItemsInInventory(SpawnedInventoryComponent->GetInventory(), TestItemInfo::TestItemID);
+	TestTrue(TEXT("Make sure we have more than 1 item in the inventory"), NumItemInInventory > 1);
+
+	SpawnedInventoryComponent->Reload();
+
+	const int32 NumItemInInventoryPostReload = UInventoryFunctions::GetNumItemsInInventory(SpawnedInventoryComponent->GetInventory(), TestItemInfo::TestItemID);
+
+	TestTrue(TEXT("Expected less items to be in the inventory"), NumItemInInventoryPostReload < NumItemInInventory);
+
+	//Make sure that the difference in numbers matches the expected clipsize
+	const FClip& PostLoadClip = SpawnedInventoryComponent->GetItemBySlot(0).GetItemClip();
+	const int32 ItemDif = NumItemInInventory - NumItemInInventoryPostReload;
+
+	TestEqual<int32>(TEXT("Expected the amount loaded into the item to match the clipsize"), ItemDif, PostLoadClip.ClipSize);
+
+	return true;
+}
+
 #endif //WITH_DEV_AUTOMATION_TESTS

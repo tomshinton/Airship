@@ -124,7 +124,7 @@ void UAirInventory::GetHotbarBounds(bool& HasHotbarSlots, int32& HotbarStart, in
 	HotbarEnd = FMath::Clamp(HotbarSlots - 1, 0, InventorySize-1);
 }
 
-FInventoryItem UAirInventory::GetItemBySlot(const int32 ID)
+FInventoryItem UAirInventory::GetItemBySlot(const int32& ID) const
 {
 	if (Inventory.ItemSlots.Num() -1 >= ID)
 	{
@@ -134,7 +134,7 @@ FInventoryItem UAirInventory::GetItemBySlot(const int32 ID)
 	return FInventoryItem();
 }
 
-FName UAirInventory::GetItemNameBySlot(const int32 Slot)
+FName UAirInventory::GetItemNameBySlot(const int32& Slot) const
 {
 	if (Inventory.ItemSlots.Num() - 1 >= Slot)
 	{
@@ -142,7 +142,7 @@ FName UAirInventory::GetItemNameBySlot(const int32 Slot)
 		return FoundSlot.ItemID;
 	}
 
-	return "";
+	return FName();
 }
 
 void UAirInventory::SetItemBySlot(FInventoryItem InItem, const int32 InSlot)

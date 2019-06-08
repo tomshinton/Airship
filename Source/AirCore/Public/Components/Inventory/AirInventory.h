@@ -12,8 +12,8 @@ class AWorldItem;
 DECLARE_MULTICAST_DELEGATE(FOnInventoryUpdated);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSlotFocusUpdated, const int32);
 
-UCLASS(MinimalAPI)
-class UAirInventory : public UActorComponent
+UCLASS()
+class AIRCORE_API UAirInventory : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -29,19 +29,19 @@ public:
 	FInventory GetInventory() const { return Inventory; };
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
-	AIRCORE_API void AddItem(const FName& ID, const int32& Quantity);
+	void AddItem(const FName& ID, const int32& Quantity);
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
-	AIRCORE_API void RemoveItem(const FName& ID, const int32& Quantity);
+	void RemoveItem(const FName& ID, const int32& Quantity);
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
-	AIRCORE_API void TransferItem(const FName& ItemID, const int32& Quantity, UAirInventory* RemoveInventory);
+	void TransferItem(const FName& ItemID, const int32& Quantity, UAirInventory* RemoveInventory);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = Inventory)
 	int32 GetInventorySize() const { return InventorySize; }
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
-	AIRCORE_API void Audit(const FName& ItemID, int32& Stack, int32& Total);
+	void Audit(const FName& ItemID, int32& Stack, int32& Total);
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void SwapSlots(const int32& FirstSlot, const int32& SecondSlot);
@@ -60,14 +60,14 @@ public:
 	UFUNCTION()
 	void ReduceCurrentClip(const int32 InAmountToReduce);
 
-	AIRCORE_API FInventoryItem GetItemBySlot(const int32 ID);
-	FName GetItemNameBySlot(const int32 ID);
+	FInventoryItem GetItemBySlot(const int32& ID) const;
+	FName GetItemNameBySlot(const int32& ID) const;
 
-	AIRCORE_API void SetItemBySlot(FInventoryItem InItem, const int32 InSlot);
+	void SetItemBySlot(FInventoryItem InItem, const int32 InSlot);
 
-	AIRCORE_API void UpdateFocus();
-	AIRCORE_API void FocusNextItem();
-	AIRCORE_API void FocusLastItem();
+	void UpdateFocus();
+	void FocusNextItem();
+	void FocusLastItem();
 
 	int32 GetCurrentFocusedSlot() const { return CurrFocusedSlot; }
 
