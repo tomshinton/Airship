@@ -3,7 +3,7 @@
 #include "ConstructorHelpers.h"
 #include "AirSettings.h"
 
-FInventoryItemRow* UInventoryFunctions::GetItemInfo(FName ItemID)
+FInventoryItemRow* UInventoryFunctions::GetItemInfo(const FName& ItemID)
 {
 	FInventoryItemRow NewRow;
 	FInventoryItemRow* NewRowPtr = &NewRow;
@@ -21,7 +21,7 @@ FInventoryItemRow* UInventoryFunctions::GetItemInfo(FName ItemID)
 
 UDataTable* UInventoryFunctions::GetDataTable()
 {
-	if (UAirSettings* GameSettings = GetMutableDefault<UAirSettings>())
+	if (UAirSettings* GameSettings = UAirSettings::Get())
 	{
 		if (UDataTable* InventoryDataTable = Cast<UDataTable>(GameSettings->InventoryLookup.TryLoad()))
 		{
