@@ -6,6 +6,7 @@
 #include <ISettingsContainer.h>
 #include <Internationalization.h>
 #include <ISettingsSection.h>
+#include "InventorySettings.h"
 
 IMPLEMENT_MODULE(FAirEditorModule, AirEditor);
 DEFINE_LOG_CATEGORY(AirEditorLog)
@@ -32,11 +33,13 @@ void FAirEditorModule::RegisterSettings()
 		
 		ISettingsSectionPtr SettingsSection = SettingsModule->RegisterSettings("Project", "Airship Settings", "General", FText::FromString("Airship Settings"), FText::FromString("Base gameplay settings for Airship"), GetMutableDefault<UAirSettings>());
 		ISettingsSectionPtr UISettingsSection = SettingsModule->RegisterSettings("Project", "Airship Settings", "UI", FText::FromString("Airship UI Settings"), FText::FromString("UI Settings"), GetMutableDefault<UUISettings>());
+		ISettingsSectionPtr InventorySettingsSection = SettingsModule->RegisterSettings("Project", "Airship Settings", "Inventory", FText::FromString("Airship Inventory Settings"), FText::FromString("Inventory Settings"), GetMutableDefault<UInventorySettings>());
 
-		if (SettingsSection.IsValid() && UISettingsSection.IsValid())
+		if (SettingsSection.IsValid() && UISettingsSection.IsValid() && InventorySettingsSection)
 		{
 			SettingsSection->OnModified().BindRaw(this, &FAirEditorModule::HandleSettingsSaved);
 			UISettingsSection->OnModified().BindRaw(this, &FAirEditorModule::HandleSettingsSaved);
+			InventorySettingsSection->OnModified().BindRaw(this, &FAirEditorModule::HandleSettingsSaved);
 		}
 	}
 }
