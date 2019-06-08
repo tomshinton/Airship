@@ -8,6 +8,8 @@
 
 DEFINE_LOG_CATEGORY_STATIC(AutomationRunnerLog, Log, Log);
 
+#define IMPLEMENT_AIRTEST(TestName, BaseClass, Category) IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(TestName, BaseClass, "Air." #Category "." #TestName, FAirBaseFixture::TestFlags)
+
 #pragma optimize("", off)
 
 #if WITH_DEV_AUTOMATION_TESTS

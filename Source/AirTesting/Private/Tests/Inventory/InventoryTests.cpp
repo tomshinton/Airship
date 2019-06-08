@@ -76,12 +76,13 @@ public:
 	}
 
 	UAirInventory* SpawnedInventoryComponent;
-	F
 };
+
+#define IMPLEMENT_TEST(TestName)IMPLEMENT_AIRTEST(TestName, FInventoryTestFixture, AirInventory)
 
 /** Initialization*/
 
-IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FBeginPlayCalledOnInventory_InventoryInitialisedAtCorrectSize, FInventoryTestFixture, "Air.InventoryComponent.BeginPlay.BeginPlayCalledOnInventory_InventoryInitialisedAtCorrectSize", FAirBaseFixture::TestFlags)
+IMPLEMENT_TEST(FBeginPlayCalledOnInventory_InventoryInitialisedAtCorrectSize)
 bool FBeginPlayCalledOnInventory_InventoryInitialisedAtCorrectSize::RunTest(const FString& Parameters)
 {
 	SpawnedInventoryComponent->BeginPlay();
@@ -98,7 +99,7 @@ bool FBeginPlayCalledOnInventory_InventoryInitialisedAtCorrectSize::RunTest(cons
 	return true;
 }
 
-IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FBeginPlayCalledOnInventory_OnSlotFocusedUpdateCalled, FInventoryTestFixture, "Air.InventoryComponent.BeginPlay.BeginPlayCalledOnInventory_OnSlotFocusedUpdateCalled", FAirBaseFixture::TestFlags)
+IMPLEMENT_TEST(FBeginPlayCalledOnInventory_OnSlotFocusedUpdateCalled)
 bool FBeginPlayCalledOnInventory_OnSlotFocusedUpdateCalled::RunTest(const FString& Parameters)
 {
 	bool HasBroadcastCorrectly = false;
@@ -120,7 +121,7 @@ bool FBeginPlayCalledOnInventory_OnSlotFocusedUpdateCalled::RunTest(const FStrin
 
 /** Adding Items */
 
-IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FAddItemCalled_ValidItemBeingPassedIn_ItemAddedToInventory, FInventoryTestFixture, "Air.InventoryComponent.AddItem.AddItemCalled_ValidItemBeingPassedIn_ItemAddedToInventory", FAirBaseFixture::TestFlags)
+IMPLEMENT_TEST(FAddItemCalled_ValidItemBeingPassedIn_ItemAddedToInventory)
 bool FAddItemCalled_ValidItemBeingPassedIn_ItemAddedToInventory::RunTest(const FString& Parameters)
 {
 	SpawnedInventoryComponent->BeginPlay();
@@ -133,7 +134,7 @@ bool FAddItemCalled_ValidItemBeingPassedIn_ItemAddedToInventory::RunTest(const F
 	return true;
 }
 
-IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FAddItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled, FInventoryTestFixture, "Air.InventoryComponent.AddItem.AddItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled", FAirBaseFixture::TestFlags)
+IMPLEMENT_TEST(FAddItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled)
 bool FAddItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled::RunTest(const FString& Parameters)
 {
 	SpawnedInventoryComponent->BeginPlay();
@@ -150,18 +151,7 @@ bool FAddItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled::RunTest(const 
 	return HasBroadcastCorrectly;
 }
 
-IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FAddItemCalled_CurrentFocusHasWieldable_WieldAttempted, FInventoryTestFixture, "Air.InventoryComponent.AddItem.AddItemCalled_CurrentFocusHasWieldable_WieldAttempted", FAirBaseFixture::TestFlags)
-bool FAddItemCalled_CurrentFocusHasWieldable_WieldAttempted::RunTest(const FString& Parameters)
-{
-	SpawnedInventoryComponent->BeginPlay();
-	SpawnedInventoryComponent->AddItem(TestItemInfo::TestItemID, TestItemInfo::TestQuantity);
-
-	TestTrue("Expected there to be at least 1 spawned wieldable in the world", GetWorldItems() > 0);
-
-	return true;
-}
-
-IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FAddItemCalled_CurrentFocusHasWieldable_WieldAttempted, FInventoryTestFixture, "Air.InventoryComponent.AddItem.AddItemCalled_AmountSpansOverTwoStacks_InventoryContainsTwoPopulatedStacks", FAirBaseFixture::TestFlags)
+IMPLEMENT_TEST(FAddItemCalled_CurrentFocusHasWieldable_WieldAttempted)
 bool FAddItemCalled_CurrentFocusHasWieldable_WieldAttempted::RunTest(const FString& Parameters)
 {
 	SpawnedInventoryComponent->BeginPlay();
@@ -174,7 +164,7 @@ bool FAddItemCalled_CurrentFocusHasWieldable_WieldAttempted::RunTest(const FStri
 
 /** Removing items*/
 
-IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FRemoveItemCalled_ValidItemRequestingRemoval_ItemRemovedFromInventory, FInventoryTestFixture, "Air.InventoryComponent.RemoveItem.RemoveItemCalled_ValidItemRequestingRemoval_ItemRemovedFromInventory", FAirBaseFixture::TestFlags)
+IMPLEMENT_TEST(FRemoveItemCalled_ValidItemRequestingRemoval_ItemRemovedFromInventory)
 bool FRemoveItemCalled_ValidItemRequestingRemoval_ItemRemovedFromInventory::RunTest(const FString& Parameters)
 {
 	SpawnedInventoryComponent->BeginPlay();
@@ -189,7 +179,7 @@ bool FRemoveItemCalled_ValidItemRequestingRemoval_ItemRemovedFromInventory::RunT
 	return true;
 }
 
-IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FRemoveItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled, FInventoryTestFixture, "Air.InventoryComponent.RemoveItem.RemoveItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled", FAirBaseFixture::TestFlags)
+IMPLEMENT_TEST(FRemoveItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled)
 bool FRemoveItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled::RunTest(const FString& Parameters)
 {
 	SpawnedInventoryComponent->BeginPlay();
@@ -205,7 +195,8 @@ bool FRemoveItemCalled_ValidItemBeingPassedIn_InventoryUpdateCalled::RunTest(con
 
 	return HasBroadcastCorrectly;
 }
-IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FRemoveItemCalled_ValidItemRequestingRemoval_ItemRemovedFromInventoryAndReturned, FInventoryTestFixture, "Air.InventoryComponent.RemoveItem.RemoveItemCalled_ValidItemRequestingRemoval_ItemRemovedFromInventoryAndReturned", FAirBaseFixture::TestFlags)
+
+IMPLEMENT_TEST(FRemoveItemCalled_ValidItemRequestingRemoval_ItemRemovedFromInventoryAndReturned)
 bool FRemoveItemCalled_ValidItemRequestingRemoval_ItemRemovedFromInventoryAndReturned::RunTest(const FString& Parameters)
 {
 	//We're allowed to try and remove more than we have in the inventory.  IN this case, request 20 be removed, but only expect 10 to be returned.
@@ -229,7 +220,7 @@ bool FRemoveItemCalled_ValidItemRequestingRemoval_ItemRemovedFromInventoryAndRet
 	return true;
 }
 
-IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FRemoveItemCalled_ValidItemRequestingPartialRemoval_ItemPartiallyRemovedFromInventory, FInventoryTestFixture, "Air.InventoryComponent.RemoveItem.RemoveItemCalled_ValidItemRequestingPartialRemoval_ItemPartiallyRemovedFromInventory", FAirBaseFixture::TestFlags)
+IMPLEMENT_TEST(FRemoveItemCalled_ValidItemRequestingPartialRemoval_ItemPartiallyRemovedFromInventory)
 bool FRemoveItemCalled_ValidItemRequestingPartialRemoval_ItemPartiallyRemovedFromInventory::RunTest(const FString& Parameters)
 {
 	SpawnedInventoryComponent->BeginPlay();
@@ -248,7 +239,7 @@ bool FRemoveItemCalled_ValidItemRequestingPartialRemoval_ItemPartiallyRemovedFro
 
 /** Focus Changing */
 
-IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FFocusChange_ItemWieldedThenFocusChanged_ItemDestroyed, FInventoryTestFixture, "Air.InventoryComponent.Focus.FocusChange_ItemWieldedThenFocusChanged_ItemDestroyed", FAirBaseFixture::TestFlags)
+IMPLEMENT_TEST(FFocusChange_ItemWieldedThenFocusChanged_ItemDestroyed)
 bool FFocusChange_ItemWieldedThenFocusChanged_ItemDestroyed::RunTest(const FString& Parameters)
 {
 	const int32 NumHotbarSlots = 10;
@@ -267,7 +258,7 @@ bool FFocusChange_ItemWieldedThenFocusChanged_ItemDestroyed::RunTest(const FStri
 	return true;
 }
 
-IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FFocusChange_FocusAlreadyAtEndOfHotbarAndFocusNextItemCalled_FocusSetToStart, FInventoryTestFixture, "Air.InventoryComponent.Focus.FocusChange_FocusAlreadyAtEndOfHotbarAndFocusNextItemCalled_FocusSetToStart", FAirBaseFixture::TestFlags)
+IMPLEMENT_TEST(FFocusChange_FocusAlreadyAtEndOfHotbarAndFocusNextItemCalled_FocusSetToStart)
 bool FFocusChange_FocusAlreadyAtEndOfHotbarAndFocusNextItemCalled_FocusSetToStart::RunTest(const FString& Parameters)
 {
 	const int32 NumHotbarSlots = 10;
@@ -280,7 +271,7 @@ bool FFocusChange_FocusAlreadyAtEndOfHotbarAndFocusNextItemCalled_FocusSetToStar
 	return true;
 }
 
-IMPLEMENT_CUSTOM_SIMPLE_AUTOMATION_TEST(FFocusChange_FocusAtStartOfHotbarAndLastItemCalled_FocusSetToEnd, FInventoryTestFixture, "Air.InventoryComponent.Focus.FocusChange_FocusAtStartOfHotbarAndLastItemCalled_FocusSetToEnd", FAirBaseFixture::TestFlags)
+IMPLEMENT_TEST(FFocusChange_FocusAtStartOfHotbarAndLastItemCalled_FocusSetToEnd)
 bool FFocusChange_FocusAtStartOfHotbarAndLastItemCalled_FocusSetToEnd::RunTest(const FString& Parameters)
 {
 	const int32 NumHotbarSlots = 10;
