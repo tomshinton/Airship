@@ -4,15 +4,18 @@
 #include "ConstructorHelpers.h"
 #include "AirChar.h"
 
-// Sets default values for this component's properties
 UHealthComponent::UHealthComponent()
-	: MaxHealth(100.f)
-	, CurrentHealth(MaxHealth)
+	: OnHealthChanged()
+	, OnHealthDepleted()
+	, FallDamageCurve(nullptr)
+	, DamageHistory()
 	, DamageHistoryLimit(5)
+	, MaxHealth(100.f)
+	, CurrentHealth(MaxHealth)
 	, MaxZVelocity(2500.f)
 	, MaxFallDamage(MaxHealth)
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	static ConstructorHelpers::FObjectFinder<UCurveFloat> FallDamageCurveRef(TEXT("CurveFloat'/Game/Data/Curves/C_FallDamageCurve.C_FallDamageCurve'"));
 	if (FallDamageCurveRef.Object)
@@ -23,17 +26,21 @@ UHealthComponent::UHealthComponent()
 
 void UHealthComponent::ApplyDamage(const FBaseDamageEvent& InDamageEvent)
 {
-	CurrentHealth = FMath::Clamp((CurrentHealth - ModifyByType(InDamageEvent)), 0.f, MaxHealth);
+	//Modify by type will approriately clamp the value to Min/Max health
+	FBaseDamageEvent ModifiableDamageEvent = InDamageEvent;
+	CurrentHealth = ModifyByType(ModifiableDamageEvent);
 
-	DamageHistory.Insert(InDamageEvent, 0);
+	DamageHistory.Insert(ModifiableDamageEvent, 0);
 	if (DamageHistory.Num() > DamageHistoryLimit)
 	{
 		DamageHistory.RemoveAt(DamageHistoryLimit);
 	}
 
+	OnHealthChanged.Broadcast(ModifiableDamageEvent);
+
 	if (CurrentHealth <= 0.f)
 	{
-		OnHealthDelepled.Broadcast(DamageHistory[0]);
+		OnHealthDepleted.Broadcast(ModifiableDamageEvent);
 	}
 }
 
@@ -43,20 +50,32 @@ void UHealthComponent::TakeFallDamage()
 	ApplyDamage(FallingDamageEvent);
 }
 
-float UHealthComponent::ModifyByType(const FBaseDamageEvent& InDamageEvent)
+float UHealthComponent::ModifyByType(FBaseDamageEvent& InDamageEvent) const
 {
-	switch (InDamageEvent.DamageType)
+	float ModifiedAmount = 0.f;
+
+	if (AActor* Owner = GetOwner())
 	{
-	case EDamageType::Falling:
-		if (FallDamageCurve)
+		switch (InDamageEvent.DamageType)
 		{
-			const float NormalisedVelocity = FMath::Abs(GetOwner()->GetVelocity().Z) / MaxZVelocity;
-			return FallDamageCurve->GetFloatValue(NormalisedVelocity) * MaxFallDamage;
+
+		case EDamageType::Flat:
+			ModifiedAmount = InDamageEvent.Amount;
+		break;
+
+		case EDamageType::Falling:
+			if (FallDamageCurve)
+			{
+				const float NormalisedVelocity = FMath::Abs(Owner->GetVelocity().Z) / MaxZVelocity;
+				ModifiedAmount = FallDamageCurve->GetFloatValue(NormalisedVelocity) * MaxFallDamage;
+			}
+		break;
+
 		}
-	break;
 	}
 
-	return InDamageEvent.Amount;
+	InDamageEvent.Amount = ModifiedAmount;
+	return FMath::Clamp(CurrentHealth - ModifiedAmount, 0.f, MaxHealth);
 }
 
 void UHealthComponent::BeginPlay()

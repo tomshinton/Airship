@@ -2,14 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
 #include "HealthInterface.h"
-#include "Utils/Events/DamageEvents.h"
 
 #include "HealthComponent.generated.h"
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthDepleted, FBaseDamageEvent, KillingBlow);
 
 UCLASS(MinimalAPI)
 class UHealthComponent : public UActorComponent, public IHealthInterface
@@ -20,33 +15,47 @@ public:
 	// Sets default values for this component's properties
 	UHealthComponent();	
 
+	AIRCORE_API TArray<FBaseDamageEvent> GetDamageHistory() const { return DamageHistory; };
+
+#if WITH_DEV_AUTOMATION_TESTS
+	void SetFallDamageCurve(UCurveFloat* InNewCurve) { FallDamageCurve = InNewCurve; };
+	void SetDamageHistoryLimit(const int32& NewLimit) { DamageHistoryLimit = NewLimit; };
+	void ResetToNewMaxHealth(const float& NewMaxHealth)
+	{
+		MaxHealth = NewMaxHealth;
+		CurrentHealth = NewMaxHealth;
+	}
+	float GetMaxSupportedVelocity() const { return MaxZVelocity; };
+#endif //WITH_DEV_AUTOMATION_TESTS
+
 private:
-	float MaxHealth;
-	float CurrentHealth;
 
-	TArray<FBaseDamageEvent> DamageHistory;
-	int32 DamageHistoryLimit;
-
-	float MaxZVelocity;
-	float MaxFallDamage;
+	virtual void BeginPlay() override;
 
 	//HealthInterface
-public:
 	virtual void ApplyDamage(const FBaseDamageEvent& InDamageEvent) override;
+	virtual FOnHealthChanged& GetOnHealthChangedEvent() override { return OnHealthChanged; };
+	virtual FOnHealthDepleted& GetOnHealthDepletedEvent() override { return OnHealthDepleted; };
 	//HealthInterface
 
 	UFUNCTION()
 	void TakeFallDamage();
 
-	float ModifyByType(const FBaseDamageEvent& InDamageEvent);
+	float ModifyByType(FBaseDamageEvent& InDamageEvent) const;
 
+	FOnHealthChanged OnHealthChanged;
+	FOnHealthDepleted OnHealthDepleted;
 
-	virtual void BeginPlay() override;
-
-public:
-	FOnHealthDepleted OnHealthDelepled;
-
-private:
+	UPROPERTY()
 	UCurveFloat* FallDamageCurve;
 
+	TArray<FBaseDamageEvent> DamageHistory;
+
+	int32 DamageHistoryLimit;
+
+	float MaxHealth;
+	float CurrentHealth;
+
+	float MaxZVelocity;
+	float MaxFallDamage;
 };
