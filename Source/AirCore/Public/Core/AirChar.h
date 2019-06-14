@@ -21,13 +21,10 @@ class AAirChar : public ACharacter
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintPure, Category = Inventory)
-	UAirInventory* GetInventory() const { return InventoryComponent; }
 
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void BeginPlay() override;
 
-public:
 	// Sets default values for this character's properties
 	AAirChar();
 
@@ -46,8 +43,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Hands)
 	float HandOffset;
 
+	UPROPERTY()
 	UHealthComponent* HealthComponent;
+
+	UPROPERTY()
 	UInteractionComponent* InteractionComponent;
+
+	UPROPERTY()
 	UAirMovementComponent* MovementComponent;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -56,6 +58,11 @@ public:
 	FOnCharLanded OnCharLanded;
 
 	virtual void Landed(const FHitResult& Hit) override;
+
+	UFUNCTION(BlueprintPure, Category = Inventory)
+	UAirInventory* GetInventory() const { return InventoryComponent; };
+
+	UInputComponent* GetCachedInputComponent() const {return CachedInputComponent; };
 
 protected:
 
@@ -69,4 +76,7 @@ private:
 	void DeferUIBinding(UInputComponent* PlayerInputComponent);
 
 	bool ShouldLowerHands();
+
+	UPROPERTY()
+	UInputComponent* CachedInputComponent;
 };

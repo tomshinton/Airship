@@ -2,14 +2,10 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "GameFramework/PlayerController.h"
-#include "Camera/CameraComponent.h"
+#include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
 #include "AirController.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLookAtChange, AActor*, NewLookAt);
-
-DECLARE_STATS_GROUP(TEXT("ControllerLookAt"), STATGROUP_ControllerFunctions, STATCAT_Advanced);
+class UInteractionComponent;
 
 UCLASS()
 class AAirController : public APlayerController
@@ -20,19 +16,6 @@ class AAirController : public APlayerController
 
 public:
 
-	FOnLookAtChange OnLookAtChanged;
-
-private:
-	void LookAt();
-	bool TraceSceneChanged();
-
-	AActor* LastLookAtActor;
-	AActor* CurrentLookAtActor;
-
-	FTransform CachedObjectTransform;
-	FTransform CachedPawnTransform;
-
-	FTimerHandle LookAtTimerHandle;
-	float LookAtFrequency;
-	float LookAtDistance;
+	UPROPERTY()
+	UInteractionComponent* InteractionComponent;
 };

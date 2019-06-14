@@ -22,6 +22,7 @@ AAirChar::AAirChar()
 	, InventoryComponent(CreateDefaultSubobject<UAirInventory>(TEXT("InventoryComponent")))
 	, RightHandTargetTransform(FVector(40.f, -30.f, 40.f))
 	, LeftHandTargetLocation(FVector(40.f, 30.f, 40.f))
+	, CachedInputComponent(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -77,6 +78,8 @@ void AAirChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	CachedInputComponent = PlayerInputComponent;
+
 	PlayerInputComponent->BindAxis("MoveForward", MovementComponent, &UAirMovementComponent::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", MovementComponent, &UAirMovementComponent::MoveRight);
 	PlayerInputComponent->BindAxis("LookRight", MovementComponent, &UAirMovementComponent::LookRight);
@@ -88,9 +91,6 @@ void AAirChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	//Act as a flip-flop
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, MovementComponent, &UAirMovementComponent::ToggleSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, MovementComponent, &UAirMovementComponent::ToggleSprint);
-
-	PlayerInputComponent->BindAction("Use", IE_Pressed, InteractionComponent, &UInteractionComponent::StartInteraction);
-	PlayerInputComponent->BindAction("Use", IE_Released, InteractionComponent, &UInteractionComponent::EndInteraction);
 
 	PlayerInputComponent->BindAction("FocusNextItem", IE_Pressed, InventoryComponent, &UAirInventory::FocusNextItem);
 	PlayerInputComponent->BindAction("FocusLastItem", IE_Pressed, InventoryComponent, &UAirInventory::FocusLastItem);
