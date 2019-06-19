@@ -39,7 +39,12 @@
 		{
 			"Name": "AirTesting",
 			"Type": "Editor",
-			"LoadingPhase": "PostEngineInit"
+			"LoadingPhase": "PostEngineInit",
+			"AdditionalDependencies": [
+				"Engine",
+				"EditorTests",
+				"UnrealEd"
+			]
 		},
 		{
 			"Name": "AirEditor",

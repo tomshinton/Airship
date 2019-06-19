@@ -23,7 +23,7 @@ void UInventorySlot::NativeConstruct()
 
 	if (!LinkedInventory)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Build called on inventory slot before having its LinkedInventory set!"));
+		UE_LOG(LogTemp, Warning, TEXT("Build called on inventory slot before having its LinkedInventory set!"));
 	}
 
 	if (LinkedInventory)

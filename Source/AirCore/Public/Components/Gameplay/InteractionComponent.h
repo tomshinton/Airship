@@ -9,7 +9,7 @@
 #include "WorldCollision.h"
 #include "InteractionComponent.generated.h"
 
-UCLASS()
+UCLASS(MinimalAPI)
 class UInteractionComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -22,6 +22,20 @@ public:
 
 	void StartInteraction();
 	void EndInteraction();
+
+	AActor* GetHoveredActor() const { return HoveredActor; };
+
+#if WITH_DEV_AUTOMATION_TESTS
+	AIRCORE_API UWorld* GetCachedWorld() const { return CachedWorld; };
+	AIRCORE_API FCollisionQueryParams& GetCachedTraceParams() { return CachedTraceParams; };
+	AIRCORE_API FTraceDelegate& GetOnLookOverDelegate() { return OnLookOverDelegate; };
+	AIRCORE_API FTimerHandle& GetTickTimerHandle() { return LookAtTimerHandle; };
+
+	AIRCORE_API void ForceLook() { Look(); };
+
+	AIRCORE_API bool GetIsAlreadyProcessingLook() const { return IsAlreadyProcessingLook; };
+
+#endif //WITH_DEV_AUTOMATION_TESTS
 
 private:
 

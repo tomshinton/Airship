@@ -7,7 +7,7 @@
 
 class UInteractionComponent;
 
-UCLASS()
+UCLASS(MinimalAPI)
 class AAirController : public APlayerController
 {
 	GENERATED_BODY()

@@ -52,10 +52,14 @@ void UInteractionComponent::SetupInput(APawn* InNewPawn)
 	{
 		CachedOwningPawn = OwningPawn;
 
-		UE_LOG(InteractionComponent, Log, TEXT("Setting up Interaction bindings"));
+		if (UInputComponent* CachedInputComponent = CachedOwningPawn->GetCachedInputComponent())
+		{
 
-		CachedOwningPawn->GetCachedInputComponent()->BindAction("Use", IE_Pressed, this, &UInteractionComponent::StartInteraction);
-		CachedOwningPawn->GetCachedInputComponent()->BindAction("Use", IE_Released, this, &UInteractionComponent::EndInteraction);
+			UE_LOG(InteractionComponent, Log, TEXT("Setting up Interaction bindings"));
+
+			CachedInputComponent->BindAction("Use", IE_Pressed, this, &UInteractionComponent::StartInteraction);
+			CachedInputComponent->BindAction("Use", IE_Released, this, &UInteractionComponent::EndInteraction);
+		}
 	}
 }
 
@@ -87,8 +91,8 @@ void UInteractionComponent::GetLookAtLocations(const FVector2D& InViewportCentre
 	if (APlayerController* OwningController = Cast<APlayerController>(GetOwner()))
 	{
 		FVector TraceDirection = FVector(ForceInitToZero);
-		OwningController->DeprojectScreenPositionToWorld(InViewportCentre.X, InViewportCentre.Y, TraceStart, TraceDirection);
 
+		OwningController->DeprojectScreenPositionToWorld(InViewportCentre.X, InViewportCentre.Y, TraceStart, TraceDirection);
 		TraceEnd = TraceStart + (TraceDirection * LookAtDistance);
 	}
 }
@@ -123,15 +127,18 @@ void UInteractionComponent::Look()
 
 			if (GEngine)
 			{
-				const FVector2D ViewportSize = FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
+				FVector2D ViewportSize = FVector2D::ZeroVector;
+				ViewportSize = FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
+
 				const FVector2D ViewportCenter = ViewportSize * 0.5f;
 
-				FVector TraceStart;
-				FVector TraceEnd;
+				FVector TraceStart = FVector::ZeroVector;
+				FVector TraceEnd = FVector::ZeroVector;
 
 				GetLookAtLocations(ViewportCenter, TraceStart, TraceEnd);
 
 				CachedWorld->AsyncLineTraceByChannel(EAsyncTraceType::Single, TraceStart, TraceEnd, CC_LOOKANDUSE, CachedTraceParams, FCollisionResponseParams(), &OnLookOverDelegate);
+				IsAlreadyProcessingLook = true;
 			}
 		}
 		else
@@ -152,7 +159,8 @@ void UInteractionComponent::OnLookOver(const TArray<FHitResult>& InHits)
 		if (AActor* FirstHit = InHits[0].Actor.Get())
 		{
 			UE_LOG(InteractionComponent, Log, TEXT("OnLookAtOver: Looking at %s"), *FirstHit->GetName());
-
+			
+			HoveredActor = FirstHit;
 			DrawDebugPoint(CachedWorld, InHits[0].Location, 20.f, FColor::Green);
 		}
 	}
@@ -165,13 +173,13 @@ void UInteractionComponent::StartInteraction()
 {
 	UE_LOG(InteractionComponent, Log, TEXT("Starting interaction"));
 
-	/*if (HoveredActor)
+	if (HoveredActor)
 	{
 		if (IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(HoveredActor))
 		{
-			InteractionInterface->OnInteract(GetOwner());
+			InteractionInterface->OnInteract(CachedOwningPawn);
 		}
-	}*/
+	}
 }
 
 void UInteractionComponent::EndInteraction()

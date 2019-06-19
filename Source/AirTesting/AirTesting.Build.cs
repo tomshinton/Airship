@@ -10,6 +10,6 @@ public class AirTesting : ModuleRules
 		
         PrivateIncludePaths.AddRange(new string[] { "AirTesting/Private" });
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Airship", "AirCore", "Core", "CoreUObject", "Engine", "InputCore", "Engine" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Airship", "AirCore", "Core", "CoreUObject", "Engine", "EditorTests", "InputCore", "UnrealEd" });
     }
 };

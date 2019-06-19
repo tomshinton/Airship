@@ -73,11 +73,18 @@ public:
 	}
 
 	template<class T>
-	T* SpawnActor()
+	T* SpawnActor(UWorld* WorldOverride = nullptr)
 	{
-		if (GameWorld)
+		UWorld* WorldToUse = GameWorld;
+
+		if (WorldOverride)
 		{
-			T* NewActor = GameWorld->SpawnActor<T>(T::StaticClass());
+			WorldToUse = WorldOverride;
+		}
+
+		if (WorldToUse)
+		{
+			T* NewActor = WorldToUse->SpawnActor<T>(T::StaticClass());
 
 			if (NewActor)
 			{
