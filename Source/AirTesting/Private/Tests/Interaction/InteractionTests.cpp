@@ -51,13 +51,14 @@ public:
 	UInteractionComponent* InteractionComponent;
 };
 
+#define IMPLEMENT_TEST(TestName) IMPLEMENT_AIRTEST(TestName, FInteractionComponentTestFixture, InteractionComponent)
+#define IMPLEMENT_MAPTEST(TestName) IMPLEMENT_AIRMAPTEST(TestName, FAirMapTestFixture, InteractionComponent)
+
 DEFINE_LATENT_AUTOMATION_COMMAND_ONE_PARAMETER(FWaitForAsyncTrace, UInteractionComponent*, InteractionComp);
 bool FWaitForAsyncTrace::Update()
 {
 	return InteractionComp->GetHoveredActor() != nullptr;
 }
-
-#define IMPLEMENT_TEST(TestName) IMPLEMENT_AIRTEST(TestName, FInteractionComponentTestFixture, InteractionComponent)
 
 IMPLEMENT_TEST(FValidInteractionComponent_BeginPlayCalled_ValidControllingOwner_WorldCached)
 bool FValidInteractionComponent_BeginPlayCalled_ValidControllingOwner_WorldCached::RunTest(const FString& Parameters)
@@ -116,23 +117,9 @@ bool FValidInteractionComponent_LookAtTraceExecuted_InteractableInfrontOfPlayerA
 	return true;
 }
 
-IMPLEMENT_TEST(FTestSpinUpRealLevel)
-bool FTestSpinUpRealLevel::RunTest(const FString& Parameters)
+IMPLEMENT_MAPTEST(FTestMapTest)
+bool FTestMapTest::RunTest(const FString& Parameters)
 {
-	ADD_LATENT_AUTOMATION_COMMAND(FStartPIECommand(true));
-
-	AirChar = SpawnActor<AAirChar>(GWorld);
-	AAirController* TestController = SpawnActor<AAirController>(GWorld);
-
-	TestController->SetPawn(AirChar);
-	AirChar->PossessedBy(TestController);
-
-	UInteractionComponent* NewInteractionComp = NewObject<UInteractionComponent>(TestController);
-	NewInteractionComp->RegisterComponent();
-	NewInteractionComp->BeginPlay();
-
-	ADD_LATENT_AUTOMATION_COMMAND(FWaitForAsyncTrace((UInteractionComponent*)NewInteractionComp));
-
 	return true;
 }
 

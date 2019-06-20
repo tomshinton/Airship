@@ -5,7 +5,7 @@
 #include <GameFramework\GameMode.h>
 #include "AirGameMode.generated.h"
 
-UCLASS()
+UCLASS(MinimalAPI)
 class AAirGameMode : public AGameMode
 {
 	GENERATED_BODY()
