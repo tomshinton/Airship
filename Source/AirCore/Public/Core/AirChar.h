@@ -79,4 +79,8 @@ private:
 
 	UPROPERTY()
 	UInputComponent* CachedInputComponent;
+
+	//Testing
+	UPROPERTY()
+	UWorld* CachedWorld;
 };

@@ -12,6 +12,7 @@
 #include "Components/InputComponent.h"
 #include "TimerManager.h"
 #include "DrawDebugHelpers.h"
+#include "Camera/CameraComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(InteractionComponent, Log, Log);
 
@@ -39,7 +40,6 @@ void UInteractionComponent::BeginPlay()
 		CachedWorld = OwningController->GetWorld();
 
 		BuildCachedTraceParams();
-
 		EnableTick();
 	}
 
@@ -86,20 +86,34 @@ void UInteractionComponent::BuildCachedTraceParams()
 	});
 }
 
-void UInteractionComponent::GetLookAtLocations(const FVector2D& InViewportCentre, FVector& TraceStart, FVector& TraceEnd) const
+void UInteractionComponent::GetCurrentViewTargetInfo(FViewTargetInfo& OutLookAtInfo) const
 {
-	if (APlayerController* OwningController = Cast<APlayerController>(GetOwner()))
+	if (CachedOwningPawn)
 	{
-		FVector TraceDirection = FVector(ForceInitToZero);
+		if (AController* CurrentController = CachedOwningPawn->GetController())
+		{
+			AActor* FoundViewTarget = CurrentController->GetViewTarget();
 
-		OwningController->DeprojectScreenPositionToWorld(InViewportCentre.X, InViewportCentre.Y, TraceStart, TraceDirection);
-		TraceEnd = TraceStart + (TraceDirection * LookAtDistance);
+			if (UActorComponent* ViewTargetCameraComponent = FoundViewTarget->GetComponentByClass(UCameraComponent::StaticClass()))
+			{
+				UCameraComponent* ViewTargetAsCamera = Cast<UCameraComponent>(ViewTargetCameraComponent);
+				OutLookAtInfo.Set(ViewTargetAsCamera->GetComponentLocation(), ViewTargetAsCamera->GetComponentRotation());
+				return;
+			}
+
+			OutLookAtInfo.Set(FoundViewTarget->GetActorLocation(), FoundViewTarget->GetActorRotation());
+		}
 	}
 }
 
 bool UInteractionComponent::ShouldTrace() const
 {
-	return FMath::IsNearlyZero(CurrentTraceCooldown) || !GetCurrentOwnerTransform().Equals(LastKnownOwnerTransform);
+	if (!LastKnownOwnerTransform.IsSet())
+	{
+		return true;
+	}
+
+	return FMath::IsNearlyZero(CurrentTraceCooldown) || !GetCurrentOwnerTransform().Equals(LastKnownOwnerTransform.GetValue());
 }
 
 FTransform UInteractionComponent::GetCurrentOwnerTransform() const
@@ -119,6 +133,9 @@ void UInteractionComponent::SetLastKnownTransform()
 
 void UInteractionComponent::Look()
 {
+	FViewTargetInfo NewLookAtCache(LookAtDistance);
+	GetCurrentViewTargetInfo(NewLookAtCache);
+
 	if (CachedWorld && !IsAlreadyProcessingLook)
 	{
 		if(ShouldTrace())
@@ -126,18 +143,9 @@ void UInteractionComponent::Look()
 			CurrentTraceCooldown = FlatRefreshTime;
 
 			if (GEngine)
-			{
-				FVector2D ViewportSize = FVector2D::ZeroVector;
-				ViewportSize = FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
-
-				const FVector2D ViewportCenter = ViewportSize * 0.5f;
-
-				FVector TraceStart = FVector::ZeroVector;
-				FVector TraceEnd = FVector::ZeroVector;
-
-				GetLookAtLocations(ViewportCenter, TraceStart, TraceEnd);
-
-				CachedWorld->AsyncLineTraceByChannel(EAsyncTraceType::Single, TraceStart, TraceEnd, CC_LOOKANDUSE, CachedTraceParams, FCollisionResponseParams(), &OnLookOverDelegate);
+			{	
+				DrawDebugLine(CachedWorld, NewLookAtCache.ViewStart, NewLookAtCache.ViewEnd, FColor::Green, false, 1.f);
+				CachedWorld->AsyncLineTraceByChannel(EAsyncTraceType::Single, NewLookAtCache.ViewStart, NewLookAtCache.ViewEnd, CC_LOOKANDUSE, CachedTraceParams, FCollisionResponseParams(), &OnLookOverDelegate);
 				IsAlreadyProcessingLook = true;
 			}
 		}

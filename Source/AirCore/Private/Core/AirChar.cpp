@@ -10,6 +10,7 @@
 #include "InteractionComponent.h"
 #include "HealthComponent.h"
 #include "AirInventory.h"
+#include "Engine/World.h"
 
 // Sets default values
 AAirChar::AAirChar()
@@ -66,6 +67,12 @@ void AAirChar::Tick(float DeltaSeconds)
 void AAirChar::BeginPlay()
 {
 	RightHandTargetTransform = RightHand->GetRelativeTransform();
+
+	if (GWorld)
+	{
+		CachedWorld = GWorld;
+	}
+
 	Super::BeginPlay();
 }
 

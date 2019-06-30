@@ -9,6 +9,45 @@
 #include "WorldCollision.h"
 #include "InteractionComponent.generated.h"
 
+USTRUCT()
+struct FViewTargetInfo
+{
+public:
+
+	GENERATED_BODY()
+
+	FViewTargetInfo()
+	: ViewStart(FVector::ZeroVector)
+	, Rotation(FRotator::ZeroRotator)
+	, ViewDistance(0.f)
+	{}
+
+	FViewTargetInfo(const float InViewDistance)
+	: ViewStart(FVector::ZeroVector)
+	, Rotation(FRotator::ZeroRotator)
+	, ViewDistance(InViewDistance)
+	{}
+
+	void Set(const FVector& InViewStart, const FRotator& InRotation)
+	{
+		ViewStart = InViewStart;
+		Rotation = InRotation;
+
+		if (ViewDistance > 0.f)
+		{
+			ViewEnd = ViewStart + (Rotation.Vector() * ViewDistance);
+		}
+	}
+
+	FVector ViewStart;
+	FVector ViewEnd;
+
+private:
+
+	FRotator Rotation;
+	float ViewDistance;
+};
+
 UCLASS(MinimalAPI)
 class UInteractionComponent : public UActorComponent
 {
@@ -34,7 +73,8 @@ public:
 	AIRCORE_API void ForceLook() { Look(); };
 
 	AIRCORE_API bool GetIsAlreadyProcessingLook() const { return IsAlreadyProcessingLook; };
-
+	AIRCORE_API TOptional<FTransform> GetLastKnownTransform() { return LastKnownOwnerTransform; };
+	AIRCORE_API float GetLookAtFrequency() const { return LookAtFrequency; };
 #endif //WITH_DEV_AUTOMATION_TESTS
 
 private:
@@ -45,6 +85,7 @@ private:
 	void BuildCachedTraceParams();
 
 	void GetLookAtLocations(const FVector2D& InViewportCentre, FVector& TraceStart, FVector& TraceEnd) const;
+	void GetCurrentViewTargetInfo(FViewTargetInfo& OutLookAtInfo) const;
 
 	bool ShouldTrace() const;
 
@@ -78,5 +119,5 @@ private:
 
 	float FlatRefreshTime;
 	float CurrentTraceCooldown;
-	FTransform LastKnownOwnerTransform;
+	TOptional<FTransform> LastKnownOwnerTransform;
 };

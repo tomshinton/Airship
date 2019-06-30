@@ -12,6 +12,9 @@
 #include "GameFramework/GameMode.h"
 #include "GameFramework/WorldSettings.h"
 #include "AirGameMode.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/PlayerController.h"
+#include "LevelEditor.h"
 
 DEFINE_LOG_CATEGORY_STATIC(AutomationRunnerLog, Log, Log);
 
@@ -114,6 +117,7 @@ public:
 	static const int TestFlags = EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter;
 };
 
+
 class FAirMapTestFixture : public FAutomationTestBase
 {
 public:
@@ -124,24 +128,42 @@ public:
 
 	virtual void BeginTest() override
 	{
-		ADD_LATENT_AUTOMATION_COMMAND(FEditorLoadMap(BaseFixturePrivate::TestLevelName));
-		if (UWorld* World = GWorld)
-		{
-			World->GetWorldSettings()->DefaultGameMode = GetGameMode();
-		}
+		FAutomationEditorCommonUtils::LoadMap(BaseFixturePrivate::TestLevelName);
 
-		GUnrealEd->StartQueuedPlayMapRequest();
+		FLevelEditorModule& LevelEditorModule = FModuleManager::Get().GetModuleChecked<FLevelEditorModule>(TEXT("LevelEditor"));
+		TSharedPtr<class ILevelViewport> ActiveLevelViewport = LevelEditorModule.GetFirstActiveViewport();
+
+		GUnrealEd->RequestPlaySession(false, ActiveLevelViewport, false, NULL, NULL, -1, false);
 	}
 
 	virtual void EndTest() override 
 	{
-		GUnrealEd->RequestEndPlayMap();
+		//GUnrealEd->RequestEndPlayMap();
 	}
 
 	virtual TSubclassOf<AGameMode> GetGameMode()
 	{
-		//return AGameMode::StaticClass();
 		return AAirGameMode::StaticClass();
+	}
+
+	static ACharacter* GetLocalCharacter(UWorld* World)
+	{
+		if (GWorld && GWorld->GetFirstPlayerController())
+		{
+			return Cast<ACharacter>(GWorld->GetFirstPlayerController()->GetPawn());
+		}
+
+		return nullptr;
+	}
+
+	static APlayerController* GetLocalPlayerController(UWorld* World)
+	{
+		if (World)
+		{
+			return World->GetFirstPlayerController();
+		}
+
+		return nullptr;
 	}
 };
 
