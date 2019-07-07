@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "ComponentProviderInterface.h"
 
 #include "AirChar.generated.h"
 
@@ -16,7 +17,8 @@ class UHealthComponent;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharLanded);
 
 UCLASS(MinimalAPI)
-class AAirChar : public ACharacter
+class AAirChar : public ACharacter,
+	public IComponentProviderInterface
 {
 	GENERATED_BODY()
 
@@ -63,6 +65,11 @@ public:
 	UAirInventory* GetInventory() const { return InventoryComponent; };
 
 	UInputComponent* GetCachedInputComponent() const {return CachedInputComponent; };
+
+	//ComponentProviderInterface
+	UHealthComponent* GetHealthComponent() const { return HealthComponent; };
+	UAirInventory* GetInventoryComponent() const { return InventoryComponent; };
+	//~ComponentProviderInterface
 
 protected:
 

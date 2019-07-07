@@ -2,15 +2,30 @@
 
 #include "AirHUDBase.h"
 #include "InventoryPanel.h"
-#include <Engine/Engine.h>
+#include "Healthbar.h"
+#include "ComponentProviderInterface.h"
+#include "AirChar.h"
+#include "HealthComponent.h"
 
 void UAirHUDBase::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (PlayerInventoryPanel)
+	if (LocalChar)
 	{
-		PlayerInventoryPanel->SetVisibility(ESlateVisibility::Collapsed);
+		if (PlayerInventoryPanel)
+		{
+			PlayerInventoryPanel->SetVisibility(ESlateVisibility::Collapsed);
+		}
+
+		if (PlayerHealthBar)
+		{
+			if (IComponentProviderInterface* CompProvider = Cast<IComponentProviderInterface>(LocalChar))
+			{
+				PlayerHealthBar->SetHealthInterface(Cast<IHealthInterface>(CompProvider->GetHealthComponent()));
+				PlayerHealthBar->SetVisibility(ESlateVisibility::Collapsed);
+			}
+		}
 	}
 }
 

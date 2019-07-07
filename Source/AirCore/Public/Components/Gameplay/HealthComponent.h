@@ -36,7 +36,11 @@ private:
 	virtual void ApplyDamage(const FBaseDamageEvent& InDamageEvent) override;
 	virtual FOnHealthChanged& GetOnHealthChangedEvent() override { return OnHealthChanged; };
 	virtual FOnHealthDepleted& GetOnHealthDepletedEvent() override { return OnHealthDepleted; };
-	//HealthInterface
+	virtual FOnHealthRestored& GetOnHealthRestoredEvent() override { return OnHealthRestored; };
+
+	virtual float GetMaxHealth() const override { return MaxHealth; };
+	virtual float GetCurrentHealth() const override { return CurrentHealth; };
+	//~HealthInterface
 
 	UFUNCTION()
 	void TakeFallDamage();
@@ -45,6 +49,7 @@ private:
 
 	FOnHealthChanged OnHealthChanged;
 	FOnHealthDepleted OnHealthDepleted;
+	FOnHealthRestored OnHealthRestored;
 
 	UPROPERTY()
 	UCurveFloat* FallDamageCurve;

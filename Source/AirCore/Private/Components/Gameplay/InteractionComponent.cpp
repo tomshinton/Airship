@@ -144,7 +144,6 @@ void UInteractionComponent::Look()
 
 			if (GEngine)
 			{	
-				DrawDebugLine(CachedWorld, NewLookAtCache.ViewStart, NewLookAtCache.ViewEnd, FColor::Green, false, 1.f);
 				CachedWorld->AsyncLineTraceByChannel(EAsyncTraceType::Single, NewLookAtCache.ViewStart, NewLookAtCache.ViewEnd, CC_LOOKANDUSE, CachedTraceParams, FCollisionResponseParams(), &OnLookOverDelegate);
 				IsAlreadyProcessingLook = true;
 			}
@@ -169,7 +168,6 @@ void UInteractionComponent::OnLookOver(const TArray<FHitResult>& InHits)
 			UE_LOG(InteractionComponent, Log, TEXT("OnLookAtOver: Looking at %s"), *FirstHit->GetName());
 			
 			HoveredActor = FirstHit;
-			DrawDebugPoint(CachedWorld, InHits[0].Location, 20.f, FColor::Green);
 		}
 	}
 
