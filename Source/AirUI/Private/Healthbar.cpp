@@ -3,6 +3,7 @@
 #include "Healthbar.h"
 #include "ProgressBar.h"
 #include "HealthInterface.h"
+#include "TimerManager.h"
 
 namespace HealthbarAnims
 {
@@ -17,6 +18,7 @@ UHealthbar::UHealthbar(const FObjectInitializer& ObjectInitializer)
 	, CurrentHealth(MaxHealth)
 	, HealthInterface(nullptr)
 	, HealthbarOnScreen(false)
+	, TimeUntilBarHidden(2.f)
 {}
 
 void UHealthbar::SynchronizeProperties()
@@ -36,9 +38,24 @@ void UHealthbar::SetHealthInterface(IHealthInterface* InHealthInterface)
 		HealthInterface.SetObject(this);
 		HealthInterface.SetInterface(InHealthInterface); 
 
-		HealthInterface->GetOnHealthChangedEvent().AddLambda([this](const FBaseDamageEvent& InEvent)
+		HealthInterface->GetOnHealthChangedEvent().AddLambda([this](const FHealthChangeEvent& InEvent)
 		{
 			UpdateBar(InEvent);
+		});
+
+		HealthInterface->GetOnHealthRestoredEvent().AddLambda([this]()
+		{
+			if (UWorld* World = GetWorld())
+			{
+				FTimerDelegate HideDelegate;
+				HideDelegate.BindLambda([this]()
+				{
+					PlayAnimation(GetAnimationByName(HealthbarAnims::Anim_Hide));
+					HealthbarOnScreen = false;
+				});
+
+				World->GetTimerManager().SetTimer(HideBarTimerHandle, HideDelegate, TimeUntilBarHidden, false, TimeUntilBarHidden);
+			}
 		});
 	}
 }
@@ -64,7 +81,7 @@ float UHealthbar::GetHealthAsPercentage() const
 	return 0.f;
 }
 
-void UHealthbar::UpdateBar(const FBaseDamageEvent& InUpdateReason)
+void UHealthbar::UpdateBar(const FHealthChangeEvent& InUpdateReason)
 {
 	if (!HealthbarOnScreen)
 	{

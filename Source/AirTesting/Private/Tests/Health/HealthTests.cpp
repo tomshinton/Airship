@@ -42,10 +42,10 @@ public:
 IMPLEMENT_TEST(FApplyDamageCalled_ValidChangeEvent_HealthChangedEventCalled)
 bool FApplyDamageCalled_ValidChangeEvent_HealthChangedEventCalled::RunTest(const FString& Parameters)
 {
-	const FBaseDamageEvent NewEvent(1.f, EDamageType::Falling, nullptr);
+	const FDamagedEvent NewEvent(1.f, EDamageType::Falling, nullptr);
 	bool CallbackSuccess = false;
 
-	HealthInterface->GetOnHealthChangedEvent().AddLambda([this, &NewEvent, &CallbackSuccess](const FBaseDamageEvent& InEvent)
+	HealthInterface->GetOnHealthChangedEvent().AddLambda([this, &NewEvent, &CallbackSuccess](const FHealthChangeEvent& InEvent)
 	{
 		if (InEvent == NewEvent)
 		{
@@ -61,7 +61,7 @@ bool FApplyDamageCalled_ValidChangeEvent_HealthChangedEventCalled::RunTest(const
 IMPLEMENT_TEST(FApplyDamageCalled_CorrectEventInDamageHistory)
 bool FApplyDamageCalled_CorrectEventInDamageHistory::RunTest(const FString& Parameters)
 {
-	const FBaseDamageEvent NewEvent(1.f, EDamageType::Falling, nullptr);
+	const FDamagedEvent NewEvent(1.f, EDamageType::Falling, nullptr);
 
 	HealthInterface->ApplyDamage(NewEvent);
 
@@ -73,8 +73,8 @@ bool FApplyDamageCalled_CorrectEventInDamageHistory::RunTest(const FString& Para
 IMPLEMENT_TEST(FApplyDamageCalled_DamageEventExceedsHistoryLength_EventPoppedFromArray)
 bool FApplyDamageCalled_DamageEventExceedsHistoryLength_EventPoppedFromArray::RunTest(const FString& Parameters)
 {
-	const FBaseDamageEvent FirstEvent(1.f, EDamageType::Falling, nullptr);
-	const FBaseDamageEvent SecondEvent(2.f, EDamageType::Falling, nullptr);
+	const FDamagedEvent FirstEvent(1.f, EDamageType::Falling, nullptr);
+	const FDamagedEvent SecondEvent(2.f, EDamageType::Falling, nullptr);
 
 	HealthComponent->SetDamageHistoryLimit(1);
 
@@ -93,10 +93,10 @@ bool FApplyDamageCalled_DamageEventAmountExceedsMaxHealth_HealthDepletedEventCal
 {
 	HealthComponent->ResetToNewMaxHealth(1.f);
 
-	const FBaseDamageEvent NewEvent(10.f, EDamageType::Flat, nullptr);
+	const FDamagedEvent NewEvent(10.f, EDamageType::Flat, nullptr);
 	bool CallbackSuccess = false;
 
-	HealthInterface->GetOnHealthDepletedEvent().AddLambda([this, &NewEvent, &CallbackSuccess](const FBaseDamageEvent& InEvent)
+	HealthInterface->GetOnHealthDepletedEvent().AddLambda([this, &NewEvent, &CallbackSuccess](const FDamagedEvent& InEvent)
 	{
 		if (InEvent == NewEvent)
 		{
@@ -121,10 +121,10 @@ bool FApplyDamageCalled_FallingDamageType_AmountModifiedByCurve::RunTest(const F
 	ACharacter* OwningCharacter = Cast<ACharacter>(HealthComponent->GetOwner());
 	OwningCharacter->GetMovementComponent()->Velocity = FVector(0.f, 0.f, -HealthComponent->GetMaxSupportedVelocity() *0.5);
 
-	const FBaseDamageEvent NewEvent(10.f, EDamageType::Falling, nullptr);
+	const FDamagedEvent NewEvent(10.f, EDamageType::Falling, nullptr);
 	bool CallbackSuccess = false;
 
-	HealthInterface->GetOnHealthChangedEvent().AddLambda([this, &NewEvent, &CallbackSuccess](const FBaseDamageEvent& InEvent)
+	HealthInterface->GetOnHealthChangedEvent().AddLambda([this, &NewEvent, &CallbackSuccess](const FHealthChangeEvent& InEvent)
 	{
 		if (!FMath::IsNearlyEqual(InEvent.Amount, NewEvent.Amount))
 		{

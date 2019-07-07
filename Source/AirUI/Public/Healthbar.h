@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AirWidget.h"
-#include "Utils/Events/DamageEvents.h"
+#include "Utils/Events/HealthEvents.h"
 #include "HealthInterface.h"
 #include "Healthbar.generated.h"
 
@@ -47,7 +47,11 @@ private:
 
 	bool HealthbarOnScreen;
 
+	float TimeUntilBarHidden;
+
+	FTimerHandle HideBarTimerHandle;
+
 	float GetHealthAsPercentage() const;
 
-	void UpdateBar(const FBaseDamageEvent& InUpdateReason);
+	void UpdateBar(const FHealthChangeEvent& InUpdateReason);
 };

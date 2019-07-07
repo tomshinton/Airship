@@ -3,7 +3,7 @@
 #pragma once
 
 #include "HealthInterface.h"
-
+#include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
 UCLASS(MinimalAPI)
@@ -15,7 +15,7 @@ public:
 	// Sets default values for this component's properties
 	UHealthComponent();	
 
-	AIRCORE_API TArray<FBaseDamageEvent> GetDamageHistory() const { return DamageHistory; };
+	AIRCORE_API TArray<FDamagedEvent> GetDamageHistory() const { return DamageHistory; };
 
 #if WITH_DEV_AUTOMATION_TESTS
 	void SetFallDamageCurve(UCurveFloat* InNewCurve) { FallDamageCurve = InNewCurve; };
@@ -33,7 +33,9 @@ private:
 	virtual void BeginPlay() override;
 
 	//HealthInterface
-	virtual void ApplyDamage(const FBaseDamageEvent& InDamageEvent) override;
+	virtual void ApplyDamage(const FDamagedEvent& InDamageEvent) override;
+	virtual void RestoreHealth(const FHealEvent& InHealEvent) override;
+
 	virtual FOnHealthChanged& GetOnHealthChangedEvent() override { return OnHealthChanged; };
 	virtual FOnHealthDepleted& GetOnHealthDepletedEvent() override { return OnHealthDepleted; };
 	virtual FOnHealthRestored& GetOnHealthRestoredEvent() override { return OnHealthRestored; };
@@ -45,7 +47,7 @@ private:
 	UFUNCTION()
 	void TakeFallDamage();
 
-	float ModifyByType(FBaseDamageEvent& InDamageEvent) const;
+	float ModifyByType(FDamagedEvent& InDamageEvent) const;
 
 	FOnHealthChanged OnHealthChanged;
 	FOnHealthDepleted OnHealthDepleted;
@@ -54,7 +56,7 @@ private:
 	UPROPERTY()
 	UCurveFloat* FallDamageCurve;
 
-	TArray<FBaseDamageEvent> DamageHistory;
+	TArray<FDamagedEvent> DamageHistory;
 
 	int32 DamageHistoryLimit;
 

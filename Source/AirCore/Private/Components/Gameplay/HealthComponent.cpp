@@ -24,10 +24,10 @@ UHealthComponent::UHealthComponent()
 	}
 }
 
-void UHealthComponent::ApplyDamage(const FBaseDamageEvent& InDamageEvent)
+void UHealthComponent::ApplyDamage(const FDamagedEvent& InDamageEvent)
 {
 	//Modify by type will approriately clamp the value to Min/Max health
-	FBaseDamageEvent ModifiableDamageEvent = InDamageEvent;
+	FDamagedEvent ModifiableDamageEvent = InDamageEvent;
 	CurrentHealth = ModifyByType(ModifiableDamageEvent);
 
 	DamageHistory.Insert(ModifiableDamageEvent, 0);
@@ -44,13 +44,25 @@ void UHealthComponent::ApplyDamage(const FBaseDamageEvent& InDamageEvent)
 	}
 }
 
+void UHealthComponent::RestoreHealth(const FHealEvent& InHealEvent)
+{
+	CurrentHealth = FMath::Clamp(CurrentHealth + InHealEvent.Amount, 0.f, MaxHealth);
+
+	if (CurrentHealth >= MaxHealth)
+	{
+		OnHealthRestored.Broadcast();
+	}
+
+	OnHealthChanged.Broadcast(InHealEvent);
+}
+
 void UHealthComponent::TakeFallDamage()
 {
-	FBaseDamageEvent FallingDamageEvent(FMath::RandRange(0, 100), EDamageType::Falling, this);
+	FDamagedEvent FallingDamageEvent(FMath::RandRange(0, 100), EDamageType::Falling, this);
 	ApplyDamage(FallingDamageEvent);
 }
 
-float UHealthComponent::ModifyByType(FBaseDamageEvent& InDamageEvent) const
+float UHealthComponent::ModifyByType(FDamagedEvent& InDamageEvent) const
 {
 	float ModifiedAmount = 0.f;
 

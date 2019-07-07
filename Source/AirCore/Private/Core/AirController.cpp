@@ -2,6 +2,7 @@
 
 #include "AirController.h"
 #include "InteractionComponent.h"
+#include "AirCheatManager.h"
 
 namespace
 {
@@ -13,4 +14,6 @@ namespace
 
 AAirController::AAirController()
 	: InteractionComponent(CreateDefaultSubobject<UInteractionComponent>(AirControllerPrivate::InteractionComponentName))
-{}
+{
+	CheatClass = UAirCheatManager::StaticClass();
+}
