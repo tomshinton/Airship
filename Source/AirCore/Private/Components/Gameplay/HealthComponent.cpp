@@ -3,6 +3,9 @@
 #include "HealthComponent.h"
 #include "ConstructorHelpers.h"
 #include "AirChar.h"
+#include "TimerManager.h"
+
+DEFINE_LOG_CATEGORY_STATIC(HealthComponentLog, Log, Log);
 
 UHealthComponent::UHealthComponent()
 	: OnHealthChanged()
@@ -14,6 +17,10 @@ UHealthComponent::UHealthComponent()
 	, CurrentHealth(MaxHealth)
 	, MaxZVelocity(2500.f)
 	, MaxFallDamage(MaxHealth)
+	, RegenCooldown(5.f)
+	, RegenFrequency(1.f)
+	, RegenAmount(1.f)
+	, RegenHandle()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
@@ -24,8 +31,24 @@ UHealthComponent::UHealthComponent()
 	}
 }
 
+void UHealthComponent::BeginPlay()
+{
+	if (AAirChar* OwningChar = Cast<AAirChar>(GetOwner()))
+	{
+		OwningChar->OnCharLanded.AddDynamic(this, &UHealthComponent::TakeFallDamage);
+	}
+
+	
+	Super::BeginPlay();
+}
+
 void UHealthComponent::ApplyDamage(const FDamagedEvent& InDamageEvent)
 {
+	if (FMath::IsNearlyZero(InDamageEvent.Amount))
+	{
+		return;
+	}
+
 	//Modify by type will approriately clamp the value to Min/Max health
 	FDamagedEvent ModifiableDamageEvent = InDamageEvent;
 	CurrentHealth = ModifyByType(ModifiableDamageEvent);
@@ -34,6 +57,7 @@ void UHealthComponent::ApplyDamage(const FDamagedEvent& InDamageEvent)
 	if (DamageHistory.Num() > DamageHistoryLimit)
 	{
 		DamageHistory.RemoveAt(DamageHistoryLimit);
+
 	}
 
 	OnHealthChanged.Broadcast(ModifiableDamageEvent);
@@ -41,6 +65,10 @@ void UHealthComponent::ApplyDamage(const FDamagedEvent& InDamageEvent)
 	if (CurrentHealth <= 0.f)
 	{
 		OnHealthDepleted.Broadcast(ModifiableDamageEvent);
+	}
+	else
+	{
+		StartRegenCoundown();
 	}
 }
 
@@ -51,6 +79,8 @@ void UHealthComponent::RestoreHealth(const FHealEvent& InHealEvent)
 	if (CurrentHealth >= MaxHealth)
 	{
 		OnHealthRestored.Broadcast();
+
+		StopRegen();
 	}
 
 	OnHealthChanged.Broadcast(InHealEvent);
@@ -90,15 +120,37 @@ float UHealthComponent::ModifyByType(FDamagedEvent& InDamageEvent) const
 	return FMath::Clamp(CurrentHealth - ModifiedAmount, 0.f, MaxHealth);
 }
 
-void UHealthComponent::BeginPlay()
+void UHealthComponent::StartRegenCoundown()
 {
-	if (AAirChar* OwningChar = Cast<AAirChar>(GetOwner()))
+	if (UWorld* World = GetWorld())
 	{
-		OwningChar->OnCharLanded.AddDynamic(this, &UHealthComponent::TakeFallDamage);
-	}
+ 		FTimerDelegate OnRegenStart;
+		OnRegenStart.BindLambda([this, World]()
+		{
+			World->GetTimerManager().SetTimer(RegenHandle, this, &UHealthComponent::Regen, RegenFrequency, true, RegenFrequency);
+		});
 
-	Super::BeginPlay();
+		UE_LOG(HealthComponentLog, Log, TEXT("Starting Regen"));
+		World->GetTimerManager().SetTimer(RegenHandle, OnRegenStart, RegenCooldown, false, 0.f);
+	}
 }
 
+void UHealthComponent::Regen()
+{
+	UE_LOG(HealthComponentLog, Log, TEXT("Regenerating health"));
+	RestoreHealth(FHealEvent(RegenAmount, EHealType::Regen, this));
+}
 
+void UHealthComponent::StopRegen()
+{
+	if (UWorld* World = GetWorld())
+	{
+		FTimerManager& TimerManager = World->GetTimerManager();
 
+		if (TimerManager.IsTimerActive(RegenHandle))
+		{
+			UE_LOG(HealthComponentLog, Log, TEXT("Stopping Regen"));
+			TimerManager.ClearTimer(RegenHandle);
+		}
+	}
+}

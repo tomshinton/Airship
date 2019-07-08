@@ -35,4 +35,9 @@ public:
 protected:
 
 	virtual void NativeConstruct() override;
+
+private:
+
+	void ShowInventoryScreen();
+	void HideInventoryScreen();
 };

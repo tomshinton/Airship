@@ -15,7 +15,8 @@ UENUM()
 enum class EHealType : uint8
 {
 	None, //Invalid HealType - should force a bail if this is passed to the HealthComponent
-	Flat //Mapped against nothing, applies the value outright
+	Flat, //Mapped against nothing, applies the value outright
+	Regen //Also flat
 };
 
 

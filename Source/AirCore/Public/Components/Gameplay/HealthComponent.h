@@ -49,6 +49,10 @@ private:
 
 	float ModifyByType(FDamagedEvent& InDamageEvent) const;
 
+	void StartRegenCoundown();
+	void Regen();
+	void StopRegen();
+
 	FOnHealthChanged OnHealthChanged;
 	FOnHealthDepleted OnHealthDepleted;
 	FOnHealthRestored OnHealthRestored;
@@ -65,4 +69,10 @@ private:
 
 	float MaxZVelocity;
 	float MaxFallDamage;
+
+	float RegenCooldown;
+	float RegenFrequency;
+	float RegenAmount;
+
+	FTimerHandle RegenHandle;
 };

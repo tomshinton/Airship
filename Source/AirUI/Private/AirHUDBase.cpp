@@ -29,10 +29,27 @@ void UAirHUDBase::NativeConstruct()
 	}
 }
 
+void UAirHUDBase::ShowInventoryScreen()
+{
+	if (PlayerInventoryPanel)
+	{
+		PlayerInventoryPanel->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void UAirHUDBase::HideInventoryScreen()
+{
+	if (PlayerInventoryPanel)
+	{
+		PlayerInventoryPanel->SetVisibility(ESlateVisibility::Collapsed);
+	}
+}
+
 void UAirHUDBase::SetupBinding(UInputComponent* InInputComponent)
 {
 	if (InInputComponent)
 	{
-		//Add default bindings here for all main HUD actions
+		InInputComponent->BindAction("ShowInventory", IE_Pressed, this, &UAirHUDBase::ShowInventoryScreen);
+		InInputComponent->BindAction("HideInventor", IE_Pressed, this, &UAirHUDBase::HideInventoryScreen);
 	}
 }

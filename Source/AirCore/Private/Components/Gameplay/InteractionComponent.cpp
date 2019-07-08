@@ -138,12 +138,12 @@ void UInteractionComponent::Look()
 
 	if (CachedWorld && !IsAlreadyProcessingLook)
 	{
-		if(ShouldTrace())
-		{ 
+		if (ShouldTrace())
+		{
 			CurrentTraceCooldown = FlatRefreshTime;
 
 			if (GEngine)
-			{	
+			{
 				CachedWorld->AsyncLineTraceByChannel(EAsyncTraceType::Single, NewLookAtCache.ViewStart, NewLookAtCache.ViewEnd, CC_LOOKANDUSE, CachedTraceParams, FCollisionResponseParams(), &OnLookOverDelegate);
 				IsAlreadyProcessingLook = true;
 			}
@@ -153,10 +153,6 @@ void UInteractionComponent::Look()
 			CurrentTraceCooldown = FMath::Clamp(CurrentTraceCooldown - LookAtFrequency, 0.f, FlatRefreshTime);
 		}
 	}
-	else
-	{
-		UE_LOG(InteractionComponent, Log, TEXT("Attempting trace whilst Trace is blocked - bailing"));
-	}
 }
 
 void UInteractionComponent::OnLookOver(const TArray<FHitResult>& InHits)
@@ -164,9 +160,7 @@ void UInteractionComponent::OnLookOver(const TArray<FHitResult>& InHits)
 	if (InHits.Num() > 0)
 	{
 		if (AActor* FirstHit = InHits[0].Actor.Get())
-		{
-			UE_LOG(InteractionComponent, Log, TEXT("OnLookAtOver: Looking at %s"), *FirstHit->GetName());
-			
+		{			
 			HoveredActor = FirstHit;
 		}
 	}
