@@ -38,6 +38,5 @@ protected:
 
 private:
 
-	void ShowInventoryScreen();
-	void HideInventoryScreen();
+	void ToggleInventoryPanel();
 };

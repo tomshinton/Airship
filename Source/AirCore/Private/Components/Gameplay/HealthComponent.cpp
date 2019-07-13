@@ -131,13 +131,12 @@ void UHealthComponent::StartRegenCoundown()
 		});
 
 		UE_LOG(HealthComponentLog, Log, TEXT("Starting Regen"));
-		World->GetTimerManager().SetTimer(RegenHandle, OnRegenStart, RegenCooldown, false, 0.f);
+		World->GetTimerManager().SetTimer(RegenHandle, OnRegenStart, RegenCooldown, false, RegenCooldown);
 	}
 }
 
 void UHealthComponent::Regen()
 {
-	UE_LOG(HealthComponentLog, Log, TEXT("Regenerating health"));
 	RestoreHealth(FHealEvent(RegenAmount, EHealType::Regen, this));
 }
 

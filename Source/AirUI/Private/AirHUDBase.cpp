@@ -6,6 +6,7 @@
 #include "ComponentProviderInterface.h"
 #include "AirChar.h"
 #include "HealthComponent.h"
+#include "HUDTools.h"
 
 void UAirHUDBase::NativeConstruct()
 {
@@ -29,19 +30,15 @@ void UAirHUDBase::NativeConstruct()
 	}
 }
 
-void UAirHUDBase::ShowInventoryScreen()
+void UAirHUDBase::ToggleInventoryPanel()
 {
-	if (PlayerInventoryPanel)
-	{
-		PlayerInventoryPanel->SetVisibility(ESlateVisibility::Visible);
-	}
-}
-
-void UAirHUDBase::HideInventoryScreen()
-{
-	if (PlayerInventoryPanel)
+	if (HUDTools::IsVisible(*PlayerInventoryPanel))
 	{
 		PlayerInventoryPanel->SetVisibility(ESlateVisibility::Collapsed);
+	}
+	else
+	{
+		PlayerInventoryPanel->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 
@@ -49,7 +46,6 @@ void UAirHUDBase::SetupBinding(UInputComponent* InInputComponent)
 {
 	if (InInputComponent)
 	{
-		InInputComponent->BindAction("ShowInventory", IE_Pressed, this, &UAirHUDBase::ShowInventoryScreen);
-		InInputComponent->BindAction("HideInventor", IE_Pressed, this, &UAirHUDBase::HideInventoryScreen);
+		InInputComponent->BindAction("ToggleInventoryPanel", IE_Pressed, this, &UAirHUDBase::ToggleInventoryPanel);
 	}
 }
