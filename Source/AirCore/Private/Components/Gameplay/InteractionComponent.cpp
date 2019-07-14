@@ -13,11 +13,14 @@
 #include "TimerManager.h"
 #include "DrawDebugHelpers.h"
 #include "Camera/CameraComponent.h"
+#include "Components/ActorComponent.h"
+#include "Utils/Functions/InterfaceHelpers.h"
+#include "InteractableInterface.h"
 
-DEFINE_LOG_CATEGORY_STATIC(InteractionComponent, Log, Log);
+DEFINE_LOG_CATEGORY_STATIC(InteractionComponentLog, Log, Log);
 
 UInteractionComponent::UInteractionComponent()
-	: HoveredActor(nullptr)
+	: HoveredInteractable(nullptr)
 	, CachedOwningPawn(nullptr)
 	, IsAlreadyProcessingLook(false)
 	, CachedTraceParams(FCollisionQueryParams())
@@ -29,6 +32,7 @@ UInteractionComponent::UInteractionComponent()
 	, FlatRefreshTime(1.f)
 	, CurrentTraceCooldown(FlatRefreshTime)
 	, LastKnownOwnerTransform(FTransform(NoInit))
+	, OnNewItemHovered()
 {}
 
 void UInteractionComponent::BeginPlay()
@@ -46,6 +50,11 @@ void UInteractionComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
+FOnNewItemHovered& UInteractionComponent::GetOnNewItemHoveredDelegate()
+{
+	return OnNewItemHovered;
+}
+
 void UInteractionComponent::SetupInput(APawn* InNewPawn)
 {
 	if (AAirChar* OwningPawn = Cast<AAirChar>(InNewPawn))
@@ -55,7 +64,7 @@ void UInteractionComponent::SetupInput(APawn* InNewPawn)
 		if (UInputComponent* CachedInputComponent = CachedOwningPawn->GetCachedInputComponent())
 		{
 
-			UE_LOG(InteractionComponent, Log, TEXT("Setting up Interaction bindings"));
+			UE_LOG(InteractionComponentLog, Log, TEXT("Setting up Interaction bindings"));
 
 			CachedInputComponent->BindAction("Use", IE_Pressed, this, &UInteractionComponent::StartInteraction);
 			CachedInputComponent->BindAction("Use", IE_Released, this, &UInteractionComponent::EndInteraction);
@@ -157,11 +166,35 @@ void UInteractionComponent::Look()
 
 void UInteractionComponent::OnLookOver(const TArray<FHitResult>& InHits)
 {
+	//We only do a line trace, so if we're getting anything greater than 1 one, something's gone pearshaped.
 	if (InHits.Num() > 0)
 	{
-		if (AActor* FirstHit = InHits[0].Actor.Get())
-		{			
-			HoveredActor = FirstHit;
+		//Iterate through stack until we hit the first InteractableInterface
+		for (const FHitResult& Hit : InHits)
+		{
+			if (AActor* FirstHit = Hit.Actor.Get())
+			{
+				if (IInteractableInterface* HitInteractableInterface = InterfaceHelpers::GetInterface<IInteractableInterface>(*FirstHit))
+				{
+					if (HoveredInteractable != HitInteractableInterface)
+					{
+						HoveredInteractable.SetObject(FirstHit);
+						HoveredInteractable.SetInterface(HitInteractableInterface);
+
+						UE_LOG(InteractionComponentLog, Log, TEXT("Caching %s for interactions"), *FirstHit->GetName());
+
+						OnNewItemHovered.Broadcast(HitInteractableInterface);
+					}
+				}
+				else if(HoveredInteractable.GetObject() != nullptr)
+				{
+					UE_LOG(InteractionComponentLog, Log, TEXT("No longer looking at %s, clearing"), *HoveredInteractable.GetObject()->GetName());
+
+					HoveredInteractable.SetObject(nullptr);
+					HoveredInteractable.SetInterface(nullptr);
+					OnNewItemHovered.Broadcast(nullptr);
+				}
+			}
 		}
 	}
 
@@ -171,19 +204,18 @@ void UInteractionComponent::OnLookOver(const TArray<FHitResult>& InHits)
 
 void UInteractionComponent::StartInteraction()
 {
-	UE_LOG(InteractionComponent, Log, TEXT("Starting interaction"));
-
-	if (HoveredActor)
+	if (HoveredInteractable)
 	{
-		if (IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(HoveredActor))
-		{
-			InteractionInterface->OnInteract(CachedOwningPawn);
-		}
+		UE_LOG(InteractionComponentLog, Log, TEXT("Starting interaction"));
+		HoveredInteractable->OnInteract(CachedOwningPawn);
 	}
 }
 
 void UInteractionComponent::EndInteraction()
 {
-	UE_LOG(InteractionComponent, Log, TEXT("Ending interaction"));
-
+	if (HoveredInteractable)
+	{
+		UE_LOG(InteractionComponentLog, Log, TEXT("Ending interaction"));
+		//EndInteraction
+	}
 }

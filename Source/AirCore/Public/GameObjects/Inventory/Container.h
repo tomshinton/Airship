@@ -4,9 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InteractionInterface.h"
+
 #include "AirInventory.h"
 #include "TransferWindowBase.h"
+#include "InteractableInterface.h"
 #include "Container.generated.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -14,7 +15,8 @@
 //////////////////////////////////////////////////////////////////////////
 
 UCLASS()
-class AContainer : public AActor, public IInteractionInterface
+class AContainer : public AActor,
+	public IInteractableInterface
 {
 	GENERATED_BODY()
 	
@@ -31,11 +33,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 	TSubclassOf<UTransferWindowBase> TransferWidget;
 
-public:
-
-	/************************************************************************/
-	/* Interaction Interface                                                */
-	/************************************************************************/
-
+	//InteractableInterface
 	virtual void OnInteract(AActor* InteractingActor) override;
+	virtual FText GetDisplayName() const override { return FText::FromString(TEXT("Container")); };
+	//~InteractableInterface
 };

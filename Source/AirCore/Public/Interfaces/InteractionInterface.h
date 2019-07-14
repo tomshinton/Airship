@@ -2,8 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "Interface.h"
+#include "InteractableInterface.h"
 
 #include "InteractionInterface.generated.h"
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnNewItemHovered, IInteractableInterface*);
 
 UINTERFACE(BlueprintType, MinimalAPI)
 class UInteractionInterface : public UInterface
@@ -17,5 +20,5 @@ class AIRCORE_API IInteractionInterface
 
 public:
 
-	virtual void OnInteract(AActor* InteractingActor) = 0;
+	virtual FOnNewItemHovered& GetOnNewItemHoveredDelegate() = 0;
 };

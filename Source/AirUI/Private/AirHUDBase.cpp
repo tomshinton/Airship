@@ -7,6 +7,10 @@
 #include "AirChar.h"
 #include "HealthComponent.h"
 #include "HUDTools.h"
+#include "InteractionInterface.h"
+#include "Utils/Functions/InterfaceHelpers.h"
+#include "HealthInterface.h"
+#include "InspectorPanel.h"
 
 void UAirHUDBase::NativeConstruct()
 {
@@ -21,10 +25,19 @@ void UAirHUDBase::NativeConstruct()
 
 		if (PlayerHealthBar)
 		{
-			if (IComponentProviderInterface* CompProvider = Cast<IComponentProviderInterface>(LocalChar))
+			if (IHealthInterface* HealthInterface = InterfaceHelpers::GetInterface<IHealthInterface>(*LocalChar))
 			{
-				PlayerHealthBar->SetHealthInterface(Cast<IHealthInterface>(CompProvider->GetHealthComponent()));
+				PlayerHealthBar->SetHealthInterface(HealthInterface);
 				PlayerHealthBar->SetVisibility(ESlateVisibility::Collapsed);
+			}
+		}
+
+		if (InspectorPanel)
+		{
+			if (IInteractionInterface* InteractionInterface = InterfaceHelpers::GetInterface<IInteractionInterface>(*LocalChar->GetController()))
+			{
+				InspectorPanel->SetInteractionInterface(InteractionInterface);
+				InspectorPanel->SetVisibility(ESlateVisibility::Collapsed);
 			}
 		}
 	}

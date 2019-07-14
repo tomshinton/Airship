@@ -1,4 +1,4 @@
-// ColonyBuilder Project, personal project by Tom Shinton
+// Airship Project - Tom Shinton 2018
 
 #pragma once
 

@@ -2,12 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
-#include "AirChar.h"
-#include "CollisionQueryParams.h"
-#include "WorldCollision.h"
+#include "InteractionInterface.h"
 #include "InteractionComponent.generated.h"
+
+class AAirChar;
+class UActorComponent;
 
 USTRUCT()
 struct FViewTargetInfo
@@ -50,6 +49,7 @@ private:
 
 UCLASS(MinimalAPI)
 class UInteractionComponent : public UActorComponent
+	, public IInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -61,8 +61,6 @@ public:
 
 	void StartInteraction();
 	void EndInteraction();
-
-	AActor* GetHoveredActor() const { return HoveredActor; };
 
 #if WITH_DEV_AUTOMATION_TESTS
 	AIRCORE_API UWorld* GetCachedWorld() const { return CachedWorld; };
@@ -79,12 +77,15 @@ public:
 
 private:
 
+	//InteractionInterface
+	virtual FOnNewItemHovered& GetOnNewItemHoveredDelegate() override;;
+	//~InteractionInterface
+
 	void SetupInput(APawn* InNewPawn);
 
 	void EnableTick();
 	void BuildCachedTraceParams();
 
-	void GetLookAtLocations(const FVector2D& InViewportCentre, FVector& TraceStart, FVector& TraceEnd) const;
 	void GetCurrentViewTargetInfo(FViewTargetInfo& OutLookAtInfo) const;
 
 	bool ShouldTrace() const;
@@ -98,8 +99,7 @@ private:
 	UFUNCTION()
 	void OnLookOver(const TArray<FHitResult>& InHits);
 
-	UPROPERTY()
-	AActor* HoveredActor;
+	TScriptInterface<IInteractableInterface> HoveredInteractable;
 
 	UPROPERTY()
 	AAirChar* CachedOwningPawn;
@@ -120,4 +120,6 @@ private:
 	float FlatRefreshTime;
 	float CurrentTraceCooldown;
 	TOptional<FTransform> LastKnownOwnerTransform;
+
+	FOnNewItemHovered OnNewItemHovered;
 };

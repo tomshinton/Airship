@@ -49,9 +49,6 @@ public:
 	UHealthComponent* HealthComponent;
 
 	UPROPERTY()
-	UInteractionComponent* InteractionComponent;
-
-	UPROPERTY()
 	UAirMovementComponent* MovementComponent;
 
 	UPROPERTY(EditDefaultsOnly)
