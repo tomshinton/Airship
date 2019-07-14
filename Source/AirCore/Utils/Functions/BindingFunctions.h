@@ -2,10 +2,11 @@
 
 #include <GameFramework/PlayerController.h>
 #include <GameFramework/PlayerInput.h>
+#include "Kismet/BlueprintFunctionLibrary.h"
 
 #include "BindingFunctions.generated.h"
 
-UCLASS()
+UCLASS(MinimalAPI)
 class UBindingFunctions : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
@@ -13,11 +14,11 @@ class UBindingFunctions : public UBlueprintFunctionLibrary
 public:
 
 	UFUNCTION(BlueprintPure, Category = Binding)
-	static void GetKeysForAction(FName Action, APlayerController* Controller, TArray<FInputActionKeyMapping>& Bindings)
+	static void GetKeysForAction(const FName& Action, const APlayerController* Controller, TArray<FInputActionKeyMapping>& OutBindings)
 	{
 		if (Controller)
 		{
-			Bindings = Controller->PlayerInput->GetKeysForAction(Action);
+			OutBindings = Controller->PlayerInput->GetKeysForAction(Action);
 		}
 	}
 };

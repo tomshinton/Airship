@@ -3,6 +3,9 @@
 #include "InspectorPanel.h"
 #include "TextBlock.h"
 #include "Engine/Engine.h"
+#include "AirWidget.h"
+#include "AirChar.h"
+#include "Utils/Functions/BindingFunctions.h"
 
 namespace InspectorPanelAnims
 {
@@ -10,36 +13,33 @@ namespace InspectorPanelAnims
 	const FName Anim_Hide("HideAnim");
 }
 
+namespace InspectorPanelPrivate
+{
+	const FName InteractBindingText("Interact");
+}
+
 UInspectorPanel::UInspectorPanel(const FObjectInitializer& ObjectInitializer)
 	: UAirWidget(ObjectInitializer)
 	, DisplayNameBlock(nullptr)
+	, InteractionKeyBlock(nullptr)
 	, InteractionInterface()
 {}
 
-void UInspectorPanel::OnNewItemLookedAt(const FText& InItemDisplayName)
+void UInspectorPanel::ShowPanel(const IInteractableInterface& InteractableInterface)
 {
-	if (DisplayNameBlock)
+	if (DisplayNameBlock && InteractionKeyBlock)
 	{
-		DisplayNameBlock->SetText(InItemDisplayName);
-	}
-}
+		DisplayNameBlock->SetText(InteractableInterface.GetDisplayName());
+		InteractionKeyBlock->SetText(GetInteractionKeyString());
 
-void UInspectorPanel::ShowPanel()
-{
-	SetVisibility(ESlateVisibility::Visible);
-	PlayAnimation(GetAnimationByName(InspectorPanelAnims::Anim_Show));
+		SetVisibility(ESlateVisibility::Visible);
+		PlayAnimation(GetAnimationByName(InspectorPanelAnims::Anim_Show));
+	}
 }
 
 void UInspectorPanel::HidePanel()
 {
 	PlayAnimation(GetAnimationByName(InspectorPanelAnims::Anim_Hide));
-}
-
-void UInspectorPanel::NativeDestruct()
-{
-	UE_LOG(LogTemp, Log, TEXT("Inspector descroyed"));
-
-	Super::NativeDestruct();
 }
 
 void UInspectorPanel::SetInteractionInterface(IInteractionInterface* InInteractionInterface)
@@ -53,8 +53,7 @@ void UInspectorPanel::SetInteractionInterface(IInteractionInterface* InInteracti
 		{
 			if (NewInteractableInterface)
 			{
-				ShowPanel();
-				OnNewItemLookedAt(NewInteractableInterface->GetDisplayName());
+				ShowPanel(*NewInteractableInterface);
 			}
 			else
 			{
@@ -62,4 +61,26 @@ void UInspectorPanel::SetInteractionInterface(IInteractionInterface* InInteracti
 			}
 		});
 	}
+}
+
+FText UInspectorPanel::GetInteractionKeyString() const
+{
+	if (LocalChar)
+	{
+		if (APlayerController* LocalController = Cast<APlayerController>(LocalChar->GetController()))
+		{
+			TArray<FInputActionKeyMapping> Keys;
+			UBindingFunctions::GetKeysForAction(InspectorPanelPrivate::InteractBindingText, LocalController, Keys);
+
+			if (Keys.Num() > 0)
+			{
+				const FString KeyString = Keys[0].Key.GetFName().ToString();
+				const FString StringReadable = FString::Printf(TEXT("%s%s%s"), "[", *KeyString, "]");
+
+				return FText::FromString(StringReadable);
+			}
+		}
+	}
+
+	return FText();
 }

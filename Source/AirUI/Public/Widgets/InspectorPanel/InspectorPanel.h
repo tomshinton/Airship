@@ -30,14 +30,13 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* DisplayNameBlock;
 
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* InteractionKeyBlock;
+	
 	TScriptInterface<IInteractionInterface> InteractionInterface;
 
-	void OnNewItemLookedAt(const FText& InItemDisplayName);
-
-	void ShowPanel();
+	void ShowPanel(const IInteractableInterface& InteractableInterface);
 	void HidePanel();
 
-protected:
-
-	virtual void NativeDestruct() override;
+	FText GetInteractionKeyString() const;
 };

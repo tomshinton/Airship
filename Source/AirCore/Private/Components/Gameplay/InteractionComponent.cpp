@@ -188,18 +188,30 @@ void UInteractionComponent::OnLookOver(const TArray<FHitResult>& InHits)
 				}
 				else if(HoveredInteractable.GetObject() != nullptr)
 				{
-					UE_LOG(InteractionComponentLog, Log, TEXT("No longer looking at %s, clearing"), *HoveredInteractable.GetObject()->GetName());
-
-					HoveredInteractable.SetObject(nullptr);
-					HoveredInteractable.SetInterface(nullptr);
-					OnNewItemHovered.Broadcast(nullptr);
+					ResetHoveredInteractable();
 				}
 			}
 		}
 	}
+	else
+	{
+		ResetHoveredInteractable();
+	}
 
 	SetLastKnownTransform();
 	IsAlreadyProcessingLook = false;
+}
+
+void UInteractionComponent::ResetHoveredInteractable()
+{
+	if (HoveredInteractable)
+	{
+		UE_LOG(InteractionComponentLog, Log, TEXT("No longer looking at %s, clearing"), *HoveredInteractable.GetObject()->GetName());
+
+		HoveredInteractable.SetObject(nullptr);
+		HoveredInteractable.SetInterface(nullptr);
+		OnNewItemHovered.Broadcast(nullptr);
+	}
 }
 
 void UInteractionComponent::StartInteraction()

@@ -99,6 +99,8 @@ private:
 	UFUNCTION()
 	void OnLookOver(const TArray<FHitResult>& InHits);
 
+	void ResetHoveredInteractable();
+
 	TScriptInterface<IInteractableInterface> HoveredInteractable;
 
 	UPROPERTY()
