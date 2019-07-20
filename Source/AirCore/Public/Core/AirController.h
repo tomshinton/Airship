@@ -23,7 +23,7 @@ public:
 	AIRCORE_API void SetMouseVisible(const bool InVisibility);
 	AIRCORE_API bool GetMouseVisible() const;
 
-	UAirHUDBase* GetHudWidget() const;
+	AIRCORE_API UAirHUDBase* GetHudWidget() const;
 
 private:
 

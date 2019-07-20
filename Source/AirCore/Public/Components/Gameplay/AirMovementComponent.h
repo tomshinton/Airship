@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Airship Project - Tom Shinton 2018
 
 #pragma once
 
@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Curves/CurveFloat.h"
 #include <Camera/CameraComponent.h>
+#include "Camera/CameraShake.h"
 #include "AirMovementComponent.generated.h"
 
 class AAirChar;

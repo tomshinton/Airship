@@ -14,7 +14,7 @@ class UTextBlock;
 class UImage;
 class UDragAndDropVisual;
 
-UCLASS()
+UCLASS(abstract)
 class UInventorySlot : public UAirWidget
 {
 	GENERATED_BODY()
@@ -57,10 +57,10 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Inventory)
 	bool IsPopulated;
 
-protected:
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = DragAndDrop)
+	UPROPERTY(EditANywhere, Category = DragAndDrop)
 	TSubclassOf<UDragAndDropVisual> DragAndDropVisual;
+
+protected:
 
 	UFUNCTION()
 	void PlayerFocusChanged(int32 InSlot);

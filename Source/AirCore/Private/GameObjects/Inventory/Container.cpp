@@ -6,6 +6,8 @@
 #include <Kismet/GameplayStatics.h>
 #include <WidgetBlueprintLibrary.h>
 #include "Utils/Functions/UMGFunctions.h"
+#include "UISettings.h"
+#include "HUDTools.h"
 
 AContainer::AContainer()
 	: Mesh(CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ContainerMesh")))
@@ -17,18 +19,17 @@ AContainer::AContainer()
 
 void AContainer::OnInteract(AActor* InteractingActor)
 {
-	if (TransferWidget)
+	if (UUISettings* UISettings = UUISettings::Get())
 	{
 		if (UWorld* World = GetWorld())
 		{
-			if (UTransferWindowBase* TransferUI = Cast<UTransferWindowBase>(CreateWidget<UTransferWindowBase>(World, TransferWidget)))
+			if (UTransferWindowBase* TransferUI = Cast<UTransferWindowBase>(CreateWidget<UTransferWindowBase>(World, UISettings->TransferWindow)))
 			{
-				UAirInventory* InteractingUI = Cast<UAirInventory>(InteractingActor->GetComponentByClass(UAirInventory::StaticClass()));
-				TransferUI->SetAppropriateInventories(Inventory, InteractingUI);
+				UAirInventory* InteractingInventory = Cast<UAirInventory>(InteractingActor->GetComponentByClass(UAirInventory::StaticClass()));
 				
 				if (AAirController* LocalController = Cast<AAirController>(UGameplayStatics::GetPlayerController(World, 0)))
 				{
-
+					UHUDTools::GetDynamicPanel(*this)->AddChildToCanvas(TransferUI);
 				}
 			}
 		}

@@ -12,33 +12,30 @@
 // Base for all Transfer windows.  These are inventory screens that can display 2 DIFFERENT inventories, and allow for transfer between them
 //////////////////////////////////////////////////////////////////////////
 
-UCLASS(MinimalAPI)
+UCLASS(MinimalAPI, abstract)
 class UTransferWindowBase : public UAirWidget
 {
 	GENERATED_BODY()
 
 public:
 
-	UPROPERTY(BlueprintReadWrite, Category = Grids)
+	UPROPERTY(EditDefaultsOnly, Category = Grids, meta = (BindWidget))
 	USequentialGridPanel* OwnerPanel;
 
-	UPROPERTY(BlueprintReadWrite, Category = Grids)
+	UPROPERTY(EditDefaultsOnly, Category = Grids, meta = (BindWidget))
 	USequentialGridPanel* PlayerPanel;
 
-	UPROPERTY(BlueprintReadWrite, Category = Inventory)
-	TSubclassOf<UInventorySlot> InventorySlotClass;
+	virtual void SynchronizeProperties() override;
 
-	UPROPERTY(BlueprintReadOnly, Category = Inventory)
+private:
+
+	UPROPERTY()
 	UAirInventory* OwnerInventory;
 
-	UPROPERTY(BlueprintReadOnly, Category = Inventory)
+	UPROPERTY()
 	UAirInventory* PlayerInventory;
 
-	UFUNCTION(BlueprintPure, Category = Inventory)
-	UAirInventory* GetOwnerInventory() const { return OwnerInventory; }
+protected:
 
-	UFUNCTION(BlueprintPure, Category = Inventory)
-	UAirInventory* GetPlayerInventory() const { return PlayerInventory; }
-
-	AIRUI_API void SetAppropriateInventories(UAirInventory* InOwnerInventory, UAirInventory* InPlayerInventory);
+	virtual void NativeConstruct() override;
 };

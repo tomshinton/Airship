@@ -66,8 +66,8 @@ void UInteractionComponent::SetupInput(APawn* InNewPawn)
 
 			UE_LOG(InteractionComponentLog, Log, TEXT("Setting up Interaction bindings"));
 
-			CachedInputComponent->BindAction("Use", IE_Pressed, this, &UInteractionComponent::StartInteraction);
-			CachedInputComponent->BindAction("Use", IE_Released, this, &UInteractionComponent::EndInteraction);
+			CachedInputComponent->BindAction("Interact", IE_Pressed, this, &UInteractionComponent::StartInteraction);
+			CachedInputComponent->BindAction("Interact", IE_Released, this, &UInteractionComponent::EndInteraction);
 		}
 	}
 }

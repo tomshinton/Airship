@@ -12,6 +12,16 @@
 #include "HealthInterface.h"
 #include "InspectorPanel.h"
 
+UAirHUDBase::UAirHUDBase(const FObjectInitializer& ObjectInitializer)
+	: UAirWidget(ObjectInitializer)
+	, Hotbar(nullptr)
+	, PlayerInventoryPanel(nullptr)
+	, PlayerHealthBar(nullptr)
+	, InspectorPanel(nullptr)
+{
+
+}
+
 void UAirHUDBase::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -45,16 +55,16 @@ void UAirHUDBase::NativeConstruct()
 
 void UAirHUDBase::ToggleInventoryPanel()
 {
-	if (HUDTools::IsVisible(*PlayerInventoryPanel))
+	/*if (UHUDTools::IsVisible(*PlayerInventoryPanel))
 	{
 		PlayerInventoryPanel->SetVisibility(ESlateVisibility::Collapsed);
-		HUDTools::ReleaseMouseFocus(*LocalChar);
+		UHUDTools::ReleaseMouseFocus(*LocalChar);
 	}
 	else
 	{
 		PlayerInventoryPanel->SetVisibility(ESlateVisibility::Visible);
-		HUDTools::RequestMouseFocus(*LocalChar);
-	}
+		UHUDTools::RequestMouseFocus(*LocalChar);
+	}*/
 }
 
 void UAirHUDBase::SetupBinding(UInputComponent* InInputComponent)

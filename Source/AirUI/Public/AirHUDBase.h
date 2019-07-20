@@ -10,17 +10,20 @@ class UHotbar;
 class UInventoryPanel;
 class UHealthbar;
 class UInspectorPanel;
+class UCanvasPanel;
 
 //////////////////////////////////////////////////////////////////////////
 // Base for AirHud, the main Hud of the game.  Holds containers for all contextual widgets like ActiveInventory and Hotbars
 //////////////////////////////////////////////////////////////////////////
 
-UCLASS(MinimalAPI)
+UCLASS(abstract, MinimalAPI)
 class UAirHUDBase : public UAirWidget
 {
 	GENERATED_BODY()
 
 public:
+
+	UAirHUDBase(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(EditDefaultsOnly, Category = Composite, meta = (BindWidget))
 	UHotbar* Hotbar;
@@ -33,6 +36,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = Composite, meta = (BindWidget))
 	UInspectorPanel* InspectorPanel;
+
+	UPROPERTY(EditDefaultsOnly, Category = Composite, meta = (BindWidget))
+	UCanvasPanel* DynamicPanel;
 
 	AIRUI_API void SetupBinding(UInputComponent* InInputComponent);
 

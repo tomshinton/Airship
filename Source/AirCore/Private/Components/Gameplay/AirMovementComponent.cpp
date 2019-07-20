@@ -67,7 +67,7 @@ void UAirMovementComponent::LookRight(float InAxis)
 {
 	LastTurnValue = InAxis;
 
-	if (!HUDTools::IsMouseVisible(*OwningCharacter))
+	if (!UHUDTools::IsMouseVisible(*OwningCharacter))
 	{
 		if (OwnerCamera && OwningCharacter)
 		{
@@ -81,7 +81,7 @@ void UAirMovementComponent::LookRight(float InAxis)
 
 void UAirMovementComponent::LookUp(float InAxis)
 {
-	if (!HUDTools::IsMouseVisible(*OwningCharacter))
+	if (!UHUDTools::IsMouseVisible(*OwningCharacter))
 	{
 		if (OwnerCamera)
 		{

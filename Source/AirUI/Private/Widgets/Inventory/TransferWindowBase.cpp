@@ -2,8 +2,12 @@
 
 #include "TransferWindowBase.h"
 
-void UTransferWindowBase::SetAppropriateInventories(UAirInventory* InOwnerInventory, UAirInventory* InPlayerInventory)
+void UTransferWindowBase::SynchronizeProperties()
 {
-	OwnerInventory = InOwnerInventory;
-	PlayerInventory = InPlayerInventory;
+	Super::SynchronizeProperties();
+}
+
+void UTransferWindowBase::NativeConstruct()
+{
+	Super::NativeConstruct();
 }
