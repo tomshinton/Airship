@@ -6,6 +6,7 @@
 #include "AirChar.h"
 #include "AirController.h"
 #include "CameraBobs.h"
+#include "HUDTools.h"
 
 UAirMovementComponent::UAirMovementComponent()
 	: MaxCameraPitch(40.f)
@@ -31,6 +32,11 @@ UAirMovementComponent::UAirMovementComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
+void UAirMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+{
+	ApplyCameraShakes();
+}
+
 void UAirMovementComponent::MoveForward(float InAxis)
 {
 	if (InAxis != 0)
@@ -52,24 +58,29 @@ void UAirMovementComponent::MoveRight(float InAxis)
 void UAirMovementComponent::LookRight(float InAxis)
 {
 	LastTurnValue = InAxis;
-
-	if (OwnerCamera && OwningCharacter)
+	if (!HUDTools::IsMouseVisible(*OwningCharacter))
 	{
-		const FRotator CurrentRotation = OwningCharacter->GetActorRotation();
-		const FRotator TargetRotation = CurrentRotation + FRotator(0.f, InAxis*TurnSpeed, 0.f);
+		if (OwnerCamera && OwningCharacter)
+		{
+			const FRotator CurrentRotation = OwningCharacter->GetActorRotation();
+			const FRotator TargetRotation = CurrentRotation + FRotator(0.f, InAxis*TurnSpeed, 0.f);
 
-		OwningCharacter->SetActorRotation(TargetRotation);
+			OwningCharacter->SetActorRotation(TargetRotation);
+		}
 	}
 }
 
 void UAirMovementComponent::LookUp(float InAxis)
 {
-	if (OwnerCamera)
+	if (!HUDTools::IsMouseVisible(*OwningCharacter))
 	{
-		const float NewPitch = FMath::Clamp(OwnerCamera->RelativeRotation.Pitch + (-InAxis * TiltCameraSpeed), -MaxCameraPitch, MaxCameraPitch);
-		FRotator NewRotation = OwnerCamera->RelativeRotation;
-		NewRotation.Pitch = NewPitch;
-		OwnerCamera->SetRelativeRotation(NewRotation);
+		if (OwnerCamera)
+		{
+			const float NewPitch = FMath::Clamp(OwnerCamera->RelativeRotation.Pitch + (-InAxis * TiltCameraSpeed), -MaxCameraPitch, MaxCameraPitch);
+			FRotator NewRotation = OwnerCamera->RelativeRotation;
+			NewRotation.Pitch = NewPitch;
+			OwnerCamera->SetRelativeRotation(NewRotation);
+		}
 	}
 }
 
@@ -132,9 +143,4 @@ TSubclassOf<UCameraShake> UAirMovementComponent::GetAppropriateCameraShake()
 	}
 
 	return UCameraShake::StaticClass();
-}
-
-void UAirMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
-{
-	ApplyCameraShakes();
 }

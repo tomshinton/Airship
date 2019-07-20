@@ -4,6 +4,7 @@
 #include "AirChar.h"
 #include <WidgetAnimation.h>
 #include <MovieScene.h>
+#include "Engine/Engine.h"
 
 UAirWidget::UAirWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

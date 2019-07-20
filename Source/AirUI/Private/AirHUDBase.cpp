@@ -48,10 +48,12 @@ void UAirHUDBase::ToggleInventoryPanel()
 	if (HUDTools::IsVisible(*PlayerInventoryPanel))
 	{
 		PlayerInventoryPanel->SetVisibility(ESlateVisibility::Collapsed);
+		HUDTools::ReleaseMouseFocus(*LocalChar);
 	}
 	else
 	{
 		PlayerInventoryPanel->SetVisibility(ESlateVisibility::Visible);
+		HUDTools::RequestMouseFocus(*LocalChar);
 	}
 }
 

@@ -36,7 +36,6 @@ public:
 	void ApplyCameraShakes();
 	TSubclassOf<UCameraShake> GetAppropriateCameraShake();
 
-
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
 private:
@@ -54,9 +53,12 @@ private:
 	bool IsSprinting;
 	float SprintModifier;
 
-	UCurveFloat * BankingCurve;
+	UPROPERTY()
+	UCurveFloat* BankingCurve;
 
-private:
-	AAirChar * OwningCharacter;
+	UPROPERTY()
+	AAirChar* OwningCharacter;
+
+	UPROPERTY()
 	UCameraComponent* OwnerCamera;
 };

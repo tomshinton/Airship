@@ -5,6 +5,7 @@
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
 #include "AirController.generated.h"
 
+class UAirHUDBase;
 class UInteractionComponent;
 
 UCLASS(MinimalAPI)
@@ -18,4 +19,13 @@ public:
 
 	UPROPERTY()
 	UInteractionComponent* InteractionComponent;
+
+	AIRCORE_API void SetMouseVisible(const bool InVisibility);
+	AIRCORE_API bool GetMouseVisible() const;
+
+	UAirHUDBase* GetHudWidget() const;
+
+private:
+
+	bool MouseVisible;
 };

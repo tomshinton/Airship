@@ -18,6 +18,8 @@ class AAirHUD : public AHUD
 public:
 	void CachePlayerInputComponent(UInputComponent* PlayerInputComponent);
 
+	UAirHUDBase* GetHUDWidget() const { return HUDWidget; };
+
 protected:
 
 	virtual void BeginPlay() override;
