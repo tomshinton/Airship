@@ -31,7 +31,6 @@ AAirChar::AAirChar()
 	RightHand->SetupAttachment(Camera);
 	RightHand->SetRelativeLocation(FVector(RightHandTargetTransform.GetLocation()));
 
-	MovementComponent->SetCameraComponent(Camera);
 	InventoryComponent->InventorySize = 20;
 	InventoryComponent->HotbarSlots = 10;
 	InventoryComponent->SetHandComponents(LeftHand, RightHand);

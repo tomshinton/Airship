@@ -9,6 +9,7 @@
 #include "AirMovementComponent.generated.h"
 
 class AAirChar;
+class UCharacterMovementComponent;
 
 UCLASS()
 class UAirMovementComponent : public UActorComponent
@@ -25,8 +26,6 @@ public:
 
 	void StartJump();
 	void EndJump();
-
-	void SetCameraComponent(UCameraComponent* InCameraComponent) { OwnerCamera = InCameraComponent; }
 
 	float GetModifiedMoveSpeed(const float InVal);
 	void GetModifiedSprintFromCurve(float& InVal);
@@ -59,6 +58,9 @@ private:
 	UPROPERTY()
 	AAirChar* OwningCharacter;
 
+	UPROPERTY()
+	UCharacterMovementComponent* OwningMovementComponent;
+	
 	UPROPERTY()
 	UCameraComponent* OwnerCamera;
 };

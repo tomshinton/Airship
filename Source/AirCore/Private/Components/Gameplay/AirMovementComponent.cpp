@@ -7,6 +7,8 @@
 #include "AirController.h"
 #include "CameraBobs.h"
 #include "HUDTools.h"
+#include "Camera/CameraShake.h"
+#include "Camera/CameraComponent.h"
 
 UAirMovementComponent::UAirMovementComponent()
 	: MaxCameraPitch(40.f)
@@ -27,6 +29,12 @@ UAirMovementComponent::UAirMovementComponent()
 	if (!OwningCharacter)
 	{
 		OwningCharacter = Cast<AAirChar>(GetOwner());
+
+		if (OwningCharacter)
+		{
+			OwningMovementComponent = Cast<UCharacterMovementComponent>(OwningCharacter->GetMovementComponent());
+			OwnerCamera = OwningCharacter->FindComponentByClass<UCameraComponent>();
+		}
 	}
 
 	PrimaryComponentTick.bCanEverTick = true;
@@ -39,18 +47,18 @@ void UAirMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickT
 
 void UAirMovementComponent::MoveForward(float InAxis)
 {
-	if (InAxis != 0)
+	if (!FMath::IsNearlyZero(InAxis))
 	{
-		Cast<UCharacterMovementComponent>(OwningCharacter->GetMovementComponent())->MaxWalkSpeed = GetModifiedMoveSpeed(InAxis);
+		OwningMovementComponent->MaxWalkSpeed = GetModifiedMoveSpeed(InAxis);
 		OwningCharacter->AddMovementInput(OwningCharacter->GetActorForwardVector(), InAxis);
 	}
 }
 
 void UAirMovementComponent::MoveRight(float InAxis)
 {
-	if (InAxis != 0)
+	if (!FMath::IsNearlyZero(InAxis))
 	{
-		Cast<UCharacterMovementComponent>(OwningCharacter->GetMovementComponent())->MaxWalkSpeed = StrafeSpeed;
+		OwningMovementComponent->MaxWalkSpeed = StrafeSpeed;
 		OwningCharacter->AddMovementInput(OwningCharacter->GetActorRightVector(), InAxis);
 	}
 }
@@ -58,6 +66,7 @@ void UAirMovementComponent::MoveRight(float InAxis)
 void UAirMovementComponent::LookRight(float InAxis)
 {
 	LastTurnValue = InAxis;
+
 	if (!HUDTools::IsMouseVisible(*OwningCharacter))
 	{
 		if (OwnerCamera && OwningCharacter)
@@ -96,19 +105,20 @@ void UAirMovementComponent::EndJump()
 
 float UAirMovementComponent::GetModifiedMoveSpeed(const float InVal)
 {
-	if (InVal != 0)
+	if (!FMath::IsNearlyZero(InVal))
 	{
 		const float LinearVal = InVal > 0 ? ForwardSpeed : BackwardsSpeed;
 		float ModifiedVal = LinearVal * (IsSprinting ? SprintModifier : 1.f);
 		GetModifiedSprintFromCurve(ModifiedVal);
 		return ModifiedVal;
 	}
+
 	return 0.f;
 }
 
 void UAirMovementComponent::GetModifiedSprintFromCurve(float& InVal)
 {
-	if (BankingCurve)
+	if (BankingCurve && !FMath::IsNearlyZero(MaxTurnValue))
 	{
 		const float NormalisedVal = FMath::Clamp(LastTurnValue / MaxTurnValue, 0.f, 1.f);
 		InVal *= BankingCurve->GetFloatValue(NormalisedVal);
@@ -117,7 +127,7 @@ void UAirMovementComponent::GetModifiedSprintFromCurve(float& InVal)
 
 void UAirMovementComponent::ToggleSprint()
 {
-	IsSprinting ? IsSprinting = false : IsSprinting = true;
+	IsSprinting = !IsSprinting;
 }
 
 void UAirMovementComponent::ApplyCameraShakes()
@@ -130,7 +140,7 @@ void UAirMovementComponent::ApplyCameraShakes()
 
 TSubclassOf<UCameraShake> UAirMovementComponent::GetAppropriateCameraShake()
 {
-	if (GetOwner()->GetVelocity().Size() > 0)
+	if (GetOwner()->GetVelocity().Size() > 0.f)
 	{
 		if (IsSprinting)
 		{
