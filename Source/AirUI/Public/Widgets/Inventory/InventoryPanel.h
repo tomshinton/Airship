@@ -35,8 +35,6 @@ public:
 
 	virtual void SynchronizeProperties() override;
 
-
-
 protected:
 
 	virtual void NativeConstruct() override;

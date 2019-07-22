@@ -24,12 +24,12 @@ public:
 		return GetMutableDefault<UUISettings>();
 	}
 
-	UPROPERTY(EditAnywhere, config, Category = "UI")
-	TSubclassOf<UAirHUDBase> HUDWidget;
+	UPROPERTY(EditAnywhere, config, Category = "U | HUD")
+	TSubclassOf<UAirHUDBase> HUDWidgetClass;
 
 	UPROPERTY(EditAnywhere, config, Category = "UI | Inventory")
-	TSubclassOf<UTransferWindowBase> TransferWindow;
+	TSubclassOf<UTransferWindowBase> TransferWindowClass;
 
 	UPROPERTY(EditAnywhere, config, Category = "UI | Inventory")
-	TSubclassOf<UInventorySlot> InventorySlot;
+	TSubclassOf<UInventorySlot> InventorySlotClass;
 };

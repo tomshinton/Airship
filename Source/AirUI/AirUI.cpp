@@ -6,12 +6,12 @@ DEFINE_LOG_CATEGORY(AirUIModuleLog);
  
 void FAirUI::StartupModule()
 {
-	UE_LOG(AirUIModuleLog, Warning, TEXT("AirAI module has started!"));
+	UE_LOG(AirUIModuleLog, Warning, TEXT("AirUI module has started!"));
 }
  
 void FAirUI::ShutdownModule()
 {
-	UE_LOG(AirUIModuleLog, Warning, TEXT("AirAI module has shut down"));
+	UE_LOG(AirUIModuleLog, Warning, TEXT("AirUI module has shut down"));
 }
  
 #undef LOCTEXT_NAMESPACE

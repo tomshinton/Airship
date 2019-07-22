@@ -33,7 +33,7 @@ public:
 	FOnWidgetClosed OnWidgetClosed;
 
 	UAirInventory* GetLinkedInventory() const { return LinkedInventory; };
-
+	
 protected:
 
 	virtual void NativeConstruct() override;

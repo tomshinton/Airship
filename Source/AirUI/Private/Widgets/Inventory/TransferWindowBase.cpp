@@ -5,6 +5,11 @@
 void UTransferWindowBase::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
+
+	if (OwnerPanel && PlayerPanel)
+	{
+
+	}
 }
 
 void UTransferWindowBase::NativeConstruct()

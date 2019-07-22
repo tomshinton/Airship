@@ -23,13 +23,13 @@ void AContainer::OnInteract(AActor* InteractingActor)
 	{
 		if (UWorld* World = GetWorld())
 		{
-			if (UTransferWindowBase* TransferUI = Cast<UTransferWindowBase>(CreateWidget<UTransferWindowBase>(World, UISettings->TransferWindow)))
+			if (UTransferWindowBase* TransferUI = Cast<UTransferWindowBase>(CreateWidget<UTransferWindowBase>(World, UISettings->TransferWindowClass)))
 			{
 				UAirInventory* InteractingInventory = Cast<UAirInventory>(InteractingActor->GetComponentByClass(UAirInventory::StaticClass()));
 				
 				if (AAirController* LocalController = Cast<AAirController>(UGameplayStatics::GetPlayerController(World, 0)))
 				{
-					UHUDTools::GetDynamicPanel(*this)->AddChildToCanvas(TransferUI);
+					UHUDTools::AddToDynamicPanel(TransferUI, *this);
 				}
 			}
 		}

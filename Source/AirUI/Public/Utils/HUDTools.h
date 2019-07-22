@@ -7,6 +7,8 @@
 #include "UserWidget.h"
 #include "CanvasPanel.h"
 #include "AirHUDBase.h"
+#include "Overlay.h"
+#include "OverlaySlot.h"
 
 #include "HUDTools.generated.h"
 
@@ -18,6 +20,24 @@ class UHUDTools : public UObject
 	UHUDTools() {};
 
 public:
+
+	AIRUI_API static UAirHUDBase& GetHUDWidget(const AActor& WorldContext)
+	{
+		UAirHUDBase* FoundWidget = nullptr;
+
+		if (UWorld* World = WorldContext.GetWorld())
+		{
+			if (AAirController* LocalController = Cast<AAirController>(World->GetFirstPlayerController()))
+			{
+				if (UAirHUDBase* HUDWidget = LocalController->GetHudWidget())
+				{
+					FoundWidget = HUDWidget;
+				}
+			}
+		}
+
+		return *FoundWidget;
+	}
 
 	AIRUI_API static bool IsVisible(const UUserWidget& InWidget)
 	{
@@ -59,19 +79,33 @@ public:
 		return false;
 	};
 
-	AIRUI_API static UCanvasPanel* GetDynamicPanel(const AActor& WorldContext)
+	AIRUI_API static UOverlay& GetDynamicPanel(const AActor& WorldContext)
 	{
-		if (UWorld* World = WorldContext.GetWorld())
+		UOverlay* FoundOverlay = nullptr;
+		
+		if (UAirHUDBase* HudWidget = &GetHUDWidget(WorldContext))
 		{
-			if (AAirController* LocalController = Cast<AAirController>(World->GetFirstPlayerController()))
+			FoundOverlay = HudWidget->DynamicOverlay;
+		}
+		
+		return *FoundOverlay;
+	};
+
+
+
+	AIRUI_API static void AddToDynamicPanel(UUserWidget* InWidget, const AActor& WorldContext)
+	{
+		UOverlay& DynamicPanel = GetDynamicPanel(WorldContext);
+
+		if (UPanelSlot* AddedChild = DynamicPanel.AddChild(InWidget))
+		{
+			if (UOverlaySlot* OverlaySlot = Cast<UOverlaySlot>(AddedChild))
 			{
-				if (UAirHUDBase* HudWidget = LocalController->GetHudWidget())
-				{
-					return HudWidget->DynamicPanel;
-				}
+				OverlaySlot->SetHorizontalAlignment(HAlign_Fill);
+				OverlaySlot->SetVerticalAlignment(VAlign_Fill);
+
+				GetHUDWidget(WorldContext).OnDynamicPanelUpdated();
 			}
 		}
-
-		return nullptr;
-	};
+	}
 };

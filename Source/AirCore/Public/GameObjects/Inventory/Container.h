@@ -30,6 +30,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 	UAirInventory* Inventory;
 
+protected:
+
 	//InteractableInterface
 	virtual void OnInteract(AActor* InteractingActor) override;
 	virtual FText GetDisplayName() const override { return FText::FromString(TEXT("Container")); };

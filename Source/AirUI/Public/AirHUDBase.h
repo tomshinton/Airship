@@ -10,7 +10,7 @@ class UHotbar;
 class UInventoryPanel;
 class UHealthbar;
 class UInspectorPanel;
-class UCanvasPanel;
+class UOverlay;
 
 //////////////////////////////////////////////////////////////////////////
 // Base for AirHud, the main Hud of the game.  Holds containers for all contextual widgets like ActiveInventory and Hotbars
@@ -38,15 +38,26 @@ public:
 	UInspectorPanel* InspectorPanel;
 
 	UPROPERTY(EditDefaultsOnly, Category = Composite, meta = (BindWidget))
-	UCanvasPanel* DynamicPanel;
+	UOverlay* DynamicOverlay;
 
 	AIRUI_API void SetupBinding(UInputComponent* InInputComponent);
 
+	void OnDynamicPanelUpdated();
+	 
 protected:
 
 	virtual void NativeConstruct() override;
 
 private:
 
+	static bool ShouldBeSnapshot(UWidget* InWidget, UWidgetTree* InWidgetTree, UOverlay* InOverlay);
+
 	void ToggleInventoryPanel();
+
+	void TakeSnapshot();
+	void RestoreSnapshot();
+
+	bool TryRemoveTopLevelDynamicWidget();
+
+	TMap<UWidget*, ESlateVisibility> Snapshot;
 };

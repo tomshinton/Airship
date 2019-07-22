@@ -6,6 +6,7 @@
 #include "AirWidget.h"
 #include "AirChar.h"
 #include "Utils/Functions/BindingFunctions.h"
+#include "HUDTools.h"
 
 namespace InspectorPanelAnims
 {
@@ -29,11 +30,14 @@ void UInspectorPanel::ShowPanel(const IInteractableInterface& InteractableInterf
 {
 	if (DisplayNameBlock && InteractionKeyBlock)
 	{
-		DisplayNameBlock->SetText(InteractableInterface.GetDisplayName());
-		InteractionKeyBlock->SetText(GetInteractionKeyString());
+		if (UHUDTools::IsVisible(*this))
+		{
+			DisplayNameBlock->SetText(InteractableInterface.GetDisplayName());
+			InteractionKeyBlock->SetText(GetInteractionKeyString());
 
-		SetVisibility(ESlateVisibility::Visible);
-		PlayAnimation(GetAnimationByName(InspectorPanelAnims::Anim_Show));
+			SetVisibility(ESlateVisibility::Visible);
+			PlayAnimation(GetAnimationByName(InspectorPanelAnims::Anim_Show));
+		}
 	}
 }
 

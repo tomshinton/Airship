@@ -27,6 +27,16 @@ public:
 
 	virtual void SynchronizeProperties() override;
 
+protected:
+
+	virtual void NativeConstruct() override;
+
+	UPROPERTY(EditAnywhere, Category = "Slots")
+	int32 Columns;
+
+	UPROPERTY(EditAnywhere, Category = "Slots")
+	int32 Slots;
+
 private:
 
 	UPROPERTY()
@@ -34,8 +44,4 @@ private:
 
 	UPROPERTY()
 	UAirInventory* PlayerInventory;
-
-protected:
-
-	virtual void NativeConstruct() override;
 };

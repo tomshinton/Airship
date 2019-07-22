@@ -16,9 +16,9 @@ void AAirHUD::BeginPlay()
 	{
 		if (UUISettings* UISettings = GetMutableDefault<UUISettings>())
 		{
-			if (UISettings->HUDWidget)
+			if (UISettings->HUDWidgetClass)
 			{
-				HUDWidget = CreateWidget<UAirHUDBase>(World, UISettings->HUDWidget);
+				HUDWidget = CreateWidget<UAirHUDBase>(World, UISettings->HUDWidgetClass);
 				HUDWidget->SetupBinding(CachedInputComponent);
 				HUDWidget->AddToViewport(0);
 			}

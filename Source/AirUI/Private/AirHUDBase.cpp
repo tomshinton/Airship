@@ -11,6 +11,8 @@
 #include "Utils/Functions/InterfaceHelpers.h"
 #include "HealthInterface.h"
 #include "InspectorPanel.h"
+#include "UserWidget.h"
+#include "WidgetTree.h"
 
 UAirHUDBase::UAirHUDBase(const FObjectInitializer& ObjectInitializer)
 	: UAirWidget(ObjectInitializer)
@@ -53,18 +55,67 @@ void UAirHUDBase::NativeConstruct()
 	}
 }
 
+bool UAirHUDBase::ShouldBeSnapshot(UWidget* InWidget, UWidgetTree* InWidgetTree, UOverlay* InOverlay)
+{
+	return InWidget != InOverlay && InWidget != InWidgetTree->RootWidget && !InOverlay->GetAllChildren().Contains(InWidget);
+}
+
 void UAirHUDBase::ToggleInventoryPanel()
 {
-	/*if (UHUDTools::IsVisible(*PlayerInventoryPanel))
+	if (!TryRemoveTopLevelDynamicWidget())
 	{
-		PlayerInventoryPanel->SetVisibility(ESlateVisibility::Collapsed);
-		UHUDTools::ReleaseMouseFocus(*LocalChar);
+		if (UHUDTools::IsVisible(*PlayerInventoryPanel))
+		{
+			PlayerInventoryPanel->SetVisibility(ESlateVisibility::Collapsed);
+			UHUDTools::ReleaseMouseFocus(*LocalChar);
+		}
+		else
+		{
+			PlayerInventoryPanel->SetVisibility(ESlateVisibility::Visible);
+			UHUDTools::RequestMouseFocus(*LocalChar);
+		}
 	}
-	else
+}
+
+void UAirHUDBase::TakeSnapshot()
+{
+	Snapshot.Empty();
+
+	TArray<UWidget*> FoundWidgets;
+	WidgetTree->GetAllWidgets(FoundWidgets);
+
+	for (UWidget* Widget : FoundWidgets)
 	{
-		PlayerInventoryPanel->SetVisibility(ESlateVisibility::Visible);
-		UHUDTools::RequestMouseFocus(*LocalChar);
-	}*/
+		if (ShouldBeSnapshot(Widget, WidgetTree, DynamicOverlay))
+		{
+			Snapshot.Add(Widget, Widget->GetVisibility());
+			Widget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
+}
+
+void UAirHUDBase::RestoreSnapshot()
+{
+	for (TPair<UWidget*, ESlateVisibility> SnapshotEntry : Snapshot)
+	{
+		SnapshotEntry.Key->SetVisibility(SnapshotEntry.Value);
+	}
+
+	Snapshot.Empty();
+}
+
+bool UAirHUDBase::TryRemoveTopLevelDynamicWidget()
+{
+	TArray<UWidget*> FoundWidgets = DynamicOverlay->GetAllChildren();
+	
+	if (FoundWidgets.Num() > 0)
+	{
+		FoundWidgets[0]->RemoveFromParent();
+		OnDynamicPanelUpdated();
+		return true;
+	}
+
+	return false;
 }
 
 void UAirHUDBase::SetupBinding(UInputComponent* InInputComponent)
@@ -72,5 +123,21 @@ void UAirHUDBase::SetupBinding(UInputComponent* InInputComponent)
 	if (InInputComponent)
 	{
 		InInputComponent->BindAction("ToggleInventoryPanel", IE_Pressed, this, &UAirHUDBase::ToggleInventoryPanel);
+	}
+}
+
+void UAirHUDBase::OnDynamicPanelUpdated()
+{
+	TArray<UWidget*> FoundWidgets = DynamicOverlay->GetAllChildren();
+
+	if (FoundWidgets.Num() > 0 && Snapshot.Num() == 0)
+	{
+		TakeSnapshot();
+		UHUDTools::RequestMouseFocus(*LocalChar);
+	}
+	else
+	{
+		RestoreSnapshot();
+		UHUDTools::ReleaseMouseFocus(*LocalChar);
 	}
 }
