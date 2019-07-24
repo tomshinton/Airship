@@ -10,8 +10,8 @@ public class AirUI : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG" });
 
-		PublicIncludePaths.AddRange(new string[] {"AirUI/Public"});
-		PrivateIncludePaths.AddRange(new string[] {"AirUI/Private"});
+		PublicIncludePaths.AddRange(new string[] {"Runtime/AirUI/Public"});
+		PrivateIncludePaths.AddRange(new string[] {"Runtime/AirUI/Private"});
 
         PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
     }
