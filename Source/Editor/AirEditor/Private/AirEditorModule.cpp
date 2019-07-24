@@ -1,7 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Airship Project - Tom Shinton 2018
+
+#include "AirEditorModule.h"
 
 #include "ModuleManager.h"
-#include "AirEditorModule.h"
 #include <ISettingsModule.h>
 #include <ISettingsContainer.h>
 #include <Internationalization.h>

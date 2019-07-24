@@ -19,10 +19,11 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"Engine",
-				"UMG",
+				"AirUI",
 				"CoreUObject",
-				"AirUI"
+				"Engine",
+				"Inventory",
+				"UMG"
 			]
 		},
 		{
@@ -35,6 +36,11 @@
 				"CoreUObject",
 				"AirCore"
 			]
+		},
+		{
+			"Name": "Inventory",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		},
 		{
 			"Name": "AirTesting",
