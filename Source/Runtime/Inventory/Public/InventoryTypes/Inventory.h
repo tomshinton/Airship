@@ -1,11 +1,11 @@
 #pragma once
 
-#include "InventoryItem.h"
+#include "Runtime/Inventory/Public/InventoryTypes/InventoryItem.h"
 
 #include "Inventory.generated.h"
 
 USTRUCT(BlueprintType)
-struct AIRCORE_API FInventory
+struct FInventory
 {
 	GENERATED_BODY()
 

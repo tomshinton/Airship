@@ -2,9 +2,7 @@
 
 #pragma once
 
-#include "Engine/DataTable.h"
-#include "SoftObjectPath.h"
-#include "Utils/Datatypes/InventoryItemRow.h"
+#include "Runtime/Inventory/Public/InventoryTypes/InventoryItemRow.h"
 
 #include "InventorySettings.generated.h"
 

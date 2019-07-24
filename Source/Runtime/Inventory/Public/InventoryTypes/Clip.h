@@ -5,7 +5,7 @@
 class AProjectileBase;
 
 USTRUCT(Blueprintable, BlueprintType)
-struct AIRCORE_API FClip
+struct FClip
 {
 	GENERATED_BODY()
 

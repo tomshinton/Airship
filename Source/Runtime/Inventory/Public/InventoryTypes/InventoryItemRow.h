@@ -6,7 +6,7 @@
 #include "InventoryItemRow.generated.h"
 
 USTRUCT(Blueprintable, BlueprintType)
-struct AIRCORE_API FInventoryItemRow : public FTableRowBase
+struct FInventoryItemRow : public FTableRowBase
 {
 public:
 

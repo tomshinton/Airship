@@ -1,12 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Airship Project - Tom Shinton 2018
 
 #pragma once
  
 #include "ModuleManager.h"
  
-DECLARE_LOG_CATEGORY_EXTERN(InventoryLog, All, All);
+DECLARE_LOG_CATEGORY_EXTERN(WieldingModuleLog, All, All);
  
-class FInventory : public IModuleInterface
+class FWieldingModule : public IModuleInterface
 {
 	public:
  

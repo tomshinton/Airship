@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "WieldInterface.h"
-#include "Utils/Datatypes/Inventory.h"
+#include <Runtime/Inventory/Public/InventoryTypes/Inventory.h>
+#include <Runtime/Wielding/Public/WieldInterface.h>
 
 #include "AirInventory.generated.h"
 
@@ -12,8 +12,8 @@ class AWorldItem;
 DECLARE_MULTICAST_DELEGATE(FOnInventoryUpdated);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSlotFocusUpdated, const int32);
 
-UCLASS()
-class AIRCORE_API UAirInventory : public UActorComponent
+UCLASS(MinimalAPI)
+class UAirInventory : public UActorComponent
 {
 	GENERATED_BODY()
 

@@ -8,7 +8,14 @@ public class AirUI : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG" });
+		PublicDependencyModuleNames.AddRange(new string[] {
+            "Core",
+            "CoreUObject",
+            "Engine",
+            "InputCore",
+            "Inventory",
+            "UMG"
+        });
 
 		PublicIncludePaths.AddRange(new string[] {"Runtime/AirUI/Public"});
 		PrivateIncludePaths.AddRange(new string[] {"Runtime/AirUI/Private"});

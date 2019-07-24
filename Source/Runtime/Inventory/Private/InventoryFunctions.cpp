@@ -1,9 +1,9 @@
-#include "InventoryFunctions.h"
-#include "ConstructorHelpers.h"
-#include "AirSettings.h"
-#include "InventorySettings.h"
-#include "../Datatypes/Inventory.h"
-#include "../Datatypes/InventoryItem.h"
+#pragma once
+
+#include "Runtime/Inventory/Public/InventoryFunctions.h"
+#include "Runtime/Inventory/Public/InventorySettings.h"
+#include "Runtime/Inventory/Public/InventoryTypes/Inventory.h"
+#include "Runtime/Inventory/Public/InventoryTypes/InventoryItem.h"
 
 FInventoryItem UInventoryFunctions::AddItemFromID(FInventory& Inventory, const FName ItemID, const int32 Quantity)
 {

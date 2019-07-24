@@ -23,7 +23,7 @@
 				"CoreUObject",
 				"Engine",
 				"Inventory",
-				"UMG"
+				"Wielding"
 			]
 		},
 		{
@@ -43,7 +43,13 @@
 			"LoadingPhase": "Default"
 		},
 		{
+			"Name": "Wielding",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
 			"Name": "AirTesting",
+			"Enabled": false,
 			"Type": "Editor",
 			"LoadingPhase": "PostEngineInit",
 			"AdditionalDependencies": [

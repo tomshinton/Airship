@@ -14,7 +14,7 @@ namespace InventoryItemStatics
 }
 
 USTRUCT(BlueprintType)
-struct AIRCORE_API FInventoryItem
+struct FInventoryItem
 {
 	GENERATED_BODY()
 

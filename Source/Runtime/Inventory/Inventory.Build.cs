@@ -8,7 +8,11 @@ public class Inventory : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core" });
+		PublicDependencyModuleNames.AddRange(new string[] 
+        {
+            "Core",
+            "Engine"
+        });
 
 		PublicIncludePaths.AddRange(new string[] {"Runtime/Inventory/Public"});
 		PrivateIncludePaths.AddRange(new string[] {"Runtime/Inventory/Private"});
