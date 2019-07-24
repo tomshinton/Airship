@@ -12,8 +12,27 @@
 #include <TextBlock.h>
 #include "DragAndDropVisual.h"
 #include "InventorySettings.h"
+#include "UISettings.h"
+#include "CanvasPanelSlot.h"
+#include "SizeBox.h"
 
 const FName UInventorySlot::Anim_Focus = FName("Focus");
+
+void UInventorySlot::SynchronizeProperties()
+{
+	Super::SynchronizeProperties();
+
+	if (UUISettings* UISettings = UUISettings::Get())
+	{
+		if (SlotBody)
+		{
+			if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(SlotBody->Slot))
+			{
+				CanvasSlot->SetSize(FVector2D(UISettings->InventorySlotSize, UISettings->InventorySlotSize));
+			}
+		}
+	}
+}
 
 void UInventorySlot::NativeConstruct()
 {

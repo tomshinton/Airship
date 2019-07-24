@@ -6,10 +6,13 @@
 #include "SequentialGridPanel.h"
 #include <GridPanel.h>
 #include "InventorySlot.h"
+#include "InventoryViewInterface.h"
+
 #include "InventoryPanel.generated.h"
 
 UCLASS()
 class AIRUI_API UInventoryPanel : public UAirWidget
+	, public IInventoryViewInterface
 {
 	GENERATED_BODY()
 	
@@ -25,17 +28,30 @@ public:
 	UGridPanel* PanelBody;
 
 	UPROPERTY(EditAnywhere, Category = "Slots")
+	bool UseDynamicRows;
+
+	UPROPERTY(EditAnywhere, Category = "Slots")
 	int32 Columns;
+
+	int32 DynamicColumns;
 
 	UPROPERTY(EditAnywhere, Category = "Slots")
 	int32 Slots;
 	
-	UPROPERTY(EditAnywhere, Category = "Slots")
-	TSubclassOf<UInventorySlot> SlotClass;
-
 	virtual void SynchronizeProperties() override;
+
+	// InventoryViewInterface
+	virtual void SetLinkedInventory(UAirInventory* InAirInventory) override { LinkedInventory = InAirInventory; };
+	//~InventoryViewInterface
 
 protected:
 
 	virtual void NativeConstruct() override;
+
+	void SetDynamicColumns();
+
+private:
+
+	UPROPERTY()
+	UAirInventory* LinkedInventory;
 };

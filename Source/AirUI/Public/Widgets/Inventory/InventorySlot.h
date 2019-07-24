@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AirWidget.h"
 #include "AirInventory.h"
+#include "InventoryViewInterface.h"
 #include "InventorySlot.generated.h"
 
 struct FInventoryItem;
@@ -13,9 +14,11 @@ class UInventorySlotPayload;
 class UTextBlock;
 class UImage;
 class UDragAndDropVisual;
+class USizeBox;
 
 UCLASS(abstract)
 class UInventorySlot : public UAirWidget
+	, public IInventoryViewInterface
 {
 	GENERATED_BODY()
 
@@ -23,7 +26,9 @@ public:
 
 	static const FName Anim_Focus;
 
-	//Elements
+	UPROPERTY(meta = (BindWidget))
+	USizeBox* SlotBody;
+
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ClipText;
 
@@ -42,12 +47,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void SetInventorySlot(const int32 InSlot, bool InIsHotbarSlot);
 
-	UFUNCTION(BlueprintCallable, Category = Inventory)
-	UAirInventory* GetLinkedInventory() const { return LinkedInventory; }
-
-	UFUNCTION(BlueprintCallable, Category = Inventory)
-	void SetLinkedInventory(UAirInventory* InInventory) { LinkedInventory = InInventory; };
-
 	UPROPERTY(EditAnywhere, Category = Inventory)
 	int32 InventorySlot;
 
@@ -59,6 +58,12 @@ public:
 
 	UPROPERTY(EditANywhere, Category = DragAndDrop)
 	TSubclassOf<UDragAndDropVisual> DragAndDropVisual;
+
+	virtual void SynchronizeProperties() override;
+	
+	// InventoryViewInterface
+	virtual void SetLinkedInventory(UAirInventory* InAirInventory) override { LinkedInventory = InAirInventory; };
+	//~InventoryViewInterface
 
 protected:
 
@@ -76,6 +81,9 @@ protected:
 
 private:
 	
+	UPROPERTY()
+	UAirInventory* LinkedInventory;
+
 	bool IsFocused;
 
 	void BuildSlotVisuals();

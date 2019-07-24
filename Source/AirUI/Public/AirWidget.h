@@ -32,22 +32,15 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnWidgetClosed OnWidgetClosed;
 
-	UAirInventory* GetLinkedInventory() const { return LinkedInventory; };
-	
 protected:
 
 	virtual void NativeConstruct() override;
-
-	virtual void SetLinkedInventory(UAirInventory* InInventory) { LinkedInventory = InInventory; };
 
 	void BuildAnimationMap();
 	UWidgetAnimation* GetAnimationByName(const FName InKey);
 
 	UPROPERTY()
 	AAirChar* LocalChar;
-
-	UPROPERTY()
-	UAirInventory* LinkedInventory;
 
 	UPROPERTY()
 	TMap<FName, UWidgetAnimation*> AnimationMap;

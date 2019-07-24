@@ -3,10 +3,9 @@
 #pragma once
 
 #include "AirWidget.h"
-#include "AirInventory.h"
-#include "SequentialGridPanel.h"
-#include "InventorySlot.h"
 #include "TransferWindowBase.generated.h"
+
+class UInventoryPanel;
 
 //////////////////////////////////////////////////////////////////////////
 // Base for all Transfer windows.  These are inventory screens that can display 2 DIFFERENT inventories, and allow for transfer between them
@@ -20,19 +19,16 @@ class UTransferWindowBase : public UAirWidget
 public:
 
 	UPROPERTY(EditDefaultsOnly, Category = Grids, meta = (BindWidget))
-	USequentialGridPanel* OwnerPanel;
+	UInventoryPanel* OwnerPanel;
 
 	UPROPERTY(EditDefaultsOnly, Category = Grids, meta = (BindWidget))
-	USequentialGridPanel* PlayerPanel;
+	UInventoryPanel* PlayerPanel;
 
 	virtual void SynchronizeProperties() override;
 
 protected:
 
 	virtual void NativeConstruct() override;
-
-	UPROPERTY(EditAnywhere, Category = "Slots")
-	int32 Columns;
 
 	UPROPERTY(EditAnywhere, Category = "Slots")
 	int32 Slots;

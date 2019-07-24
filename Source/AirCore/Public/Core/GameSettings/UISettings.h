@@ -32,4 +32,7 @@ public:
 
 	UPROPERTY(EditAnywhere, config, Category = "UI | Inventory")
 	TSubclassOf<UInventorySlot> InventorySlotClass;
+
+	UPROPERTY(EditAnywhere, config, Category = "UI | Inventory")
+	float InventorySlotSize;
 };

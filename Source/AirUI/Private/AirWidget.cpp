@@ -9,7 +9,7 @@
 UAirWidget::UAirWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, LocalChar(nullptr)
-	, LinkedInventory(nullptr)
+	, AnimationMap()
 {}
 
 void UAirWidget::Build()
@@ -19,6 +19,8 @@ void UAirWidget::Build()
 
 void UAirWidget::NativeConstruct()
 {
+	Super::NativeConstruct();
+
 	if (UWorld* World = GetWorld())
 	{
 		if (APlayerController* FirstPlayerController = World->GetFirstPlayerController())
@@ -26,7 +28,6 @@ void UAirWidget::NativeConstruct()
 			if (AAirChar* FirstCharFound = Cast<AAirChar>(FirstPlayerController->GetPawn()))
 			{
 				LocalChar = FirstCharFound;
-				SetLinkedInventory(FirstCharFound->GetInventory());
 			}
 		}
 	}
