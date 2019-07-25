@@ -11,7 +11,8 @@ public class Inventory : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[] 
         {
             "Core",
-            "Engine"
+            "Engine",
+            "Projectile"
         });
 
 		PublicIncludePaths.AddRange(new string[] {"Runtime/Inventory/Public"});

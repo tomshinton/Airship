@@ -2,21 +2,20 @@
 
 using UnrealBuildTool;
 
-public class Wielding : ModuleRules
+public class Projectile : ModuleRules
 {
-	public Wielding(ReadOnlyTargetRules Target) : base(Target)
+	public Projectile(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] 
         {
             "Core",
-            "Engine",
-            "Item"
+            "Item" 
         });
 
-		PublicIncludePaths.AddRange(new string[] {"Runtime/Wielding/Public"});
-		PrivateIncludePaths.AddRange(new string[] {"Runtime/Wielding/Private"});
+		PublicIncludePaths.AddRange(new string[] {"Runtime/Projectile/Public"});
+		PrivateIncludePaths.AddRange(new string[] {"Runtime/Projectile/Private"});
 
         PrivateDependencyModuleNames.AddRange(new string[] { });
     }

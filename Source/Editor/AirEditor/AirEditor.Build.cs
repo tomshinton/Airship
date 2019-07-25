@@ -8,12 +8,21 @@ public class AirEditor : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        PublicIncludePaths.AddRange(new string[] { "Editor/AirEditor/Public" });
 
-        PrivateIncludePaths.AddRange(new string[] { "Editor/AirEditor/Private" });
-
-        PublicDependencyModuleNames.AddRange(new string[] { "AirCore", "Core", "CoreUObject", "Engine", "InputCore" });
+        PublicDependencyModuleNames.AddRange(new string[] 
+        {
+            "AirCore",
+            "Core",
+            "CoreUObject",
+            "Engine",
+            "InputCore",
+            "Inventory",
+            "UI"
+        });
 
         PrivateDependencyModuleNames.AddRange(new string[] { });
+
+        PublicIncludePaths.AddRange(new string[] { "Editor/AirEditor/Public" });
+        PrivateIncludePaths.AddRange(new string[] { "Editor/AirEditor/Private" });
     }
 };

@@ -1,8 +1,5 @@
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Interface.h"
-
 #include "WieldInterface.generated.h"
 
 UINTERFACE(BlueprintType, MinimalAPI)
@@ -11,7 +8,7 @@ class UWieldInterface : public UInterface
 	GENERATED_BODY()
 };
 
-class AIRCORE_API IWieldInterface
+class WIELDING_API IWieldInterface
 {
 	GENERATED_BODY()
 

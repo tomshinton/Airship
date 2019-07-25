@@ -19,26 +19,20 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"AirUI",
 				"CoreUObject",
 				"Engine",
 				"Inventory",
+				"UI",
 				"Wielding"
 			]
 		},
 		{
-			"Name": "AirUI",
-			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"Engine",
-				"UMG",
-				"CoreUObject",
-				"AirCore"
-			]
-		},
-		{
 			"Name": "Inventory",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},	
+		{
+			"Name": "Projectile",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},
@@ -46,6 +40,17 @@
 			"Name": "Wielding",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "UI",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"AirCore",
+				"CoreUObject",
+				"Engine",
+				"UMG"
+			]
 		},
 		{
 			"Name": "AirTesting",

@@ -128,7 +128,7 @@ void UInventoryFunctions::Audit(FName ItemID, int32& Stacks, int32& Total, FInve
 	}
 }
 
-AIRCORE_API int32 UInventoryFunctions::GetNumStacksInInventory(const FInventory& Inventory, const FName& InItemID)
+int32 UInventoryFunctions::GetNumStacksInInventory(const FInventory& Inventory, const FName& InItemID)
 {
 	int32 AmountFound = 0;
 	for (const FInventoryItem& Item : Inventory.ItemSlots)
