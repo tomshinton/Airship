@@ -1,15 +1,13 @@
 // Airship Project - Tom Shinton 2018
 
-#include "ProjectileBase.h"
+#include "Runtime/Projectile/Public/ProjectileBase.h"
 
 AProjectileBase::AProjectileBase()
-{
-	PrimaryActorTick.bCanEverTick = true;
-	SetActorTickEnabled(true);
-}
+	: ProjectileVelocity(0.f)
+	, MoveDirection(FVector::ZeroVector)
+{}
 
-void AProjectileBase::OnFire(const FVector FireDirection)
+void AProjectileBase::OnFire(const FVector& InFireDirection)
 {
-	MoveDirection = FireDirection;
-	ItemMesh->AddImpulse(MoveDirection*ProjectileVelocity);
+
 }

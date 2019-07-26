@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Clip.generated.h"
+#include <Runtime/Projectile/Public/ProjectileBase.h>
 
-class AProjectileBase;
+#include "Clip.generated.h"
 
 USTRUCT(Blueprintable, BlueprintType)
 struct FClip

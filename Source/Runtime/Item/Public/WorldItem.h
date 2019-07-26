@@ -1,8 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Airship Project - Tom Shinton 2018
 
 #pragma once
 
-#include <Runtime/Wielding/Public/WieldInterface.h>
+#include <Runtime/Engine/Classes/GameFramework/Actor.h>
+#include <Runtime/Item/Public/WieldInterface.h>
 
 #include "WorldItem.generated.h"
 
@@ -16,10 +17,11 @@ class AWorldItem : public AActor
 	GENERATED_BODY()
 	
 public:
+
 	static const FName BarrelSocketName;
 
 public:	
-	// Sets default values for this actor's properties
+
 	AWorldItem();
 
 	UPROPERTY(EditDefaultsOnly)
@@ -31,12 +33,12 @@ public:
 public:
 
 	//WieldInterface
-	virtual void StartPrimary() override;
-	virtual void EndPrimary() override;
-	virtual void StartSecondary() override;
-	virtual void EndSecondary() override;
-	virtual void StartWield() override;
-	virtual void EndWield() override;
+	ITEM_API virtual void StartPrimary() override;
+	ITEM_API virtual void EndPrimary() override;
+	ITEM_API virtual void StartSecondary() override;
+	ITEM_API virtual void EndSecondary() override;
+	ITEM_API virtual void StartWield() override;
+	ITEM_API virtual void EndWield() override;
 	//~WieldInterface
 
 	void SetAssociatedInventory(UAirInventory* InInventory) { AssociatedInventoryComponent = InInventory; }

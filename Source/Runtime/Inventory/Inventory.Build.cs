@@ -11,7 +11,9 @@ public class Inventory : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[] 
         {
             "Core",
+            "CoreUObject",
             "Engine",
+            "Item",
             "Projectile"
         });
 

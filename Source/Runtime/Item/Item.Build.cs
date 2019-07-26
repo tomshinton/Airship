@@ -12,15 +12,20 @@ public class Item : ModuleRules
         {
             "AirCore",
             "Core",
+            "CoreUObject",
             "Engine",
             "Inventory",
-            "UI",
-            "Wielding"
+            "Projectile",
+            "UI"
+        });
+
+        PrivateDependencyModuleNames.AddRange(new string[] 
+        {
+            "UMG"
         });
 
 		PublicIncludePaths.AddRange(new string[] {"Runtime/Item/Public"});
 		PrivateIncludePaths.AddRange(new string[] {"Runtime/Item/Private"});
 
-        PrivateDependencyModuleNames.AddRange(new string[] { });
     }
 }

@@ -2,16 +2,18 @@
 
 #pragma once
 
+#include "Runtime/UI/Public/AirWidget.h"
+#include "Runtime/UI/Public/Widgets/Inventory/InventoryViewInterface.h"
+
+#include <Runtime/Inventory/Public/InventoryComponent/AirInventory.h>
+
+#include "Hotbar.generated.h"
+
 class UInventorySlot;
 class UHorizontalBox;
 
-#include "AirWidget.h"
-#include "AirInventory.h"
-#include "InventoryViewInterface.h"
-#include "Hotbar.generated.h"
-
 UCLASS()
-class AIRUI_API UHotbar : public UAirWidget
+class UI_API UHotbar : public UAirWidget
 	, public IInventoryViewInterface
 {
 	GENERATED_BODY()

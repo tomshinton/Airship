@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include <Runtime/Item/Public/WorldItem.h>
-
 #include "ProjectileBase.generated.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -11,19 +9,22 @@
 //////////////////////////////////////////////////////////////////////////
 
 UCLASS(MinimalAPI)
-class AProjectileBase : public AWorldItem
+class AProjectileBase : public AActor
 {
 	GENERATED_BODY()
 
+public:
+
 	AProjectileBase();
 
-public:
-	virtual void OnFire(const FVector FireDirection);
+	virtual void OnFire(const FVector& InFireDirection);
 
 protected:
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	FVector MoveDirection;
-	
+
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	float ProjectileVelocity;
+
+private:
+
+	FVector MoveDirection;
 };

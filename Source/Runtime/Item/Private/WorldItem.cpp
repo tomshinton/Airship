@@ -1,16 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Airship Project - Tom Shinton 2018
 
-#include "WorldItem.h"
-#include "AirInventory.h"
+#include "Runtime/Item/Public/WorldItem.h"
+#include <Runtime/Inventory/Public/InventoryComponent/AirInventory.h>
 
 const FName AWorldItem::BarrelSocketName = FName("BarrelSocket");
 
 AWorldItem::AWorldItem()
+	: ItemRoot(CreateDefaultSubobject<USceneComponent>(TEXT("ItemRoot")))
+	, ItemMesh(CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh")))
 {
-	ItemRoot = CreateDefaultSubobject<USceneComponent>(TEXT("ItemRoot"));
 	RootComponent = ItemRoot;
-
-	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
 	ItemMesh->SetupAttachment(RootComponent);
 	ItemMesh->SetCastShadow(false);
 
@@ -20,12 +19,10 @@ AWorldItem::AWorldItem()
 
 void AWorldItem::StartPrimary()
 {
-
 }
 
 void AWorldItem::EndPrimary()
 {
-
 }
 
 void AWorldItem::StartSecondary()

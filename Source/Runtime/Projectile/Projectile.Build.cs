@@ -11,7 +11,8 @@ public class Projectile : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[] 
         {
             "Core",
-            "Item" 
+            "CoreUObject",
+            "Engine"
         });
 
 		PublicIncludePaths.AddRange(new string[] {"Runtime/Projectile/Public"});

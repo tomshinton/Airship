@@ -2,18 +2,19 @@
 
 #include "Runtime/Item/Public/Container.h"
 
-#include <AirCore/Utils/Functions/UMGFunctions.h>
 #include <AirCore/Public/Core/AirController.h>
 #include <AirCore/Public/Core/GameSettings/UISettings.h>
+#include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 #include <Runtime/Inventory/Public/InventoryComponent/AirInventory.h>
 #include <Runtime/UI/Public/Utils/HUDTools.h>
+#include <Runtime/UI/Public/Utils/UMGFunctions.h>
 
-AContainer::AContainer()
+	AContainer::AContainer()
 	: Mesh(CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ContainerMesh")))
 	, Inventory(CreateDefaultSubobject<UAirInventory>(TEXT("Inventory")))
 {
 	PrimaryActorTick.bCanEverTick = false;
-	RootComponent = Mesh;
+	SetRootComponent(Mesh);
 }
 
 void AContainer::OnInteract(AActor* InteractingActor)

@@ -10,12 +10,10 @@ public class AirshipTarget : TargetRules
 		Type = TargetType.Game;
 
 		ExtraModuleNames.AddRange( new string[] { "Airship" } );
-		ExtraModuleNames.AddRange( new string[] { "AirCore" } );
 
         if (Type == TargetRules.TargetType.Editor)
         {
-            ExtraModuleNames.AddRange( new string[] { "AirEditor" } );
-            ExtraModuleNames.AddRange( new string[] { "AirTesting" });
+            ExtraModuleNames.AddRange(new string[] { "AirEditor" });
         }
     }
 }

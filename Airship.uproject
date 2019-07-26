@@ -23,7 +23,6 @@
 				"Engine",
 				"Inventory",
 				"UI",
-				"Wielding"
 			]
 		},
 		{
@@ -33,11 +32,6 @@
 		},	
 		{
 			"Name": "Projectile",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		},
-		{
-			"Name": "Wielding",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},
@@ -53,20 +47,12 @@
 			]
 		},
 		{
-			"Name": "AirTesting",
-			"Enabled": false,
+			"Name": "AirEditor",
 			"Type": "Editor",
 			"LoadingPhase": "PostEngineInit",
 			"AdditionalDependencies": [
-				"Engine",
-				"EditorTests",
-				"UnrealEd"
+				"Airship"
 			]
-		},
-		{
-			"Name": "AirEditor",
-			"Type": "Editor",
-			"LoadingPhase": "PostEngineInit"
 		}
 	]
 }

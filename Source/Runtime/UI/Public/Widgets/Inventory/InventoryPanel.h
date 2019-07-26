@@ -11,7 +11,7 @@
 #include "InventoryPanel.generated.h"
 
 UCLASS()
-class AIRUI_API UInventoryPanel : public UAirWidget
+class UI_API UInventoryPanel : public UAirWidget
 	, public IInventoryViewInterface
 {
 	GENERATED_BODY()

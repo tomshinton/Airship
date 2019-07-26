@@ -1,4 +1,5 @@
 #pragma once
+#include <Runtime/CoreUObject/Public/UObject/Interface.h>
 
 #include "WieldInterface.generated.h"
 
@@ -8,7 +9,7 @@ class UWieldInterface : public UInterface
 	GENERATED_BODY()
 };
 
-class WIELDING_API IWieldInterface
+class ITEM_API IWieldInterface
 {
 	GENERATED_BODY()
 

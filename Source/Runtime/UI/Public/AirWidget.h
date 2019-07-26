@@ -12,7 +12,7 @@ class UAirInventory;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWidgetClosed);
 
-UCLASS(abstract)
+UCLASS(abstract, MinimalAPI)
 class UAirWidget : public UUserWidget
 {
 	GENERATED_BODY()

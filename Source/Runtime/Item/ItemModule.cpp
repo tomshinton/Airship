@@ -18,4 +18,4 @@ void FItemModule::ShutdownModule()
  
 #undef LOCTEXT_NAMESPACE
  
-IMPLEMENT_MODULE(FItemModule, ItemModuleLog)
+IMPLEMENT_MODULE(FItemModule, Item)

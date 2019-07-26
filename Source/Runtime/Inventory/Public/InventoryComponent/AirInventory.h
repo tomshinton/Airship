@@ -3,7 +3,7 @@
 #pragma once
 
 #include <Runtime/Inventory/Public/InventoryTypes/Inventory.h>
-#include <Runtime/Wielding/Public/WieldInterface.h>
+#include <Runtime/Item/Public/WieldInterface.h>
 
 #include "AirInventory.generated.h"
 
@@ -53,21 +53,21 @@ public:
 	void GetHotbarBounds(bool& HasHotbarSlots, int32& HotbarStart, int32& HotbarEnd);
 
 	void SetHandComponents(USceneComponent* InLeftHand, USceneComponent* InRightHand) { RightHand = InRightHand; }
+	
+	UFUNCTION()
+	INVENTORY_API void Reload();
 
 	UFUNCTION()
-	void Reload();
+	INVENTORY_API void ReduceCurrentClip(const int32 InAmountToReduce);
 
-	UFUNCTION()
-	void ReduceCurrentClip(const int32 InAmountToReduce);
-
-	FInventoryItem GetItemBySlot(const int32& ID) const;
+	INVENTORY_API FInventoryItem GetItemBySlot(const int32& ID) const;
 	FName GetItemNameBySlot(const int32& ID) const;
 
-	void SetItemBySlot(FInventoryItem InItem, const int32 InSlot);
+	INVENTORY_API void SetItemBySlot(FInventoryItem InItem, const int32 InSlot);
 
 	void UpdateFocus();
-	void FocusNextItem();
-	void FocusLastItem();
+	INVENTORY_API void FocusNextItem();
+	INVENTORY_API void FocusLastItem();
 
 	int32 GetCurrentFocusedSlot() const { return CurrFocusedSlot; }
 
@@ -84,10 +84,10 @@ public:
 
 	void Wield();
 
-	void StartPrimary();
-	void EndPrimary();
-	void StartSecondary();
-	void EndSecondary();
+	INVENTORY_API void StartPrimary();
+	INVENTORY_API void EndPrimary();
+	INVENTORY_API void StartSecondary();
+	INVENTORY_API void EndSecondary();
 
 	FOnInventoryUpdated OnInventoryUpdated;
 	FOnSlotFocusUpdated OnSlotFocusUpdated;

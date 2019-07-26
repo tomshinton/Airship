@@ -6,13 +6,13 @@
 
 class UAirInventory;
 
-UINTERFACE()
+UINTERFACE(MinimalAPI)
 class UInventoryViewInterface : public UInterface
 {
 	GENERATED_BODY()
 };
 
-class INVENTORY_API IInventoryViewInterface
+class UI_API IInventoryViewInterface
 {
 	GENERATED_BODY()
 

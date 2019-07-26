@@ -1,10 +1,10 @@
 // Airship Project - Tom Shinton 2018
 
-#include "Runtime/Wielding/Public/Aimable.h"
-
-#include "Runtime/Wielding/Public/Scope.h"
+#include "Runtime/Item/Public/Aimable.h"
+#include "Runtime/Item/Public/Scope.h"
 
 #include <AirCore/Public/Core/AirHUD.h>
+#include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 #include <Runtime/Inventory/Public/InventoryComponent/AirInventory.h>
 #include <Runtime/Projectile/Public/ProjectileBase.h>
 

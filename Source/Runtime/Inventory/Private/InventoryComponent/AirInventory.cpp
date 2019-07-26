@@ -1,9 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Airship Project - Tom Shinton 2018
 
-#include "AirInventory.h"
-#include "WorldItem.h"
-#include <GameFramework/Character.h>
-#include "Utils/Functions/InventoryFunctions.h"
+#include "Runtime/Inventory/Public/InventoryComponent\AirInventory.h"
+#include "Runtime/Inventory/Public/InventoryFunctions.h"
+
+#include <Runtime/Engine/Classes/GameFramework/Character.h>
+#include <Runtime/Item/Public/WieldInterface.h>
+#include <Runtime/Item/Public/WorldItem.h>
 
 DEFINE_LOG_CATEGORY_STATIC(AirInventoryLog, Log, Log);
 
