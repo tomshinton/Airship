@@ -34,6 +34,12 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* InteractionKeyBlock;
 	
+	UPROPERTY(meta = (BindWidgetAnim))
+	UWidgetAnimation* ShowAnim;
+
+	UPROPERTY(meta = (BindWidgetAnim))
+	UWidgetAnimation* HideAnim;
+
 	TScriptInterface<IInteractionInterface> InteractionInterface;
 
 	void ShowPanel(const IInteractableInterface& InteractableInterface);

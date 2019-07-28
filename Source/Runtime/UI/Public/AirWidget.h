@@ -36,9 +36,6 @@ protected:
 
 	virtual void NativeConstruct() override;
 
-	void BuildAnimationMap();
-	UWidgetAnimation* GetAnimationByName(const FName InKey);
-
 	UPROPERTY()
 	AAirChar* LocalChar;
 

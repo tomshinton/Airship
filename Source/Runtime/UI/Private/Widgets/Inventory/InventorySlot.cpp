@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Airship Project - Tom Shinton 2018
 
 #include "InventorySlot.h"
 #include "AirChar.h"
@@ -15,8 +15,6 @@
 #include "UISettings.h"
 #include "CanvasPanelSlot.h"
 #include "SizeBox.h"
-
-const FName UInventorySlot::Anim_Focus = FName("Focus");
 
 void UInventorySlot::SynchronizeProperties()
 {
@@ -112,13 +110,13 @@ void UInventorySlot::PlayerFocusChanged(int32 InSlot)
 		{
 			IsFocused = true;
 
-			PlayAnimation(GetAnimationByName(UInventorySlot::Anim_Focus));
+			PlayAnimation(FocusAnim);
 		}
 		else if (IsFocused)
 		{
 			IsFocused = false;
 
-			PlayAnimation(GetAnimationByName(UInventorySlot::Anim_Focus), 0.f, 1, EUMGSequencePlayMode::Reverse, 3.f);
+			PlayAnimation(FocusAnim, 0.f, 1, EUMGSequencePlayMode::Reverse, 3.f);
 		}
 	}
 }
@@ -207,9 +205,20 @@ void UInventorySlot::BuildFromValidData(FInventoryItemRow* Row)
 
 void UInventorySlot::BuildFromInvalidData()
 {
-	ItemIcon->SetVisibility(ESlateVisibility::Hidden);
-	QuantityText->SetVisibility(ESlateVisibility::Hidden);
-	ClipText->SetVisibility(ESlateVisibility::Hidden);
+	if (ItemIcon)
+	{
+		ItemIcon->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	if (QuantityText)
+	{
+		QuantityText->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	if (ClipText)
+	{
+		ClipText->SetVisibility(ESlateVisibility::Hidden);
+	}
 
 	IsPopulated = false;
 }

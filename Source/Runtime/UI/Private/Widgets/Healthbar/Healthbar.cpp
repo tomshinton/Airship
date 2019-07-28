@@ -50,7 +50,7 @@ void UHealthbar::SetHealthInterface(IHealthInterface* InHealthInterface)
 				FTimerDelegate HideDelegate;
 				HideDelegate.BindLambda([this]()
 				{
-					PlayAnimation(GetAnimationByName(HealthbarAnims::Anim_Hide));
+					PlayAnimation(HideAnim);
 					HealthbarOnScreen = false;
 				});
 
@@ -86,7 +86,7 @@ void UHealthbar::UpdateBar(const FHealthChangeEvent& InUpdateReason)
 	if (!HealthbarOnScreen)
 	{
 		SetVisibility(ESlateVisibility::Visible);
-		PlayAnimation(GetAnimationByName(HealthbarAnims::Anim_Show));
+		PlayAnimation(ShowAnim);
 
 		HealthbarOnScreen = true;
 	}

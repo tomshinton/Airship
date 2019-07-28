@@ -28,6 +28,12 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* HealthBar;
 
+	UPROPERTY(meta = (BindWidgetAnim))
+	UWidgetAnimation* ShowAnim;
+
+	UPROPERTY(meta = (BindWidgetAnim))
+	UWidgetAnimation* HideAnim;
+
 	UPROPERTY(EditAnywhere, Category = Health)
 	float MaxHealth;
 

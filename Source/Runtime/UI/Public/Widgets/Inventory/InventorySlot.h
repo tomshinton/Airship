@@ -1,11 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Airship Project - Tom Shinton 2018
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "AirWidget.h"
-#include "AirInventory.h"
-#include "InventoryViewInterface.h"
+#include "Runtime/UI/Public/AirWidget.h"
+#include "Runtime/UI/Public/Widgets/Inventory/InventoryViewInterface.h"
+
+#include <Runtime/Inventory/Public/InventoryComponent/AirInventory.h>
+
 #include "InventorySlot.generated.h"
 
 struct FInventoryItem;
@@ -24,8 +25,6 @@ class UInventorySlot : public UAirWidget
 
 public:
 
-	static const FName Anim_Focus;
-
 	UPROPERTY(meta = (BindWidget))
 	USizeBox* SlotBody;
 
@@ -37,6 +36,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* QuantityText;
+
+	UPROPERTY(meta = (BindWidgetAnim))
+	UWidgetAnimation* FocusAnim;
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = Inventory)
 	FInventoryItem GetLinkedItem();

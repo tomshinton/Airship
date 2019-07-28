@@ -8,12 +8,6 @@
 #include "Utils/Functions/BindingFunctions.h"
 #include "HUDTools.h"
 
-namespace InspectorPanelAnims
-{
-	const FName Anim_Show("ShowAnim");
-	const FName Anim_Hide("HideAnim");
-}
-
 namespace InspectorPanelPrivate
 {
 	const FName InteractBindingText("Interact");
@@ -35,15 +29,14 @@ void UInspectorPanel::ShowPanel(const IInteractableInterface& InteractableInterf
 			DisplayNameBlock->SetText(InteractableInterface.GetDisplayName());
 			InteractionKeyBlock->SetText(GetInteractionKeyString());
 
-			SetVisibility(ESlateVisibility::Visible);
-			PlayAnimation(GetAnimationByName(InspectorPanelAnims::Anim_Show));
+			PlayAnimation(ShowAnim);
 		}
 	}
 }
 
 void UInspectorPanel::HidePanel()
 {
-	PlayAnimation(GetAnimationByName(InspectorPanelAnims::Anim_Hide));
+	PlayAnimation(HideAnim);
 }
 
 void UInspectorPanel::SetInteractionInterface(IInteractionInterface* InInteractionInterface)
