@@ -2,9 +2,12 @@
 
 #pragma once
 
+#include <Runtime/CoreUObject/Public/UObject/Interface.h>
+
 #include "InventoryViewInterface.generated.h"
 
-class UAirInventory;
+class IHotbarInterface;
+class IInventoryInterface;
 
 UINTERFACE(MinimalAPI)
 class UInventoryViewInterface : public UInterface
@@ -18,5 +21,6 @@ class UI_API IInventoryViewInterface
 
 public:
 
-	virtual void SetLinkedInventory(UAirInventory* InAirInventory) = 0;
+	virtual void SetLinkedInventory(IInventoryInterface* InInterface) = 0;
+	virtual void SetLinkedHotbar(IHotbarInterface* InInterface) = 0;
 };

@@ -41,7 +41,12 @@ public:
 	virtual void SynchronizeProperties() override;
 
 	// InventoryViewInterface
-	virtual void SetLinkedInventory(UAirInventory* InAirInventory) override { LinkedInventory = InAirInventory; };
+	virtual void SetLinkedInventory(IInventoryInterface* InInterface) override
+	{
+		LinkedInventory.SetInterface(InInterface);
+		LinkedInventory.SetObject(this);
+	};
+	virtual void SetLinkedHotbar(IHotbarInterface* InInterface) {};
 	//~InventoryViewInterface
 
 protected:
@@ -53,5 +58,5 @@ protected:
 private:
 
 	UPROPERTY()
-	UAirInventory* LinkedInventory;
+	TScriptInterface<IInventoryInterface> LinkedInventory;
 };

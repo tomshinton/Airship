@@ -113,21 +113,6 @@ bool UInventoryFunctions::InventoryHasEmptySlots(FInventory& Inventory)
 
 }
 
-void UInventoryFunctions::Audit(FName ItemID, int32& Stacks, int32& Total, FInventory& InInventory)
-{
-	Total = 0;
-	Stacks = 0;
-
-	for (FInventoryItem& ExistingSlot : InInventory.ItemSlots)
-	{
-		if (ExistingSlot.ItemID == ItemID)
-		{
-			Stacks++;
-			Total += ExistingSlot.Quantity;
-		}
-	}
-}
-
 int32 UInventoryFunctions::GetNumStacksInInventory(const FInventory& Inventory, const FName& InItemID)
 {
 	int32 AmountFound = 0;

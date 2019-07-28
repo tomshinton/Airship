@@ -37,7 +37,7 @@ void UInventoryPanel::SynchronizeProperties()
 
 					if (IInventoryViewInterface* InvViewInterface = Cast<IInventoryViewInterface>(NewSlot))
 					{
-						InvViewInterface->SetLinkedInventory(LinkedInventory);
+						InvViewInterface->SetLinkedInventory((IInventoryInterface*)LinkedInventory.GetInterface());
 					}
 
 					UGridSlot* AddedChild = PanelBody->AddChildToGrid(NewSlot);
@@ -65,7 +65,7 @@ void UInventoryPanel::NativeConstruct()
 		{
 			if (UInventorySlot* ChildSlot = Cast<UInventorySlot>(Widget))
 			{
-				ChildSlot->SetLinkedInventory(LinkedInventory);
+				ChildSlot->SetLinkedInventory((IInventoryInterface*)LinkedInventory.GetInterface());
 			}
 		}
 	}
@@ -75,7 +75,7 @@ void UInventoryPanel::SetDynamicColumns()
 {
 	if(UWidget* ParentWidget = GetParent())
 	{
-			const float ParentWidth = ParentWidget->GetDesiredSize().X;
+		const float ParentWidth = ParentWidget->GetDesiredSize().X;
 	}
 	else
 	{

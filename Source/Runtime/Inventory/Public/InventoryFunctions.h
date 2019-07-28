@@ -19,7 +19,6 @@ public:
 	static void TransferItems(FName ItemID, int32 Quantity, FInventory& InventoryToRemoveFrom, FInventory& InventoryToAddTo);
 
 	static bool InventoryHasEmptySlots(FInventory& Inventory);
-	static void Audit(FName ItemID, int32& Stacks, int32& Total, FInventory& InInventory);
 	
 	static bool InventoryContains(const FInventory& Inventory, const FName& InItemID, const int32& InQuantity);
 	static int32 GetNumItemsInInventory(const FInventory& Inventory, const FName& ItemID);

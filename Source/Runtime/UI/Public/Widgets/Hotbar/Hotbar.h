@@ -5,8 +5,9 @@
 #include "Runtime/UI/Public/AirWidget.h"
 #include "Runtime/UI/Public/Widgets/Inventory/InventoryViewInterface.h"
 
+#include <Runtime/Inventory/Public/HotbarInterface.h>
 #include <Runtime/Inventory/Public/InventoryComponent/AirInventory.h>
-
+ 
 #include "Hotbar.generated.h"
 
 class UInventorySlot;
@@ -34,7 +35,17 @@ public:
 	virtual void SynchronizeProperties() override;
 
 	//IInventoryViewInterface
-	virtual void SetLinkedInventory(UAirInventory* InAirInventory) override { LinkedInventory = InAirInventory; };
+	virtual void SetLinkedInventory(IInventoryInterface* InInterface) override
+	{
+		LinkedInventory.SetInterface(InInterface);
+		LinkedInventory.SetObject(this);
+	};
+
+	virtual void SetLinkedHotbar(IHotbarInterface* InInterface) override 
+	{ 
+		LinkedHotbar.SetInterface(InInterface);
+		LinkedHotbar.SetObject(this);
+	};
 	//~IInventoryViewInterface
 
 protected:
@@ -47,6 +58,6 @@ private:
 
 	int32 HotbarSlotCount;
 
-	UPROPERTY()
-	UAirInventory* LinkedInventory;
+	TScriptInterface<IInventoryViewInterface> LinkedInventory;
+	TScriptInterface<IHotbarInterface> LinkedHotbar;
 };

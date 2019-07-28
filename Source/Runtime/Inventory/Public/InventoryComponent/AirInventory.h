@@ -2,18 +2,19 @@
 
 #pragma once
 
-#include <Runtime/Inventory/Public/InventoryTypes/Inventory.h>
-#include <Runtime/Item/Public/WieldInterface.h>
+#include "Runtime/Inventory/Public/InventoryInterface.h"
+#include "Runtime/Inventory/Public/HotbarInterface.h"
+#include "Runtime/Inventory/Public/InventoryTypes/Inventory.h"
 
+#include <Runtime/Item/Public/WieldInterface.h>
 #include "AirInventory.generated.h"
 
 class AWorldItem;
 
-DECLARE_MULTICAST_DELEGATE(FOnInventoryUpdated);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnSlotFocusUpdated, const int32);
-
 UCLASS(MinimalAPI)
 class UAirInventory : public UActorComponent
+	, public IInventoryInterface
+	, public IHotbarInterface
 {
 	GENERATED_BODY()
 
@@ -26,7 +27,19 @@ public:
 	
 public:
 
-	FInventory GetInventory() const { return Inventory; };
+	//IInventoryInterface
+	virtual FOnInventoryUpdated& GetOnInventoryUpdated() override { return OnInventoryUpdated; };
+	virtual FOnSlotFocusUpdated& GetOnSlotFocusUpdated() override { return OnSlotFocusUpdated; };
+	virtual FInventory& GetInventory() override { return Inventory; };
+	virtual int32 GetCurrentFocusedSlot() const override { return CurrFocusedSlot; }
+
+	virtual FInventoryItem GetItemBySlot(const int32 InSlot) const;
+	virtual void SetItemBySlot(const FInventoryItem& InItem, const int32 InSlot) override;
+	//~IInventoryInterface
+
+	//IHotbarInterface
+	virtual int32 GetNumHotbarSlots() const override { return HotbarSlots; };
+	//~IHotbarInterface
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void AddItem(const FName& ID, const int32& Quantity);
@@ -39,9 +52,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = Inventory)
 	int32 GetInventorySize() const { return InventorySize; }
-
-	UFUNCTION(BlueprintCallable, Category = Inventory)
-	void Audit(const FName& ItemID, int32& Stack, int32& Total);
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void SwapSlots(const int32& FirstSlot, const int32& SecondSlot);
@@ -60,7 +70,6 @@ public:
 	UFUNCTION()
 	INVENTORY_API void ReduceCurrentClip(const int32 InAmountToReduce);
 
-	INVENTORY_API FInventoryItem GetItemBySlot(const int32& ID) const;
 	FName GetItemNameBySlot(const int32& ID) const;
 
 	INVENTORY_API void SetItemBySlot(FInventoryItem InItem, const int32 InSlot);
@@ -69,7 +78,6 @@ public:
 	INVENTORY_API void FocusNextItem();
 	INVENTORY_API void FocusLastItem();
 
-	int32 GetCurrentFocusedSlot() const { return CurrFocusedSlot; }
 
 	void SetIsAiming(const bool InAiming) { IsAiming = InAiming; }
 	bool GetIsAiming() const { return IsAiming; }
@@ -77,10 +85,6 @@ public:
 #if WITH_DEV_AUTOMATION_TESTS
 	void SetCurrentFocusSlot(const int32 NewFocusedSlot) { CurrFocusedSlot = NewFocusedSlot; };
 #endif //WITH_DEV_AUTOMATION_TESTS
-
-	/************************************************************************/
-	/* Interaction                                                          */
-	/************************************************************************/
 
 	void Wield();
 

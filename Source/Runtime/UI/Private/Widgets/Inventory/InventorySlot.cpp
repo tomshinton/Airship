@@ -45,12 +45,12 @@ void UInventorySlot::NativeConstruct()
 
 	if (LinkedInventory)
 	{
-		LinkedInventory->OnSlotFocusUpdated.AddLambda([this](const int32 NewSlot)
+		LinkedInventory->GetOnSlotFocusUpdated().AddLambda([this](const int32 NewSlot)
 		{
 			PlayerFocusChanged(NewSlot);
 		});
 
-		LinkedInventory->OnInventoryUpdated.AddLambda([this]()
+		LinkedInventory->GetOnInventoryUpdated().AddLambda([this]()
 		{
 			PlayerInventoryChanged();
 		});
@@ -74,8 +74,8 @@ FInventoryItem UInventorySlot::GetLinkedItem()
 
 bool UInventorySlot::OnInventorySlotDrop(UInventorySlotDragOperation* Operation)
 {
-	UAirInventory* ThisInventory = LinkedInventory;
-	UAirInventory* OtherInventory = Operation->SourceInventory;
+	IInventoryInterface* ThisInventory = (IInventoryInterface*)LinkedInventory.GetInterface();
+	IInventoryInterface* OtherInventory = (IInventoryInterface*)Operation->SourceInventoryInterface.GetInterface();
 
 	const int32 ThisSlotNum = InventorySlot;
 	const int32 OtherSlotNum = Operation->IncomingSlot->InventorySlot;
@@ -142,7 +142,9 @@ void UInventorySlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPo
 			{
 				DragOp->DefaultDragVisual = DragAndDropWidget;
 				DragOp->IncomingSlot = this;
-				DragOp->SourceInventory = LinkedInventory;
+
+				DragOp->SourceInventoryInterface.SetInterface((IInventoryInterface*)LinkedInventory.GetInterface());
+				DragOp->SourceInventoryInterface.SetObject(DragOp);
 
 				OutOperation = DragOp;
 			}

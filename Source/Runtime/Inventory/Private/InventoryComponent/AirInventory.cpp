@@ -83,11 +83,6 @@ void UAirInventory::TransferItem(const FName& ItemID, const int32& Quantity, UAi
 	}
 }
 
-void UAirInventory::Audit(const FName& ItemID, int32& Stacks, int32& Total)
-{
-	UInventoryFunctions::Audit(ItemID, Stacks, Total, Inventory);
-}
-
 void UAirInventory::SwapSlots(const int32& FirstSlot, const int32& SecondSlot)
 {
 	Inventory.ItemSlots.Swap(FirstSlot, SecondSlot);
@@ -126,11 +121,11 @@ void UAirInventory::GetHotbarBounds(bool& HasHotbarSlots, int32& HotbarStart, in
 	HotbarEnd = FMath::Clamp(HotbarSlots - 1, 0, InventorySize-1);
 }
 
-FInventoryItem UAirInventory::GetItemBySlot(const int32& ID) const
+FInventoryItem UAirInventory::GetItemBySlot(const int32 InSlot) const
 {
-	if (Inventory.ItemSlots.Num() -1 >= ID)
+	if (Inventory.ItemSlots.Num() - 1 >= InSlot)
 	{
-		return Inventory.ItemSlots[ID];
+		return Inventory.ItemSlots[InSlot];
 	}
 
 	return FInventoryItem();
@@ -147,7 +142,7 @@ FName UAirInventory::GetItemNameBySlot(const int32& Slot) const
 	return FName();
 }
 
-void UAirInventory::SetItemBySlot(FInventoryItem InItem, const int32 InSlot)
+void UAirInventory::SetItemBySlot(const FInventoryItem& InItem, const int32 InSlot)
 {
 	Inventory.ItemSlots[InSlot] = InItem;
 
