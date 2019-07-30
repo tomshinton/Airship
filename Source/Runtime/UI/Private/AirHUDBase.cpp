@@ -1,18 +1,21 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Airship Project - Tom Shinton 2018
 
-#include "AirHUDBase.h"
-#include "InventoryPanel.h"
-#include "Healthbar.h"
-#include "ComponentProviderInterface.h"
-#include "AirChar.h"
-#include "HealthComponent.h"
-#include "HUDTools.h"
-#include "InteractionInterface.h"
-#include "Utils/Functions/InterfaceHelpers.h"
-#include "HealthInterface.h"
-#include "InspectorPanel.h"
-#include "UserWidget.h"
-#include "WidgetTree.h"
+#include "Runtime/UI/Public/AirHUDBase.h"
+#include "Runtime/UI/Public/Utils/HUDTools.h"
+#include "Runtime/UI/Public/Widgets/Healthbar/Healthbar.h"
+#include "Runtime/UI/Public/Widgets/Hotbar/Hotbar.h"
+#include "Runtime/UI/Public/Widgets/InspectorPanel/InspectorPanel.h"
+#include "Runtime/UI/Public/Widgets/Inventory/InventoryPanel.h"
+#include "Runtime/UI/Public/Widgets/Inventory/InventoryViewInterface.h"
+
+#include <AirCore/Utils/Functions/InterfaceHelpers.h>
+#include <AirCore/Public/Core/AirChar.h>
+#include <AirCore/Public/Interfaces/HealthInterface.h>
+#include <AirCore/Public/Interfaces/InteractionInterface.h>
+#include <Runtime/Inventory/Public/InventoryInterface.h>
+#include <Runtime/UMG/Public/Blueprint/WidgetTree.h>
+#include <Runtime/UMG/Public/Components/Overlay.h>
+#include <Runtime/UMG/Public/Components/Widget.h>
 
 UAirHUDBase::UAirHUDBase(const FObjectInitializer& ObjectInitializer)
 	: UAirWidget(ObjectInitializer)
@@ -20,9 +23,7 @@ UAirHUDBase::UAirHUDBase(const FObjectInitializer& ObjectInitializer)
 	, PlayerInventoryPanel(nullptr)
 	, PlayerHealthBar(nullptr)
 	, InspectorPanel(nullptr)
-{
-
-}
+{}
 
 void UAirHUDBase::NativeConstruct()
 {
@@ -32,6 +33,14 @@ void UAirHUDBase::NativeConstruct()
 	{
 		if (PlayerInventoryPanel)
 		{
+			if (IInventoryInterface* InventoryInterface = InterfaceHelpers::GetInterface<IInventoryInterface>(*LocalChar))
+			{
+				if (IInventoryViewInterface* InventoryViewInterface = Cast<IInventoryViewInterface>(PlayerInventoryPanel))
+				{
+					InventoryViewInterface->SetLinkedInventory(InventoryInterface);
+				}
+			}
+
 			PlayerInventoryPanel->SetVisibility(ESlateVisibility::Collapsed);
 		}
 
@@ -50,6 +59,17 @@ void UAirHUDBase::NativeConstruct()
 			{
 				InspectorPanel->SetInteractionInterface(InteractionInterface);
 				InspectorPanel->SetVisibility(ESlateVisibility::Collapsed);
+			}
+		}
+
+		if (Hotbar)
+		{
+			if (IInventoryInterface* InventoryInterface = InterfaceHelpers::GetInterface<IInventoryInterface>(*LocalChar))
+			{
+				if (IInventoryViewInterface* InventoryViewInterface = Cast<IInventoryViewInterface>(Hotbar))
+				{
+					InventoryViewInterface->SetLinkedInventory(InventoryInterface);
+				}
 			}
 		}
 	}
