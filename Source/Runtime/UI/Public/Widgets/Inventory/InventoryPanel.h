@@ -18,7 +18,7 @@ class UI_API UInventoryPanel : public UAirWidget
 	
 public:
 
-	static const FName Anim_Show;
+	virtual void Build() override;
 
 public:
 
@@ -26,9 +26,6 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	UGridPanel* PanelBody;
-
-	UPROPERTY(EditAnywhere, Category = "Slots")
-	bool UseDynamicRows;
 
 	UPROPERTY(EditAnywhere, Category = "Slots")
 	int32 Columns;
@@ -48,12 +45,6 @@ public:
 	};
 	virtual void SetLinkedHotbar(IHotbarInterface* InInterface) {};
 	//~InventoryViewInterface
-
-protected:
-
-	virtual void NativeConstruct() override;
-
-	void SetDynamicColumns();
 
 private:
 

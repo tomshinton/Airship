@@ -1,16 +1,18 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Airship Project - Tom Shinton 2018
 
 #include "Runtime/UI/Public/AirWidget.h"
-#include "AirChar.h"
-#include "Engine/Engine.h"
+
+#include <AirCore/Public/Core/AirChar.h>
 
 UAirWidget::UAirWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, LocalChar(nullptr)
+	, NativeConstructCalled(false)
 {}
 
 void UAirWidget::Build()
 {
+	checkf(NativeConstructCalled, TEXT("Cannot call build on a non-initialised AirWidget - did you forget the Super on nativeConstruct?"));
 	OnBuild();
 }
 
@@ -28,6 +30,8 @@ void UAirWidget::NativeConstruct()
 			}
 		}
 	}
+
+	NativeConstructCalled = true;
 }
 
 void UAirWidget::OnBuild_Implementation(){}

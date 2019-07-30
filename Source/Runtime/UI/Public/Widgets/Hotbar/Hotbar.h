@@ -34,6 +34,8 @@ public:
 
 	virtual void SynchronizeProperties() override;
 
+	virtual void Build() override;
+
 	//IInventoryViewInterface
 	virtual void SetLinkedInventory(IInventoryInterface* InInterface) override
 	{
@@ -47,10 +49,6 @@ public:
 		LinkedHotbar.SetObject(this);
 	};
 	//~IInventoryViewInterface
-
-protected:
-
-	virtual void NativeConstruct() override;
 
 private:
 

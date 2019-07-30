@@ -7,16 +7,47 @@
 
 DEFINE_LOG_CATEGORY_STATIC(InventoryPanelLog, Log, Log);
 
-const FName UInventoryPanel::Anim_Show = FName("Show");
-
 UInventoryPanel::UInventoryPanel(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, PanelBody(nullptr)
-	, UseDynamicRows(false)
 	, Columns(4)
 	, DynamicColumns(0)
 	, Slots(10)
 {}
+
+void UInventoryPanel::Build()
+{
+	if (PanelBody)
+	{
+		if (PanelBody->GetAllChildren().Num() < LinkedInventory->GetInventorySlotCount())
+		{
+			UE_LOG(InventoryPanelLog, Warning, TEXT("%s not configured to handle an inventory of this size - attempting to rebuild with the correct number of slots at runtime"), *GetName());
+			UE_LOG(InventoryPanelLog, Warning, TEXT("We need %i slots - we only have %i"), LinkedInventory->GetInventorySlotCount(), PanelBody->GetAllChildren().Num());
+	
+			Slots = LinkedInventory->GetInventorySlotCount();
+			SynchronizeProperties();
+		}
+	}
+
+	if (LinkedInventory && PanelBody)
+	{
+		for (UWidget* Widget : PanelBody->GetAllChildren())
+		{
+			if (UInventorySlot* ChildSlot = Cast<UInventorySlot>(Widget))
+			{
+				if (ChildSlot->InventorySlot > LinkedInventory->GetInventorySlotCount())
+				{
+					ChildSlot->RemoveFromParent();
+				}
+				else if (IInventoryViewInterface* SlotViewInterface = Cast<IInventoryViewInterface>(ChildSlot))
+				{
+					ChildSlot->SetLinkedInventory((IInventoryInterface*)LinkedInventory.GetInterface());
+					ChildSlot->Build();
+				}
+			}
+		}
+	}
+}
 
 void UInventoryPanel::SynchronizeProperties()
 {
@@ -24,7 +55,7 @@ void UInventoryPanel::SynchronizeProperties()
 
 	if (UUISettings* UISettings = UUISettings::Get())
 	{
-		if (PanelBody && Slots > 0 && UISettings->InventorySlotClass && (Columns > 0 || UseDynamicRows))
+		if (PanelBody && Slots > 0 && UISettings->InventorySlotClass)
 		{
 			PanelBody->ClearChildren();
 
@@ -50,35 +81,5 @@ void UInventoryPanel::SynchronizeProperties()
 				}
 			}
 		}
-	}
-}
-
-void UInventoryPanel::NativeConstruct()
-{
-	Super::NativeConstruct();
-
-	if (LinkedInventory && PanelBody)
-	{
-		TArray<UWidget*> ChildWidgets = PanelBody->GetAllChildren();
-
-		for (UWidget* Widget : ChildWidgets)
-		{
-			if (UInventorySlot* ChildSlot = Cast<UInventorySlot>(Widget))
-			{
-				ChildSlot->SetLinkedInventory((IInventoryInterface*)LinkedInventory.GetInterface());
-			}
-		}
-	}
-}
-
-void UInventoryPanel::SetDynamicColumns()
-{
-	if(UWidget* ParentWidget = GetParent())
-	{
-		const float ParentWidth = ParentWidget->GetDesiredSize().X;
-	}
-	else
-	{
-		UseDynamicRows = false;
 	}
 }

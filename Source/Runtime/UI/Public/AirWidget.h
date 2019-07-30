@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Airship Project - Tom Shinton 2018
 
 #pragma once
 
@@ -12,7 +12,7 @@ class UAirInventory;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWidgetClosed);
 
-UCLASS(abstract, MinimalAPI)
+UCLASS(abstract, HideDropdown, MinimalAPI)
 class UAirWidget : public UUserWidget
 {
 	GENERATED_BODY()
@@ -41,4 +41,6 @@ protected:
 
 	UPROPERTY()
 	TMap<FName, UWidgetAnimation*> AnimationMap;
+
+	bool NativeConstructCalled;
 };

@@ -41,6 +41,7 @@ void UAirHUDBase::NativeConstruct()
 				}
 			}
 
+			PlayerInventoryPanel->Build();
 			PlayerInventoryPanel->SetVisibility(ESlateVisibility::Collapsed);
 		}
 
@@ -49,6 +50,7 @@ void UAirHUDBase::NativeConstruct()
 			if (IHealthInterface* HealthInterface = InterfaceHelpers::GetInterface<IHealthInterface>(*LocalChar))
 			{
 				PlayerHealthBar->SetHealthInterface(HealthInterface);
+				PlayerHealthBar->Build();
 				PlayerHealthBar->SetVisibility(ESlateVisibility::Collapsed);
 			}
 		}
@@ -58,6 +60,7 @@ void UAirHUDBase::NativeConstruct()
 			if (IInteractionInterface* InteractionInterface = InterfaceHelpers::GetInterface<IInteractionInterface>(*LocalChar->GetController()))
 			{
 				InspectorPanel->SetInteractionInterface(InteractionInterface);
+				InspectorPanel->Build();
 				InspectorPanel->SetVisibility(ESlateVisibility::Collapsed);
 			}
 		}
@@ -66,9 +69,14 @@ void UAirHUDBase::NativeConstruct()
 		{
 			if (IInventoryInterface* InventoryInterface = InterfaceHelpers::GetInterface<IInventoryInterface>(*LocalChar))
 			{
-				if (IInventoryViewInterface* InventoryViewInterface = Cast<IInventoryViewInterface>(Hotbar))
+				if (IHotbarInterface* HotbarInterface = InterfaceHelpers::GetInterface<IHotbarInterface>(*LocalChar))
 				{
-					InventoryViewInterface->SetLinkedInventory(InventoryInterface);
+					if (IInventoryViewInterface* InventoryViewInterface = Cast<IInventoryViewInterface>(Hotbar))
+					{
+						InventoryViewInterface->SetLinkedInventory(InventoryInterface);
+						InventoryViewInterface->SetLinkedHotbar(HotbarInterface);
+						Hotbar->Build();
+					}
 				}
 			}
 		}

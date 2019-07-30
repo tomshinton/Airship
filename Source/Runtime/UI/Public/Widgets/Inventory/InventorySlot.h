@@ -43,6 +43,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = Inventory)
 	FInventoryItem GetLinkedItem();
 
+	virtual void Build() override;
+
 	UFUNCTION(BlueprintCallable, Category = DragAndDrop)
 	bool OnInventorySlotDrop(UInventorySlotDragOperation* Payload);
 
@@ -83,8 +85,6 @@ protected:
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
-
-	virtual void NativeConstruct() override;
 
 private:
 	

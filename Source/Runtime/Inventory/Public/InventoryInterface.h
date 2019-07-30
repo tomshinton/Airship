@@ -33,4 +33,5 @@ public:
 	virtual void SetItemBySlot(const FInventoryItem& InItem, const int32 InSlot) = 0;
 
 	virtual int32 GetCurrentFocusedSlot() const = 0;
+	virtual int32 GetInventorySlotCount() const = 0;
 };

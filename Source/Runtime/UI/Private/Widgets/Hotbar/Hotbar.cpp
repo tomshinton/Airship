@@ -26,39 +26,37 @@ void UHotbar::SynchronizeProperties()
 			{
 				NewSlot->InventorySlot = i;
 				NewSlot->IsHotBarSlot = true;
-
-				if (IInventoryViewInterface* SlotViewInterface = Cast<IInventoryViewInterface>(NewSlot))
-				{
-					SlotViewInterface->SetLinkedInventory((IInventoryInterface*)LinkedInventory.GetInterface());
-				}
-
 				Bar->AddChild(NewSlot);
 			}
 		}
 	}
 }
 
-void UHotbar::NativeConstruct()
+void UHotbar::Build()
 {
-	Super::NativeConstruct();
+	Super::Build();
 
 	SetHotbarSlotCount();
 
-	if (LinkedInventory && Bar)
+	if (LinkedInventory && LinkedHotbar && Bar)
 	{
-		TArray<UWidget*> ChildWidgets = Bar->GetAllChildren();
-
-		for (UWidget* Widget : ChildWidgets)
+		if (LinkedHotbar)
 		{
-			if (UInventorySlot* ChildSlot = Cast<UInventorySlot>(Widget))
+			TArray<UWidget*> ChildWidgets = Bar->GetAllChildren();
+
+			for (UWidget* Widget : ChildWidgets)
 			{
-				if (ChildSlot->InventorySlot > HotbarSlotCount)
+				if (UInventorySlot* ChildSlot = Cast<UInventorySlot>(Widget))
 				{
-					ChildSlot->RemoveFromParent();
-				}
-				else if(IInventoryViewInterface* SlotViewInterface = Cast<IInventoryViewInterface>(ChildSlot))
-				{
-					ChildSlot->SetLinkedInventory((IInventoryInterface*)LinkedInventory.GetInterface());
+					if (ChildSlot->InventorySlot > LinkedHotbar->GetNumHotbarSlots())
+					{
+						ChildSlot->RemoveFromParent();
+					}
+					else if (IInventoryViewInterface* SlotViewInterface = Cast<IInventoryViewInterface>(ChildSlot))
+					{
+						ChildSlot->SetLinkedInventory((IInventoryInterface*)LinkedInventory.GetInterface());
+						ChildSlot->Build();
+					}
 				}
 			}
 		}

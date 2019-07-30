@@ -1,20 +1,17 @@
 // Airship Project - Tom Shinton 2018
 
-#include "InventorySlot.h"
-#include "AirChar.h"
-#include "AirInventory.h"
-#include "Kismet/GameplayStatics.h"
-#include <WidgetBlueprintLibrary.h>
-#include "Utils/Functions/BindingFunctions.h"
-#include "InventorySlotDragOperation.h"
-#include <Engine/DataTable.h>
-#include <Image.h>
-#include <TextBlock.h>
-#include "DragAndDropVisual.h"
-#include "InventorySettings.h"
-#include "UISettings.h"
-#include "CanvasPanelSlot.h"
-#include "SizeBox.h"
+#include "Runtime/UI/Public/Widgets/Inventory/InventorySlot.h"
+
+#include "Runtime/UI/Public/DragAndDrop/InventorySlotDragOperation.h"
+#include "Runtime/UI/Public/DragAndDrop/DragAndDropVisual.h"
+
+#include <AirCore/Public/Core/GameSettings/UISettings.h>
+#include <AirCore/Utils/Functions/BindingFunctions.h>
+#include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
+#include <Runtime/Inventory/Public/InventorySettings.h>
+#include <Runtime/UMG/Public/Blueprint/WidgetBlueprintLibrary.h>
+#include <Runtime/UMG/Public/Components/CanvasPanelSlot.h>
+#include <Runtime/UMG/Public/Components/SizeBox.h>
 
 void UInventorySlot::SynchronizeProperties()
 {
@@ -32,12 +29,8 @@ void UInventorySlot::SynchronizeProperties()
 	}
 }
 
-void UInventorySlot::NativeConstruct()
+void UInventorySlot::Build()
 {
-	Super::NativeConstruct();
-
-	BuildSlotVisuals();
-
 	if (!LinkedInventory)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Build called on inventory slot before having its LinkedInventory set!"));
@@ -59,6 +52,7 @@ void UInventorySlot::NativeConstruct()
 		PlayerFocusChanged(FocusedSlot);
 
 		LinkedInventoryItem = LinkedInventory->GetItemBySlot(InventorySlot);
+		BuildSlotVisuals();
 	}
 }
 

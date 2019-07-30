@@ -35,6 +35,8 @@ public:
 
 	virtual FInventoryItem GetItemBySlot(const int32 InSlot) const;
 	virtual void SetItemBySlot(const FInventoryItem& InItem, const int32 InSlot) override;
+
+	virtual int32 GetInventorySlotCount() const override { return InventorySize; };
 	//~IInventoryInterface
 
 	//IHotbarInterface
