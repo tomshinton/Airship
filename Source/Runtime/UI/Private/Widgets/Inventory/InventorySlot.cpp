@@ -157,6 +157,11 @@ bool UInventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 	return false;
 }
 
+FReply UInventorySlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
+}
+
 void UInventorySlot::BuildSlotVisuals()
 {
 	if(UDataTable* InventoryDataTable = UInventorySettings::GetItemLookupTable())
