@@ -2,16 +2,15 @@
 
 #include "Runtime/Item/Public/Container.h"
 
-#include <AirCore/Public/Core/AirController.h>
-#include <AirCore/Public/Core/GameSettings/UISettings.h>
+#include <AirCore/Utils/Functions/InterfaceHelpers.h>
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 #include <Runtime/Inventory/Public/InventoryComponent/AirInventory.h>
 #include <Runtime/UI/Public/Utils/HUDTools.h>
 #include <Runtime/UI/Public/Utils/UMGFunctions.h>
 
-	AContainer::AContainer()
-	: Mesh(CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ContainerMesh")))
-	, Inventory(CreateDefaultSubobject<UAirInventory>(TEXT("Inventory")))
+AContainer::AContainer()
+: Mesh(CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ContainerMesh")))
+, Inventory(CreateDefaultSubobject<UAirInventory>(TEXT("ContainerInventory")))
 {
 	PrimaryActorTick.bCanEverTick = false;
 	SetRootComponent(Mesh);
@@ -19,19 +18,14 @@
 
 void AContainer::OnInteract(AActor* InteractingActor)
 {
-	if (UUISettings* UISettings = UUISettings::Get())
+	if (UWorld* World = GetWorld())
 	{
-		if (UWorld* World = GetWorld())
-		{
-			if (UTransferWindowBase* TransferUI = Cast<UTransferWindowBase>(CreateWidget<UTransferWindowBase>(World, UISettings->TransferWindowClass)))
-			{
-				UAirInventory* InteractingInventory = Cast<UAirInventory>(InteractingActor->GetComponentByClass(UAirInventory::StaticClass()));
-				
-				if (AAirController* LocalController = Cast<AAirController>(UGameplayStatics::GetPlayerController(World, 0)))
-				{
-					UHUDTools::AddToDynamicPanel(TransferUI, *this);
-				}
-			}
+		IInventoryInterface* OwningInventory = InterfaceHelpers::GetInterface<IInventoryInterface>(*this);
+		IInventoryInterface* PlayerInventory = InterfaceHelpers::GetInterface<IInventoryInterface>(*InteractingActor);
+
+		if(UTransferWindowBase* TransferUI = UTransferWindowBase::NewWindow(*OwningInventory, *PlayerInventory, *World))
+		{				
+			UHUDTools::AddToDynamicPanel(TransferUI, *this);
 		}
 	}
 }

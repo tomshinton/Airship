@@ -1,14 +1,15 @@
 // Airship Project - Tom Shinton 2018
 
 #pragma once
-#include "Engine/World.h"
-#include "AirController.h"
 
-#include "UserWidget.h"
-#include "CanvasPanel.h"
-#include "AirHUDBase.h"
-#include "Overlay.h"
-#include "OverlaySlot.h"
+#include "Runtime/UI/Public/AirWidget.h"
+#include "Runtime/UI/Public/AirHUDBase.h"
+
+#include <AirCore/Public/Core/AirController.h>
+#include <Runtime/Engine/Classes/Engine/World.h>
+#include <Runtime/UMG/Public/Components/CanvasPanel.h>
+#include <Runtime/UMG/Public/Components/Overlay.h>
+#include <Runtime/UMG/Public/Components/OverlaySlot.h>
 
 #include "HUDTools.generated.h"
 
@@ -105,6 +106,11 @@ public:
 				OverlaySlot->SetVerticalAlignment(VAlign_Fill);
 
 				GetHUDWidget(WorldContext).OnDynamicPanelUpdated();
+
+				if (UAirWidget* AirWidget = Cast<UAirWidget>(InWidget))
+				{
+					AirWidget->Build();
+				}
 			}
 		}
 	}

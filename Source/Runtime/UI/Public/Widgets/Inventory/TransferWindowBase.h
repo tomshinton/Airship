@@ -4,6 +4,8 @@
 
 #include "Runtime/UI/Public/AirWidget.h"
 
+#include <Runtime/Inventory/Public/InventoryInterface.h>
+
 #include "TransferWindowBase.generated.h"
 
 class UInventoryPanel;
@@ -19,6 +21,8 @@ class UTransferWindowBase : public UAirWidget
 
 public:
 
+	UI_API static UTransferWindowBase* NewWindow(IInventoryInterface& OwningInterface, IInventoryInterface& PlayerInterface, UWorld& WorldContext);
+
 	UPROPERTY(EditDefaultsOnly, Category = Grids, meta = (BindWidget))
 	UInventoryPanel* OwnerPanel;
 
@@ -27,18 +31,18 @@ public:
 
 	virtual void SynchronizeProperties() override;
 
-protected:
+	virtual void Build() override;
 
-	virtual void NativeConstruct() override;
+	void SetOwningInventory(IInventoryInterface* OwningInterface);
+	void SetPlayerInventory(IInventoryInterface* PlayerInterface);
+
+protected:
 
 	UPROPERTY(EditAnywhere, Category = "Slots")
 	int32 Slots;
 
 private:
 
-	UPROPERTY()
-	UAirInventory* OwnerInventory;
-
-	UPROPERTY()
-	UAirInventory* PlayerInventory;
+	TScriptInterface<IInventoryInterface> OwnerInventory;
+	TScriptInterface<IInventoryInterface> PlayerInventory;
 };
