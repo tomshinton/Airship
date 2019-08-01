@@ -61,6 +61,7 @@ void UAirHUDBase::NativeConstruct()
 			{
 				InspectorPanel->SetInteractionInterface(InteractionInterface);
 				InspectorPanel->Build();
+
 				InspectorPanel->SetVisibility(ESlateVisibility::Collapsed);
 			}
 		}

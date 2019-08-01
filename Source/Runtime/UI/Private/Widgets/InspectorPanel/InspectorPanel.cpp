@@ -1,12 +1,13 @@
 // Airship Project - Tom Shinton 2018
 
-#include "InspectorPanel.h"
-#include "TextBlock.h"
-#include "Engine/Engine.h"
-#include "AirWidget.h"
-#include "AirChar.h"
-#include "Utils/Functions/BindingFunctions.h"
-#include "HUDTools.h"
+#include "Runtime/UI/Public/Widgets/InspectorPanel/InspectorPanel.h"
+#include "Runtime/UI/Public/Utils/HUDTools.h"
+
+#include <AirCore/Public/Core/AirChar.h>
+#include <AirCore/Utils/Functions/BindingFunctions.h>
+#include <Runtime/UMG/Public/Animation/WidgetAnimationDelegateBinding.h>
+#include <Runtime/UMG/Public/Components/TextBlock.h>
+#include <Runtime/UMG/Public/Animation/WidgetAnimation.h>
 
 namespace InspectorPanelPrivate
 {
@@ -17,20 +18,38 @@ UInspectorPanel::UInspectorPanel(const FObjectInitializer& ObjectInitializer)
 	: UAirWidget(ObjectInitializer)
 	, DisplayNameBlock(nullptr)
 	, InteractionKeyBlock(nullptr)
-	, InteractionInterface()
+	, ShowAnim(nullptr)
+	, HideAnim(nullptr)
+	, InteractionInterface(nullptr)
 {}
+
+void UInspectorPanel::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	if (HideAnim)
+	{
+		FWidgetAnimationDynamicEvent OnHideAnimOver;
+		OnHideAnimOver.BindUFunction(this, "OnHidePanelOver");
+
+		BindToAnimationFinished(HideAnim, OnHideAnimOver);
+	}
+}
+
+void UInspectorPanel::OnHidePanelOver()
+{
+	SetVisibility(ESlateVisibility::Collapsed);
+}
 
 void UInspectorPanel::ShowPanel(const IInteractableInterface& InteractableInterface)
 {
 	if (DisplayNameBlock && InteractionKeyBlock)
 	{
-		if (UHUDTools::IsVisible(*this))
-		{
-			DisplayNameBlock->SetText(InteractableInterface.GetDisplayName());
-			InteractionKeyBlock->SetText(GetInteractionKeyString());
+		SetVisibility(ESlateVisibility::Visible);
+		DisplayNameBlock->SetText(InteractableInterface.GetDisplayName());
+		InteractionKeyBlock->SetText(GetInteractionKeyString());
 
-			PlayAnimation(ShowAnim);
-		}
+		PlayAnimation(ShowAnim);
 	}
 }
 

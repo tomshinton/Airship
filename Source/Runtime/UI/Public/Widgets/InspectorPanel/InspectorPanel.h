@@ -46,4 +46,13 @@ private:
 	void HidePanel();
 
 	FText GetInteractionKeyString() const;
+
+protected:
+
+	virtual void NativeConstruct() override;
+
+private:
+
+	UFUNCTION()
+	void OnHidePanelOver();
 };
