@@ -6,13 +6,14 @@
 
 UAirWidget::UAirWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
+	, ShouldConsumeDynamicPanel(false)
 	, LocalChar(nullptr)
 	, NativeConstructCalled(false)
 {}
 
 void UAirWidget::Build()
 {
-	checkf(NativeConstructCalled, TEXT("Cannot call build on a non-initialised AirWidget - did you forget the Super on nativeConstruct?"));
+	checkf(NativeConstructCalled, TEXT("Cannot call build on a non-initialised AirWidget - did you forget the Super on NativeConstruct? Have you called super on OnSlotAdded and OnSlotRemoved?"));
 	OnBuild();
 }
 

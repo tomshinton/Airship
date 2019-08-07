@@ -1,7 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Airship Project - Tom Shinton 2018
 
-#include "SequentialGridPanel.h"
-#include <UniformGridSlot.h>
+#include "Runtime/UI/Public/Elements/SequentialGridPanel.h"
+
+#include <Runtime/UMG/Public/Components/UniformGridPanel.h>
+#include <Runtime/UMG/Public/Components/UniformGridSlot.h>
 
 #define LOCTEXT_NAMESPACE "UMG"
 

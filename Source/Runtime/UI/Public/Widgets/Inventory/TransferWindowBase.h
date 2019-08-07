@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Runtime/UI/Public/AirWidget.h"
+#include "Runtime/UI/Public/Elements/OverlayLockInterface.h"
 
 #include <Runtime/Inventory/Public/InventoryInterface.h>
 
@@ -14,8 +15,9 @@ class UInventoryPanel;
 // Base for all Transfer windows.  These are inventory screens that can display 2 DIFFERENT inventories, and allow for transfer between them
 //////////////////////////////////////////////////////////////////////////
 
-UCLASS(MinimalAPI, abstract)
+UCLASS(MinimalAPI, abstract, hidedropdown)
 class UTransferWindowBase : public UAirWidget
+	, public IOverlayLockInterface
 {
 	GENERATED_BODY()
 
@@ -35,6 +37,10 @@ public:
 
 	void SetOwningInventory(IInventoryInterface* OwningInterface);
 	void SetPlayerInventory(IInventoryInterface* PlayerInterface);
+
+	//OverlayLockInterface
+	virtual bool ShouldLockOverlay() const override;
+	//~OverlayLockInterface
 
 protected:
 

@@ -84,7 +84,7 @@ void UAirHUDBase::NativeConstruct()
 	}
 }
 
-bool UAirHUDBase::ShouldBeSnapshot(UWidget* InWidget, UWidgetTree* InWidgetTree, UOverlay* InOverlay)
+bool UAirHUDBase::ShouldBeSnapshot(UWidget* InWidget, UWidgetTree* InWidgetTree, UDynamicOverlayPanel* InOverlay)
 {
 	return InWidget != InOverlay && InWidget != InWidgetTree->RootWidget && !InOverlay->GetAllChildren().Contains(InWidget);
 }

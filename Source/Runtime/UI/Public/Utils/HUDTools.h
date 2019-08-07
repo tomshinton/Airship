@@ -8,7 +8,7 @@
 #include <AirCore/Public/Core/AirController.h>
 #include <Runtime/Engine/Classes/Engine/World.h>
 #include <Runtime/UMG/Public/Components/CanvasPanel.h>
-#include <Runtime/UMG/Public/Components/Overlay.h>
+#include <Runtime/UI/Public/Elements/DynamicOverlayPanel.h>
 #include <Runtime/UMG/Public/Components/OverlaySlot.h>
 
 #include "HUDTools.generated.h"
@@ -80,9 +80,9 @@ public:
 		return false;
 	};
 
-	UI_API static UOverlay& GetDynamicPanel(const AActor& WorldContext)
+	UI_API static UDynamicOverlayPanel& GetDynamicPanel(const AActor& WorldContext)
 	{
-		UOverlay* FoundOverlay = nullptr;
+		UDynamicOverlayPanel* FoundOverlay = nullptr;
 		
 		if (UAirHUDBase* HudWidget = &GetHUDWidget(WorldContext))
 		{
@@ -91,25 +91,26 @@ public:
 		
 		return *FoundOverlay;
 	};
-
-
-
+	   
 	UI_API static void AddToDynamicPanel(UUserWidget* InWidget, const AActor& WorldContext)
 	{
-		UOverlay& DynamicPanel = GetDynamicPanel(WorldContext);
+		UDynamicOverlayPanel& DynamicPanel = GetDynamicPanel(WorldContext);
 
-		if (UPanelSlot* AddedChild = DynamicPanel.AddChild(InWidget))
+		if (!DynamicPanel.GetIsLocked())
 		{
-			if (UOverlaySlot* OverlaySlot = Cast<UOverlaySlot>(AddedChild))
+			if (UPanelSlot* AddedChild = DynamicPanel.AddChild(InWidget))
 			{
-				OverlaySlot->SetHorizontalAlignment(HAlign_Fill);
-				OverlaySlot->SetVerticalAlignment(VAlign_Fill);
-
-				GetHUDWidget(WorldContext).OnDynamicPanelUpdated();
-
-				if (UAirWidget* AirWidget = Cast<UAirWidget>(InWidget))
+				if (UOverlaySlot* OverlaySlot = Cast<UOverlaySlot>(AddedChild))
 				{
-					AirWidget->Build();
+					OverlaySlot->SetHorizontalAlignment(HAlign_Fill);
+					OverlaySlot->SetVerticalAlignment(VAlign_Fill);
+
+					GetHUDWidget(WorldContext).OnDynamicPanelUpdated();
+
+					if (UAirWidget* AirWidget = Cast<UAirWidget>(InWidget))
+					{
+						AirWidget->Build();
+					}
 				}
 			}
 		}

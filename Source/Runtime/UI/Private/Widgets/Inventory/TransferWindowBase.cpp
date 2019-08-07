@@ -58,3 +58,8 @@ void UTransferWindowBase::SetPlayerInventory(IInventoryInterface* PlayerInterfac
 	PlayerInventory.SetInterface(PlayerInterface);
 	PlayerInventory.SetObject(this);
 }
+
+bool UTransferWindowBase::ShouldLockOverlay() const
+{
+	return true;
+}

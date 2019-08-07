@@ -27,6 +27,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = Build)
 	void OnBuild();
 
+	UPROPERTY(EditDefaultsOnly, Category = DynamicOverlay)
+	bool ShouldConsumeDynamicPanel;
+
 public:
 
 	UPROPERTY(BlueprintAssignable)
@@ -38,9 +41,6 @@ protected:
 
 	UPROPERTY()
 	AAirChar* LocalChar;
-
-	UPROPERTY()
-	TMap<FName, UWidgetAnimation*> AnimationMap;
 
 	bool NativeConstructCalled;
 };

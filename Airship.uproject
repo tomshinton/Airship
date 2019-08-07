@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{2196ECC0-4D4B-9F67-44CB-C8BBB19C409D}",
+	"EngineAssociation": "{8BB5BDEA-4051-0E7A-76EF-27876C9DFDED}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -22,14 +22,14 @@
 				"CoreUObject",
 				"Engine",
 				"Inventory",
-				"UI",
+				"UI"
 			]
 		},
 		{
 			"Name": "Inventory",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
-		},	
+		},
 		{
 			"Name": "Projectile",
 			"Type": "Runtime",
