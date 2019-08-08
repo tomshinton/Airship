@@ -39,6 +39,16 @@ void AAirController::SetMouseVisible(const bool InVisibility)
 
 		InputMode.SetWidgetToFocus(GetHudWidget()->TakeWidget());
 		SetInputMode(InputMode);
+
+		if (FViewport* CurrentViewport = GetLocalPlayer()->ViewportClient->Viewport)
+		{
+			FVector2D ViewportSize;
+			GetLocalPlayer()->ViewportClient->GetViewportSize(ViewportSize);
+
+			const int32 X = (int32)(ViewportSize.X * 0.5f);
+			const int32 Y = (int32)(ViewportSize.Y * 0.5f);
+			CurrentViewport->SetMouse(X, Y);
+		}
 	}
 	else
 	{
