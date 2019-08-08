@@ -1,18 +1,17 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Airship Project - Tom Shinton 2018
 
-#include "AirChar.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "ConstructorHelpers.h"
-#include <DrawDebugHelpers.h>
-#include "AirHUD.h"
-#include "AirController.h"
-#include "AirMovementComponent.h"
-#include "InteractionComponent.h"
-#include "HealthComponent.h"
-#include "AirInventory.h"
-#include "Engine/World.h"
+#include "AirCore/Public/Core/AirChar.h"
+#include "AirCore/Public/Core/AirController.h"
+#include "AirCore/Public/Core/AirHUD.h"
+#include "AirCore/Public/Components/Gameplay/AirMovementComponent.h"
+#include "AirCore/Public/Components/Gameplay/HealthComponent.h"
+#include "AirCore/Public/Components/Gameplay/InteractionComponent.h"
 
-// Sets default values
+#include <Runtime/Engine/Classes/GameFramework/CharacterMovementComponent.h>
+#include <Runtime/Engine/Public/DrawDebugHelpers.h>
+#include <Runtime/Input/Public/AirInputComponent.h>
+#include <Runtime/Inventory/Public/InventoryComponent/AirInventory.h>
+
 AAirChar::AAirChar()
 	: Camera(CreateDefaultSubobject<UCameraComponent>(TEXT("Camera")))
 	, RightHand(CreateDefaultSubobject<USceneComponent>(TEXT("RightHandComponent")))
@@ -24,6 +23,8 @@ AAirChar::AAirChar()
 	, LeftHandTargetLocation(FVector(40.f, 30.f, 40.f))
 	, CachedInputComponent(nullptr)
 {
+	InputComponentClass = UAirInputComponent::StaticClass();
+
 	PrimaryActorTick.bCanEverTick = true;
 
 	Camera->SetupAttachment(RootComponent);
@@ -66,9 +67,9 @@ void AAirChar::BeginPlay()
 {
 	RightHandTargetTransform = RightHand->GetRelativeTransform();
 
-	if (GWorld)
+	if (UWorld* World = GetWorld())
 	{
-		CachedWorld = GWorld;
+		CachedWorld = World;
 	}
 
 	Super::BeginPlay();
@@ -93,7 +94,6 @@ void AAirChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, MovementComponent, &UAirMovementComponent::StartJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, MovementComponent, &UAirMovementComponent::EndJump);
 
-	//Act as a flip-flop
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, MovementComponent, &UAirMovementComponent::ToggleSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, MovementComponent, &UAirMovementComponent::ToggleSprint);
 

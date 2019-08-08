@@ -21,6 +21,7 @@
 			"AdditionalDependencies": [
 				"CoreUObject",
 				"Engine",
+				"Input",
 				"Inventory",
 				"UI"
 			]
@@ -29,6 +30,14 @@
 			"Name": "Inventory",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "Input",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
 		},
 		{
 			"Name": "Projectile",

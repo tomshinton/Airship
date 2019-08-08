@@ -1,3 +1,5 @@
+// Airship Project - Tom Shinton 2018
+
 #include "Runtime/UI/UIModule.h"
  
 DEFINE_LOG_CATEGORY(UIModuleLog);

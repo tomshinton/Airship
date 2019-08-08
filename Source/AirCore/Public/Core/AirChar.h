@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Airship Project - Tom Shinton 2018
 
 #pragma once
 
@@ -17,8 +17,7 @@ class UHealthComponent;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharLanded);
 
 UCLASS(MinimalAPI)
-class AAirChar : public ACharacter,
-	public IComponentProviderInterface
+class AAirChar : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -62,11 +61,6 @@ public:
 	UAirInventory* GetInventory() const { return InventoryComponent; };
 
 	UInputComponent* GetCachedInputComponent() const {return CachedInputComponent; };
-
-	//ComponentProviderInterface
-	UHealthComponent* GetHealthComponent() const { return HealthComponent; };
-	UAirInventory* GetInventoryComponent() const { return InventoryComponent; };
-	//~ComponentProviderInterface
 
 protected:
 
