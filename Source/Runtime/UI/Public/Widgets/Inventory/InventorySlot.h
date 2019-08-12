@@ -5,6 +5,7 @@
 #include "Runtime/UI/Public/AirWidget.h"
 #include "Runtime/UI/Public/Widgets/Inventory/InventoryViewInterface.h"
 
+#include <Runtime/Input/Public/Types/ChordLookup.h>
 #include <Runtime/Inventory/Public/InventoryComponent/AirInventory.h>
 
 #include "InventorySlot.generated.h"
@@ -103,4 +104,6 @@ private:
 	void BuildFromInvalidData();
 
 	FInventoryItem LinkedInventoryItem;
+
+	ChordLookup SlotChordLookup;
 };
