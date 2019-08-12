@@ -11,11 +11,6 @@ struct FChordDef
 	
 public:
 
-	void CallFunc()
-	{ 
-		Func();
-	};
-
 	bool DoesChordMatch(const TArray<FKey>& InChord) const
 	{
 		if (InChord.Num() != Chord.Num())
@@ -36,12 +31,12 @@ public:
 		}
 	}
 
-private:
-
-	TFunction<void()> operator()(const int32 Index)
+	void operator()()
 	{
-		return Func;
+		Func();
 	};
+
+private:
 
 	bool operator==(const FChordDef& OtherChordDef) const
 	{
@@ -61,7 +56,7 @@ public:
 		const int32 ChordIndex = GetDelegateForChord(InChord);
 		if (ChordIndex != INDEX_NONE)
 		{
-			Defs[ChordIndex].CallFunc();
+			Defs[ChordIndex]();
 			return true;
 		}
 		return false;
