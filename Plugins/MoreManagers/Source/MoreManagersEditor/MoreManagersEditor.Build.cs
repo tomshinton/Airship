@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 2019 Tom Shinton. All Rights Reserved.
 
 using UnrealBuildTool;
 using System.IO;
@@ -14,18 +14,38 @@ public class MoreManagersEditor : ModuleRules
 
         PublicDependencyModuleNames.AddRange(new string[]
         {
+            "AssetRegistry",
             "Core",
             "CoreUObject",
+            "ContentBrowser",
+            "BlueprintGraph",
+            "EditorStyle",
+            "EditorWidgets",
             "Engine",
             "InputCore",
-            "AssetTools",
+            "Json",
+            "KismetWidgets",
+            "Kismet",
             "MoreManagers",
-            "UnrealEd",
+            "PropertyEditor",
+            "Projects",
+            "RenderCore",
             "Slate",
             "SlateCore",
-            "Projects"
+            "UnrealEd",
+            "WorkspaceMenuStructure",
         });
 
-        PrivateDependencyModuleNames.AddRange(new string[] { "MoreManagers" });
+        PrivateDependencyModuleNames.AddRange(new string[] 
+        {
+            "MoreManagers",
+            "EditorStyle",
+            "LevelEditor"
+        });
+
+        DynamicallyLoadedModuleNames.AddRange(new string[]
+        {
+            "AssetTools"
+        });
     }
 };

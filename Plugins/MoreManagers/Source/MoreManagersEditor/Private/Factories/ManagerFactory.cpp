@@ -42,7 +42,10 @@ bool UManagerFactory::ConfigureProperties()
 
 UObject* UManagerFactory::FactoryCreateNew(UClass* Class, UObject* InParent, FName Name, EObjectFlags Flags, UObject* Context, FFeedbackContext* Warn, FName CallingContext)
 {
-	return FKismetEditorUtilities::CreateBlueprint(UManager::StaticClass() , InParent, Name, BPTYPE_Normal, UBlueprint::StaticClass(), UBlueprintGeneratedClass::StaticClass(), CallingContext);
+	//return FKismetEditorUtilities::CreateBlueprint(UManager::StaticClass() , InParent, Name, BPTYPE_Normal, UBlueprint::StaticClass(), UBlueprintGeneratedClass::StaticClass(), CallingContext);
+
+	UManager* NewManager = NewObject<UManager>(InParent, Name, Flags);
+	return NewManager;
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -1,6 +1,8 @@
 // Copyright 2019 Tom Shinton. All Rights Reserved.
 
-#include "MoreManagersEditorModule.h"
+#include "MoreManagersEditor/Public/MoreManagersEditorModule.h"
+#include "MoreManagersEditor/Public/Actions/AssetTypeActions_Manager.h"
+#include "MoreManagersEditor/Public/Editor/ManagerEditor.h"
 
 #include <MoreManagers/Public/ManagerCore/InvokeList.h>
 
@@ -13,7 +15,10 @@
 #include <Runtime/SlateCore/Public/Brushes/SlateImageBrush.h>
 
 IMPLEMENT_MODULE(FMoreManagersEditorModule, MoreManagersEditor);
+
 DEFINE_LOG_CATEGORY(MoreManagersEditorLog)
+
+const FName ManagerEditorAppIdentifier = FName(TEXT("ManagerEditorApp"));
 
 #define LOCTEXT_NAMESPACE "MoreManagers"
 
@@ -21,19 +26,50 @@ void FMoreManagersEditorModule::StartupModule()
 {
 	UE_LOG(MoreManagersEditorLog, Log, TEXT("MoreManagersEditorLog: Module Started"));
 	
-	RegisterAssetCategory();
 	SetModuleIcon();
 	RegisterUnmutableSettings();
+	
+	IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+
+	RegisterAssetCategory(AssetTools);
+	RegisterAssetTypeAction(AssetTools, MakeShareable(new FAssetTypeActions_Manager()));
+
+	MenuExtensibilityManager = MakeShareable(new FExtensibilityManager);
+	ToolBarExtensibilityManager = MakeShareable(new FExtensibilityManager);
 }
 
 void FMoreManagersEditorModule::ShutdownModule()
 {
 	UE_LOG(MoreManagersEditorLog, Warning, TEXT("MoreManagersEditorLog: Module Shutdown"));
+
+	MenuExtensibilityManager.Reset();
+	ToolBarExtensibilityManager.Reset();
+
+	CreatedAssetTypeActions.Empty();
+	MenuExtensibilityManager.Reset();
+	ToolBarExtensibilityManager.Reset();
 }
 
-void FMoreManagersEditorModule::RegisterAssetCategory()
+TSharedRef<IManagerEditor> FMoreManagersEditorModule::CreateManagerEditor(const EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost>& InitToolkitHost, UManager* InManager)
 {
-	IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+	TSharedRef<FManagerEditor> NewManagerEditor(new FManagerEditor());
+	NewManagerEditor->InitManagerEditor(Mode, InitToolkitHost, InManager);
+
+	return NewManagerEditor;
+}
+
+TSharedPtr<FExtensibilityManager> FMoreManagersEditorModule::GetMenuExtensibilityManager()
+{
+	return MenuExtensibilityManager;
+}
+
+TSharedPtr<FExtensibilityManager> FMoreManagersEditorModule::GetToolBarExtensibilityManager()
+{
+	return ToolBarExtensibilityManager;
+}
+
+void FMoreManagersEditorModule::RegisterAssetCategory(IAssetTools& AssetTools)
+{
 	MoreManagerCategoryBit = AssetTools.RegisterAdvancedAssetCategory(FName(TEXT("MoreManagers")), LOCTEXT("MoreManagersCategoryName", "More Managers"));
 }
 
@@ -73,7 +109,7 @@ void FMoreManagersEditorModule::UnregisterUnmutableSettings()
 {
 	if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
 	{
-		SettingsModule->UnregisterSettings("Project", "Colony Settings", "AI");
+		SettingsModule->UnregisterSettings("Project", "MoreManagers", "Invoke");
 	}
 }
 
@@ -84,5 +120,12 @@ bool FMoreManagersEditorModule::HandleSaved()
 
 	return true;
 }
+
+void FMoreManagersEditorModule::RegisterAssetTypeAction(IAssetTools& AssetTools, TSharedRef<IAssetTypeActions> Action)
+{
+	AssetTools.RegisterAssetTypeActions(Action);
+	CreatedAssetTypeActions.Add(Action);
+}
+
 
 #undef LOCTEXT_NAMESPACE

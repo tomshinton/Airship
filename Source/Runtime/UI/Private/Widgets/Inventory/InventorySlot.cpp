@@ -13,6 +13,8 @@
 #include <Runtime/UMG/Public/Components/CanvasPanelSlot.h>
 #include <Runtime/UMG/Public/Components/SizeBox.h>
 
+DEFINE_LOG_CATEGORY(InventorySlotLog);
+
 void UInventorySlot::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
@@ -159,7 +161,18 @@ bool UInventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 
 FReply UInventorySlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
+	const FReply DragReply = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
+
+	if(DragReply.IsEventHandled())
+	{
+		return DragReply;
+	}
+	else
+	{
+		UE_LOG(InventorySlotLog, Log, TEXT("Mouse down did not detect drag - fall through chord options"));
+	}
+
+	return FReply::Unhandled();
 }
 
 void UInventorySlot::BuildSlotVisuals()

@@ -17,6 +17,8 @@ class UImage;
 class UDragAndDropVisual;
 class USizeBox;
 
+DECLARE_LOG_CATEGORY_EXTERN(InventorySlotLog, All, All);
+
 UCLASS(abstract)
 class UInventorySlot : public UAirWidget
 	, public IInventoryViewInterface

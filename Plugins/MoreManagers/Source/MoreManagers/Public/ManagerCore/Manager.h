@@ -4,6 +4,7 @@
 
 class UManagerComponent;
 
+#include "EdGraph/EdGraph.h"
 #include "Manager.generated.h"
 
 UCLASS(Blueprintable)
