@@ -12,6 +12,7 @@ public class UI : ModuleRules
             "Core",
             "CoreUObject",
             "Engine",
+            "Input",
             "InputCore",
             "Inventory",
             "Slate",

@@ -15,6 +15,24 @@
 
 DEFINE_LOG_CATEGORY(InventorySlotLog);
 
+UInventorySlot::UInventorySlot(const FObjectInitializer& ObjectInitializer)
+	: UAirWidget(ObjectInitializer)
+	, SlotBody(nullptr)
+	, ClipText(nullptr)
+	, ItemIcon(nullptr)
+	, QuantityText(nullptr)
+	, FocusAnim(nullptr)
+	, InventorySlot(0)
+	, IsHotBarSlot(0)
+	, IsPopulated(0)
+	, DragAndDropVisual(UDragAndDropVisual::StaticClass())
+	, LinkedInventory()
+	, IsFocused(false)
+	, LinkedInventoryItem()
+	, SlotChordLookup(*this)
+{
+}
+
 void UInventorySlot::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
@@ -33,6 +51,12 @@ void UInventorySlot::SynchronizeProperties()
 
 void UInventorySlot::Build()
 {
+	SlotChordLookup.Bind({ EKeys::LeftMouseButton, EKeys::LeftShift },
+	[this]()
+	{
+		QuickTransfer();
+	});
+
 	if (!LinkedInventory)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Build called on inventory slot before having its LinkedInventory set!"));
@@ -161,15 +185,14 @@ bool UInventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 
 FReply UInventorySlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	const FReply DragReply = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
+	if (!SlotChordLookup.Get({ InMouseEvent.GetEffectingButton() }))
+	{
+		const FReply DragReply = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
 
-	if(DragReply.IsEventHandled())
-	{
-		return DragReply;
-	}
-	else
-	{
-		UE_LOG(InventorySlotLog, Log, TEXT("Mouse down did not detect drag - fall through chord options"));
+		if (DragReply.IsEventHandled())
+		{
+			return DragReply;
+		}
 	}
 
 	return FReply::Unhandled();
@@ -235,5 +258,10 @@ void UInventorySlot::BuildFromInvalidData()
 	}
 
 	IsPopulated = false;
+}
+
+void UInventorySlot::QuickTransfer()
+{
+	UE_LOG(InventorySlotLog, Log, TEXT("Attempting Quick Transfer"));
 }
 

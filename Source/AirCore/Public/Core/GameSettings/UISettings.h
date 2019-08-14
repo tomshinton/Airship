@@ -24,7 +24,7 @@ public:
 		return GetMutableDefault<UUISettings>();
 	}
 
-	UPROPERTY(EditAnywhere, config, Category = "U | HUD")
+	UPROPERTY(EditAnywhere, config, Category = "UI | HUD")
 	TSubclassOf<UAirHUDBase> HUDWidgetClass;
 
 	UPROPERTY(EditAnywhere, config, Category = "UI | Inventory")

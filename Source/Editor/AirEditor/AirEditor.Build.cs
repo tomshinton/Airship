@@ -16,6 +16,7 @@ public class AirEditor : ModuleRules
             "CoreUObject",
             "Engine",
             "InputCore",
+            "Input",
             "Inventory",
             "UI"
         });

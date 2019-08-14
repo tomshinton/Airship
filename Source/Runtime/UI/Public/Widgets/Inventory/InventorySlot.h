@@ -28,6 +28,8 @@ class UInventorySlot : public UAirWidget
 
 public:
 
+	UInventorySlot(const FObjectInitializer& ObjectInitializer);
+
 	UPROPERTY(meta = (BindWidget))
 	USizeBox* SlotBody;
 
@@ -94,7 +96,7 @@ protected:
 private:
 	
 	TScriptInterface<IInventoryInterface> LinkedInventory;
-
+	
 	bool IsFocused;
 
 	void BuildSlotVisuals();
@@ -106,4 +108,6 @@ private:
 	FInventoryItem LinkedInventoryItem;
 
 	ChordLookup SlotChordLookup;
+
+	void QuickTransfer();
 };

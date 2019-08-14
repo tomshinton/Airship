@@ -12,7 +12,8 @@ public class Input : ModuleRules
         {
             "Core",
             "CoreUObject",
-            "Engine"
+            "Engine",
+            "InputCore"
         });
 
 		PublicIncludePaths.AddRange(new string[] {"Runtime/Input/Public"});

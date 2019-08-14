@@ -1,11 +1,11 @@
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Modules/ModuleInterface.h"
-#include "Modules/ModuleManager.h"
-#include "UnrealEd.h"
-#include "AirSettings.h"
-#include "UISettings.h"
+#include <Runtime/Core/Public/Modules/ModuleManager.h>
+
+#include <AirCore/Public/Core/GameSettings/AirSettings.h>
+#include <AirCore/Public/Core/GameSettings/UISettings.h>
+#include <Runtime/Input/Public/AirInputSettings.h>
+#include <Runtime/Inventory/Public/InventorySettings.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(AirEditorLog, All, All)
 
