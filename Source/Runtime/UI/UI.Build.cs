@@ -7,8 +7,10 @@ public class UI : ModuleRules
 	public UI(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
-		PublicDependencyModuleNames.AddRange(new string[] {
+
+        PublicDependencyModuleNames.AddRange(new string[]
+        {
+            "AirCore",
             "Core",
             "CoreUObject",
             "Engine",

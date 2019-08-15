@@ -1,20 +1,30 @@
 // Airship Project - Tom Shinton 2018
 
-#include "Hotbar.h"
-#include "InventorySlot.h"
-#include <HorizontalBox.h>
-#include "AirWidget.h"
+#include "Runtime/UI/Public/Widgets/Hotbar/Hotbar.h"
+#include "Runtime/UI/Public/Widgets/Inventory/InventorySlot.h"
+
+#include <AirCore/Public/Core/GameSettings/UISettings.h>
+#include <Runtime/UMG/Public/Components/HorizontalBox.h>
 
 UHotbar::UHotbar(const FObjectInitializer& ObjectInitializer)
-	: Super( ObjectInitializer)
-	, HotbarSlotCount(0)
-{
-
-}
+	: UAirWidget( ObjectInitializer)
+	, SlotClass(UInventorySlot::StaticClass())
+	, SlotsToAdd(0)
+	, Bar(nullptr)
+	, SlotDomain(ESlotDomain::Hotbar)
+	, HotbarSlotCount(10)
+	, LinkedInventory(nullptr)
+	, LinkedHotbar(nullptr)
+{}
 
 void UHotbar::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
+
+	if (UUISettings* UISettings = UUISettings::Get())
+	{
+		SlotClass = UISettings->InventorySlotClass;
+	}
 
 	if (SlotsToAdd > 0 && Bar && SlotClass)
 	{
@@ -54,7 +64,9 @@ void UHotbar::Build()
 					}
 					else if (IInventoryViewInterface* SlotViewInterface = Cast<IInventoryViewInterface>(ChildSlot))
 					{
-						ChildSlot->SetLinkedInventory((IInventoryInterface*)LinkedInventory.GetInterface());
+						SlotViewInterface->SetLinkedInventory((IInventoryInterface*)LinkedInventory.GetInterface());
+						SlotViewInterface->SetSlotDomain(SlotDomain);
+
 						ChildSlot->Build();
 					}
 				}

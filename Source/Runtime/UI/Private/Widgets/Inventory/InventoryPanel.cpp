@@ -1,9 +1,13 @@
 // Airship Project - Tom Shinton 2018
 
-#include "InventoryPanel.h"
-#include <GridSlot.h>
-#include "UISettings.h"
-#include "CanvasPanelSlot.h"
+#include "Runtime/UI/Public/Widgets/Inventory/InventoryPanel.h"
+#include "Runtime/UI/Public/Widgets/Inventory/InventorySlot.h"
+
+#include <AirCore/Public/Core/GameSettings/UISettings.h>
+#include <Runtime/Inventory/Public/InventoryInterface.h>
+#include <Runtime/UMG/Public/Components/CanvasPanelSlot.h>
+#include <Runtime/UMG/Public/Components/GridPanel.h>
+#include <Runtime/UMG/Public/Components/GridSlot.h>
 
 DEFINE_LOG_CATEGORY_STATIC(InventoryPanelLog, Log, Log);
 
@@ -69,6 +73,7 @@ void UInventoryPanel::SynchronizeProperties()
 					if (IInventoryViewInterface* InvViewInterface = Cast<IInventoryViewInterface>(NewSlot))
 					{
 						InvViewInterface->SetLinkedInventory((IInventoryInterface*)LinkedInventory.GetInterface());
+						InvViewInterface->SetSlotDomain(SlotDomain);
 					}
 
 					UGridSlot* AddedChild = PanelBody->AddChildToGrid(NewSlot);

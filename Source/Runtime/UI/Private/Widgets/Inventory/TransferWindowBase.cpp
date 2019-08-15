@@ -28,6 +28,16 @@ UTransferWindowBase* UTransferWindowBase::NewWindow(IInventoryInterface& OwningI
 void UTransferWindowBase::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
+
+	if (OwnerPanel)
+	{
+		OwnerPanel->SetSlotDomain(ESlotDomain::TransferWindow);
+	}
+
+	if (PlayerPanel)
+	{
+		OwnerPanel->SetSlotDomain(ESlotDomain::TransferWindow);
+	}
 }
 
 void UTransferWindowBase::Build()

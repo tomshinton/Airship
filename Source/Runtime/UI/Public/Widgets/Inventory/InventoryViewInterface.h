@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Runtime/UI/Public/Types/SlotDomain.h"
+
 #include <Runtime/CoreUObject/Public/UObject/Interface.h>
 
 #include "InventoryViewInterface.generated.h"
@@ -23,4 +25,5 @@ public:
 
 	virtual void SetLinkedInventory(IInventoryInterface* InInterface) = 0;
 	virtual void SetLinkedHotbar(IHotbarInterface* InInterface) = 0;
+	virtual void SetSlotDomain(const ESlotDomain InDomain) = 0;
 };

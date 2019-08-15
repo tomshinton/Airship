@@ -2,13 +2,13 @@
 
 #pragma once
 
-#include "AirWidget.h"
-#include "SequentialGridPanel.h"
-#include <GridPanel.h>
-#include "InventorySlot.h"
-#include "InventoryViewInterface.h"
+#include "Runtime/UI/Public/AirWidget.h"
+#include "Runtime/UI/Public/Widgets/Inventory/InventoryViewInterface.h"
 
 #include "InventoryPanel.generated.h"
+
+class UGridPanel;
+class UGridSlot;
 
 UCLASS()
 class UI_API UInventoryPanel : public UAirWidget
@@ -35,6 +35,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Slots")
 	int32 Slots;
 	
+	UPROPERTY(EditAnywhere, Category = "Slots")
+	ESlotDomain SlotDomain;
+
 	virtual void SynchronizeProperties() override;
 
 	// InventoryViewInterface
@@ -43,7 +46,8 @@ public:
 		LinkedInventory.SetInterface(InInterface);
 		LinkedInventory.SetObject(this);
 	};
-	virtual void SetLinkedHotbar(IHotbarInterface* InInterface) {};
+	virtual void SetLinkedHotbar(IHotbarInterface* InInterface) override {};
+	virtual void SetSlotDomain(const ESlotDomain InDomain) override { SlotDomain = InDomain; };
 	//~InventoryViewInterface
 
 private:

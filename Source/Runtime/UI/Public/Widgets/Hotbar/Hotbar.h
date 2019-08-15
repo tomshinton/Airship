@@ -6,7 +6,6 @@
 #include "Runtime/UI/Public/Widgets/Inventory/InventoryViewInterface.h"
 
 #include <Runtime/Inventory/Public/HotbarInterface.h>
-#include <Runtime/Inventory/Public/InventoryComponent/AirInventory.h>
  
 #include "Hotbar.generated.h"
 
@@ -23,7 +22,7 @@ public:
 
 	UHotbar(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(EditAnywhere, Category = "Slots")
+	UPROPERTY(VisibleAnywhere, Category = "Slots")
 	TSubclassOf<UInventorySlot> SlotClass;
 
 	UPROPERTY(EditAnywhere, Category = "Slots")
@@ -31,6 +30,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	UHorizontalBox*	Bar;
+
+	UPROPERTY(EditAnywhere, Category = "Slots")
+	ESlotDomain SlotDomain;
 
 	virtual void SynchronizeProperties() override;
 
@@ -42,12 +44,12 @@ public:
 		LinkedInventory.SetInterface(InInterface);
 		LinkedInventory.SetObject(this);
 	};
-
 	virtual void SetLinkedHotbar(IHotbarInterface* InInterface) override 
 	{ 
 		LinkedHotbar.SetInterface(InInterface);
 		LinkedHotbar.SetObject(this);
 	};
+	virtual void SetSlotDomain(const ESlotDomain InDomain) override { SlotDomain = InDomain; };
 	//~IInventoryViewInterface
 
 private:

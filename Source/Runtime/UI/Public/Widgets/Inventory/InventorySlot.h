@@ -65,7 +65,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Inventory)
 	bool IsPopulated;
 
-	UPROPERTY(EditANywhere, Category = DragAndDrop)
+	UPROPERTY(EditAnywhere, Category = DragAndDrop)
 	TSubclassOf<UDragAndDropVisual> DragAndDropVisual;
 
 	virtual void SynchronizeProperties() override;
@@ -76,10 +76,14 @@ public:
 		LinkedInventory.SetInterface(InInterface);
 		LinkedInventory.SetObject(this);
 	};
-	virtual void SetLinkedHotbar(IHotbarInterface* InInterface) override final {};
+	virtual void SetLinkedHotbar(IHotbarInterface* InInterface) override {};
+	virtual void SetSlotDomain(const ESlotDomain InDomain) override { SlotDomain = InDomain; };
 	//~InventoryViewInterface
 
 protected:
+
+	UPROPERTY(VisibleAnywhere, Category = DragAndDrop)
+	ESlotDomain SlotDomain;
 
 	UFUNCTION()
 	void PlayerFocusChanged(int32 InSlot);
