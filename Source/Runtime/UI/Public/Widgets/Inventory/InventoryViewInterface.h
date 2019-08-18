@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include "Runtime/UI/Public/Types/SlotDomain.h"
-
 #include <Runtime/CoreUObject/Public/UObject/Interface.h>
+
+#include "Runtime/UI/Public/QuickTransfer/SlotDomain.h"
 
 #include "InventoryViewInterface.generated.h"
 
