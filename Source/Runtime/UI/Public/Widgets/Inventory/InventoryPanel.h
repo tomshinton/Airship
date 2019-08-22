@@ -7,8 +7,10 @@
 
 #include "InventoryPanel.generated.h"
 
+class UDraggableComponent;
 class UGridPanel;
 class UGridSlot;
+class USizeBox;
 
 UCLASS()
 class UI_API UInventoryPanel : public UAirWidget
@@ -18,25 +20,12 @@ class UI_API UInventoryPanel : public UAirWidget
 	
 public:
 
-	virtual void Build() override;
-
-public:
-
 	UInventoryPanel(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(meta = (BindWidget))
-	UGridPanel* PanelBody;
+	UPROPERTY()
+	UDraggableComponent* DraggableComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Slots")
-	int32 Columns;
-
-	int32 DynamicColumns;
-
-	UPROPERTY(EditAnywhere, Category = "Slots")
-	int32 Slots;
-	
-	UPROPERTY(EditAnywhere, Category = "Slots")
-	ESlotDomain SlotDomain;
+	virtual void Build() override;
 
 	virtual void SynchronizeProperties() override;
 
@@ -50,8 +39,42 @@ public:
 	virtual void SetSlotDomain(const ESlotDomain InDomain) override { SlotDomain = InDomain; };
 	//~InventoryViewInterface
 
+	UPROPERTY(meta = (BindWidget))
+	UGridPanel* PanelBody;
+	
+	UPROPERTY(meta = (BindWidget))
+	USizeBox* MoveHandle;
+
+	UPROPERTY(EditAnywhere, Category = "Slots")
+	int32 Columns;
+
+	UPROPERTY(EditAnywhere, Category = "Slots")
+	int32 Slots;
+	
+	UPROPERTY(EditAnywhere, Category = "Body")
+	bool ShowMoveHandle;
+
+	UPROPERTY(EditAnywhere, Category = "Slots")
+	ESlotDomain SlotDomain;
+
+protected:
+	
+	virtual FReply NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 private:
 
 	UPROPERTY()
 	TScriptInterface<IInventoryInterface> LinkedInventory;
+
+	bool IsMoving;
+
+	FKey ClickAndDragKey;
+
+	FVector2D MouseDragDelta;
+
+	FVector2D MousePosition;
 };

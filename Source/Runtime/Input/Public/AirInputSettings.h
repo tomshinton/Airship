@@ -20,6 +20,14 @@ public:
 		return GetMutableDefault<UAirInputSettings>();
 	}
 
+	static FKey GetClickAndDragKey()
+	{
+		return Get()->ClickAndDragKey;
+	}
+
+	UPROPERTY(EditAnywhere, config, Category = "Input | Click and Drag", meta = (Tooltip = "What key drives 'click and drag' functionality across the board.  Typically the left mouse key"))
+	FKey ClickAndDragKey;
+
 	UPROPERTY(EditAnywhere, config, Category = "Input | Chord Lookup", meta = (Tooltip = "What keys count as 'chords'? For instance, Ctrl, Alt or Shift.  These are paired against other keys to facilitate discrete function calls"))
 	TArray<FKey> ChordCompliments;
 };

@@ -8,6 +8,7 @@
 #include <AirCore/Public/Core/GameSettings/UISettings.h>
 #include <AirCore/Utils/Functions/BindingFunctions.h>
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
+#include <Runtime/Input/Public/AirInputSettings.h>
 #include <Runtime/Inventory/Public/InventorySettings.h>
 #include <Runtime/UMG/Public/Blueprint/WidgetBlueprintLibrary.h>
 #include <Runtime/UMG/Public/Components/CanvasPanelSlot.h>
@@ -29,9 +30,11 @@ UInventorySlot::UInventorySlot(const FObjectInitializer& ObjectInitializer)
 	, SlotDomain(ESlotDomain::Default)
 	, LinkedInventory()
 	, IsFocused(false)
+	, ClickAndDragKey()
 	, LinkedInventoryItem()
 	, SlotChordLookup(*this)
 {
+	ClickAndDragKey = UAirInputSettings::GetClickAndDragKey();
 }
 
 void UInventorySlot::SynchronizeProperties()
@@ -52,7 +55,7 @@ void UInventorySlot::SynchronizeProperties()
 
 void UInventorySlot::Build()
 {
-	SlotChordLookup.Bind({ EKeys::LeftMouseButton, EKeys::LeftShift },
+	SlotChordLookup.Bind({ ClickAndDragKey, EKeys::LeftShift },
 	[this]()
 	{
 		QuickTransfer();
@@ -188,7 +191,7 @@ FReply UInventorySlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, cons
 {
 	if (!SlotChordLookup.Get({ InMouseEvent.GetEffectingButton() }))
 	{
-		const FReply DragReply = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
+		const FReply DragReply = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, ClickAndDragKey).NativeReply;
 
 		if (DragReply.IsEventHandled())
 		{

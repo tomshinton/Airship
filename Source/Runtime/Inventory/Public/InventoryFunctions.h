@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Engine/DataTable.h"
+#include <Runtime/Engine/Classes/Engine/DataTable.h>
+
 #include "InventoryFunctions.generated.h"
 
 struct FInventoryItemRow;

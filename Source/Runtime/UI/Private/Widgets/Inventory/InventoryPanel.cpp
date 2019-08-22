@@ -1,23 +1,44 @@
 // Airship Project - Tom Shinton 2018
 
 #include "Runtime/UI/Public/Widgets/Inventory/InventoryPanel.h"
+
+#include "Runtime/UI/Public/Components/DraggableComponent.h"
 #include "Runtime/UI/Public/Widgets/Inventory/InventorySlot.h"
 
 #include <AirCore/Public/Core/GameSettings/UISettings.h>
+#include <Runtime/Input/Public/AirInputSettings.h>
 #include <Runtime/Inventory/Public/InventoryInterface.h>
+#include <Runtime/UMG/Public/Blueprint/WidgetBlueprintLibrary.h>
+#include <Runtime/UMG/Public/Blueprint/WidgetLayoutLibrary.h>
 #include <Runtime/UMG/Public/Components/CanvasPanelSlot.h>
 #include <Runtime/UMG/Public/Components/GridPanel.h>
 #include <Runtime/UMG/Public/Components/GridSlot.h>
+#include <Runtime/UMG/Public/Components/SizeBox.h>
+
+#include "Engine/Engine.h"
 
 DEFINE_LOG_CATEGORY_STATIC(InventoryPanelLog, Log, Log);
 
+namespace InventoryPanelPrivate
+{
+	const FName DraggableComponentName = TEXT("DraggableComponent");
+}
+
 UInventoryPanel::UInventoryPanel(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
+	, DraggableComponent(ObjectInitializer.CreateDefaultSubobject<UDraggableComponent>(this, InventoryPanelPrivate::DraggableComponentName))
 	, PanelBody(nullptr)
+	, MoveHandle(nullptr)
 	, Columns(4)
-	, DynamicColumns(0)
 	, Slots(10)
-{}
+	, ShowMoveHandle(false)
+	, LinkedInventory(nullptr)
+	, IsMoving(false)
+	, ClickAndDragKey()
+	, MouseDragDelta(FVector2D::ZeroVector)
+{
+	ClickAndDragKey = UAirInputSettings::GetClickAndDragKey();
+}
 
 void UInventoryPanel::Build()
 {
@@ -57,6 +78,18 @@ void UInventoryPanel::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
 
+	if (MoveHandle)
+	{
+		if (ShowMoveHandle)
+		{
+			MoveHandle->SetVisibility(ESlateVisibility::Visible);
+		}
+		else
+		{
+			MoveHandle->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
+
 	if (UUISettings* UISettings = UUISettings::Get())
 	{
 		if (PanelBody && Slots > 0 && UISettings->InventorySlotClass)
@@ -78,7 +111,7 @@ void UInventoryPanel::SynchronizeProperties()
 
 					UGridSlot* AddedChild = PanelBody->AddChildToGrid(NewSlot);
 
-					const int32 TargetRow = i / Columns;
+					  int32 TargetRow = i / Columns;
 					const int32 TargetColumn = (i % Columns);
 
 					AddedChild->SetRow(TargetRow);
@@ -87,4 +120,68 @@ void UInventoryPanel::SynchronizeProperties()
 			}
 		}
 	}
+}
+
+FReply UInventoryPanel::NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	if (UCanvasPanelSlot* HandleAsSlot = Cast<UCanvasPanelSlot>(Slot))
+	{
+		if (UWorld* World = GetWorld())
+		{
+			if (APlayerController* PlayerController = World->GetFirstPlayerController())
+			{
+				float ViewportX;
+				float ViewportY;
+
+				UWidgetLayoutLibrary::GetMousePositionScaledByDPI(PlayerController, ViewportX, ViewportY);
+
+				if (IsMoving)
+				{
+					HandleAsSlot->SetPosition(FVector2D(ViewportX, ViewportY) - MousePosition);
+				}
+
+				const FColor Colour = IsMoving ? FColor::Green : FColor::Red;
+				GEngine->AddOnScreenDebugMessage(-1, 1, Colour, FString::Printf(TEXT("Mouse at: %s"), *FVector2D(ViewportX, ViewportY).ToString()));
+			}
+		}
+	}
+
+	return FReply::Handled();
+}
+
+FReply UInventoryPanel::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	if (UWorld* World = GetWorld())
+	{
+		if (APlayerController* PlayerController = World->GetFirstPlayerController())
+		{
+			float ViewportX;
+			float ViewportY;
+			
+			UWidgetLayoutLibrary::GetMousePositionScaledByDPI(PlayerController, ViewportX, ViewportY);
+
+			const FVector2D WidgetLocation = FVector2D(ViewportX, ViewportY);
+
+			if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(MoveHandle->Slot))
+			{
+				MousePosition = CanvasSlot->GetPosition() - WidgetLocation;
+			}
+
+			IsMoving = true;
+		}
+	}
+
+	return FReply::Handled();
+}
+
+FReply UInventoryPanel::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	IsMoving = false;
+
+	return FReply::Handled();
+}
+
+void UInventoryPanel::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+
 }

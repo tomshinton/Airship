@@ -103,6 +103,8 @@ private:
 	
 	bool IsFocused;
 
+	FKey ClickAndDragKey;
+
 	void BuildSlotVisuals();
 
 	void BuildFromValidData(FInventoryItemRow* Row);
