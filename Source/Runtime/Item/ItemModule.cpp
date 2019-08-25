@@ -8,12 +8,12 @@ DEFINE_LOG_CATEGORY(ItemModuleLog);
  
 void FItemModule::StartupModule()
 {
-	UE_LOG(ItemModuleLog, Warning, TEXT("ItemModuleLog module has started!"));
+	UE_LOG(ItemModuleLog, Log, TEXT("ItemModuleLog module has started!"));
 }
  
 void FItemModule::ShutdownModule()
 {
-	UE_LOG(ItemModuleLog, Warning, TEXT("ItemModuleLog module has shut down"));
+	UE_LOG(ItemModuleLog, Log, TEXT("ItemModuleLog module has shut down"));
 }
  
 #undef LOCTEXT_NAMESPACE

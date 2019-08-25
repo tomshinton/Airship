@@ -1,6 +1,7 @@
 // Airship Project - Tom Shinton 2018
 
 #include "Runtime/UI/Public/AirHUDBase.h"
+
 #include "Runtime/UI/Public/Utils/HUDTools.h"
 #include "Runtime/UI/Public/Widgets/Healthbar/Healthbar.h"
 #include "Runtime/UI/Public/Widgets/Hotbar/Hotbar.h"
@@ -23,6 +24,7 @@ UAirHUDBase::UAirHUDBase(const FObjectInitializer& ObjectInitializer)
 	, PlayerInventoryPanel(nullptr)
 	, PlayerHealthBar(nullptr)
 	, InspectorPanel(nullptr)
+	, DraggableAction(new FDraggableAction(*this))
 {}
 
 void UAirHUDBase::NativeConstruct()

@@ -6,12 +6,12 @@ DEFINE_LOG_CATEGORY(ProjectileLog);
  
 void FProjectileModule::StartupModule()
 {
-	UE_LOG(ProjectileLog, Warning, TEXT("EmptyModule module has started!"));
+	UE_LOG(ProjectileLog, Log, TEXT("Projectile module has started!"));
 }
  
 void FProjectileModule::ShutdownModule()
 {
-	UE_LOG(ProjectileLog, Warning, TEXT("EmptyModule module has shut down"));
+	UE_LOG(ProjectileLog, Log, TEXT("Projectile module has shut down"));
 }
  
 #undef LOCTEXT_NAMESPACE

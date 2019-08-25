@@ -8,12 +8,12 @@ DEFINE_LOG_CATEGORY(InputModuleLog);
  
 void FInputModule::StartupModule()
 {
-	UE_LOG(InputModuleLog, Warning, TEXT("InputModule module has started!"));
+	UE_LOG(InputModuleLog, Log, TEXT("InputModule module has started!"));
 }
  
 void FInputModule::ShutdownModule()
 {
-	UE_LOG(InputModuleLog, Warning, TEXT("InputModule module has shut down"));
+	UE_LOG(InputModuleLog, Log, TEXT("InputModule module has shut down"));
 }
  
 #undef LOCTEXT_NAMESPACE

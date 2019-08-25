@@ -8,12 +8,12 @@ DEFINE_LOG_CATEGORY(UIModuleLog);
  
 void FUIModule::StartupModule()
 {
-	UE_LOG(UIModuleLog, Warning, TEXT("UI module has started!"));
+	UE_LOG(UIModuleLog, Log, TEXT("UI module has started!"));
 }
  
 void FUIModule::ShutdownModule()
 {
-	UE_LOG(UIModuleLog, Warning, TEXT("UI module has shut down"));
+	UE_LOG(UIModuleLog, Log, TEXT("UI module has shut down"));
 }
  
 #undef LOCTEXT_NAMESPACE

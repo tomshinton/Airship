@@ -6,12 +6,12 @@ DEFINE_LOG_CATEGORY(InventoryLog);
  
 void FInventoryModule::StartupModule()
 {
-	UE_LOG(InventoryLog, Warning, TEXT("Inventory module has started!"));
+	UE_LOG(InventoryLog, Log, TEXT("Inventory module has started!"));
 }
  
 void FInventoryModule::ShutdownModule()
 {
-	UE_LOG(InventoryLog, Warning, TEXT("Inventory module has shut down"));
+	UE_LOG(InventoryLog, Log, TEXT("Inventory module has shut down"));
 }
  
 #undef LOCTEXT_NAMESPACE

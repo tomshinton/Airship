@@ -22,9 +22,6 @@ public:
 
 	UInventoryPanel(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY()
-	UDraggableComponent* DraggableComponent;
-
 	virtual void Build() override;
 
 	virtual void SynchronizeProperties() override;

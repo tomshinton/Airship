@@ -3,6 +3,10 @@
 #pragma once
 
 #include "Runtime/UI/Public/AirWidget.h"
+#include "Runtime/UI/Public/Actions/DraggableAction.h"
+
+#include <Runtime/Core/Public/Templates/UniquePtr.h>
+
 #include "AirHUDBase.generated.h"
 
 class UCanvasPanel;
@@ -60,4 +64,6 @@ private:
 	bool TryRemoveTopLevelDynamicWidget();
 
 	TMap<UWidget*, ESlateVisibility> Snapshot;
+
+	TUniquePtr<FDraggableAction> DraggableAction;
 };

@@ -9,6 +9,10 @@ public class UI : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PublicDependencyModuleNames.AddRange(new string[]
+        {   
+        });
+
+        PrivateDependencyModuleNames.AddRange(new string[] 
         {
             "AirCore",
             "Core",
@@ -19,11 +23,7 @@ public class UI : ModuleRules
             "Inventory",
             "Slate",
             "SlateCore",
-            "UMG"
-        });
-
-        PrivateDependencyModuleNames.AddRange(new string[] 
-        {
+            "UMG",
             "Slate",
             "SlateCore"
         });

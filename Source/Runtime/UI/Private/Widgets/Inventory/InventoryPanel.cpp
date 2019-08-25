@@ -2,7 +2,6 @@
 
 #include "Runtime/UI/Public/Widgets/Inventory/InventoryPanel.h"
 
-#include "Runtime/UI/Public/Components/DraggableComponent.h"
 #include "Runtime/UI/Public/Widgets/Inventory/InventorySlot.h"
 
 #include <AirCore/Public/Core/GameSettings/UISettings.h>
@@ -26,7 +25,6 @@ namespace InventoryPanelPrivate
 
 UInventoryPanel::UInventoryPanel(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, DraggableComponent(ObjectInitializer.CreateDefaultSubobject<UDraggableComponent>(this, InventoryPanelPrivate::DraggableComponentName))
 	, PanelBody(nullptr)
 	, MoveHandle(nullptr)
 	, Columns(4)
@@ -151,6 +149,8 @@ FReply UInventoryPanel::NativeOnMouseMove(const FGeometry& InGeometry, const FPo
 
 FReply UInventoryPanel::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
+	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+
 	if (UWorld* World = GetWorld())
 	{
 		if (APlayerController* PlayerController = World->GetFirstPlayerController())
