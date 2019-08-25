@@ -54,7 +54,7 @@ protected:
 
 private:
 
-	static bool ShouldBeSnapshot(UWidget* InWidget, UWidgetTree* InWidgetTree, UDynamicOverlayPanel* InOverlay);
+	static bool ShouldBeSnapshot(const UWidget& InWidget, const UWidgetTree& InWidgetTree, const UDynamicOverlayPanel& InOverlay);
 
 	void ToggleInventoryPanel();
 

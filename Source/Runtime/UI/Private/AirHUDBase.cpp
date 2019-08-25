@@ -86,9 +86,9 @@ void UAirHUDBase::NativeConstruct()
 	}
 }
 
-bool UAirHUDBase::ShouldBeSnapshot(UWidget* InWidget, UWidgetTree* InWidgetTree, UDynamicOverlayPanel* InOverlay)
+bool UAirHUDBase::ShouldBeSnapshot(const UWidget& InWidget, const UWidgetTree& InWidgetTree, const UDynamicOverlayPanel& InOverlay)
 {
-	return InWidget != InOverlay && InWidget != InWidgetTree->RootWidget && !InOverlay->GetAllChildren().Contains(InWidget);
+	return &InWidget != &InOverlay && &InWidget != InWidgetTree.RootWidget && !InOverlay.GetAllChildren().Contains(&InWidget);
 }
 
 void UAirHUDBase::ToggleInventoryPanel()
@@ -117,7 +117,7 @@ void UAirHUDBase::TakeSnapshot()
 
 	for (UWidget* Widget : FoundWidgets)
 	{
-		if (ShouldBeSnapshot(Widget, WidgetTree, DynamicOverlay))
+		if (ShouldBeSnapshot(*Widget, *WidgetTree, *DynamicOverlay))
 		{
 			Snapshot.Add(Widget, Widget->GetVisibility());
 			Widget->SetVisibility(ESlateVisibility::Collapsed);
@@ -154,7 +154,10 @@ void UAirHUDBase::SetupBinding(UInputComponent* InInputComponent)
 	if (InInputComponent)
 	{
 		InInputComponent->BindAction("ToggleInventoryPanel", IE_Pressed, this, &UAirHUDBase::ToggleInventoryPanel);
+
+		DraggableAction->Init(*InInputComponent);
 	}
+
 }
 
 void UAirHUDBase::OnDynamicPanelUpdated()
