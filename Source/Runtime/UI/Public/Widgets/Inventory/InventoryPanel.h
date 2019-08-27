@@ -3,18 +3,21 @@
 #pragma once
 
 #include "Runtime/UI/Public/AirWidget.h"
-#include "Runtime/UI/Public/Widgets/Inventory/InventoryViewInterface.h"
+#include "Runtime/UI/Public/Actions/DraggableInterface.h"
 
+#include "Runtime/UI/Public/Widgets/Inventory/InventoryViewInterface.h"
+#include "Widget.h"
 #include "InventoryPanel.generated.h"
 
-class UDraggableComponent;
 class UGridPanel;
 class UGridSlot;
 class USizeBox;
+class UTextBlock;
 
 UCLASS()
 class UI_API UInventoryPanel : public UAirWidget
 	, public IInventoryViewInterface
+	, public IDraggableInterface
 {
 	GENERATED_BODY()
 	
@@ -36,11 +39,18 @@ public:
 	virtual void SetSlotDomain(const ESlotDomain InDomain) override { SlotDomain = InDomain; };
 	//~InventoryViewInterface
 
+	// DraggableInterface
+	virtual FDraggableHandle GetDraggableHandle() override { return FDraggableHandle(this, (UWidget*)MoveHandle); };
+	//~DraggableInterface
+
 	UPROPERTY(meta = (BindWidget))
 	UGridPanel* PanelBody;
 	
 	UPROPERTY(meta = (BindWidget))
 	USizeBox* MoveHandle;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* HandleNameBlock;
 
 	UPROPERTY(EditAnywhere, Category = "Slots")
 	int32 Columns;
@@ -48,19 +58,14 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Slots")
 	int32 Slots;
 	
-	UPROPERTY(EditAnywhere, Category = "Body")
+	UPROPERTY(EditAnywhere, Category = "Handle")
 	bool ShowMoveHandle;
+
+	UPROPERTY(EditAnywhere, Category = "Handle")
+	FText InventoryName;
 
 	UPROPERTY(EditAnywhere, Category = "Slots")
 	ESlotDomain SlotDomain;
-
-protected:
-	
-	virtual FReply NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 private:
 

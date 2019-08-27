@@ -13,6 +13,7 @@
 #include <Runtime/UMG/Public/Components/GridPanel.h>
 #include <Runtime/UMG/Public/Components/GridSlot.h>
 #include <Runtime/UMG/Public/Components/SizeBox.h>
+#include <Runtime/UMG/Public/Components/TextBlock.h>
 
 #include "Engine/Engine.h"
 
@@ -27,9 +28,11 @@ UInventoryPanel::UInventoryPanel(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, PanelBody(nullptr)
 	, MoveHandle(nullptr)
+	, HandleNameBlock(nullptr)
 	, Columns(4)
 	, Slots(10)
 	, ShowMoveHandle(false)
+	, InventoryName()
 	, LinkedInventory(nullptr)
 	, IsMoving(false)
 	, ClickAndDragKey()
@@ -81,6 +84,11 @@ void UInventoryPanel::SynchronizeProperties()
 		if (ShowMoveHandle)
 		{
 			MoveHandle->SetVisibility(ESlateVisibility::Visible);
+		
+			if (HandleNameBlock)
+			{
+				HandleNameBlock->SetText(InventoryName);
+			}
 		}
 		else
 		{
@@ -118,70 +126,4 @@ void UInventoryPanel::SynchronizeProperties()
 			}
 		}
 	}
-}
-
-FReply UInventoryPanel::NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
-{
-	if (UCanvasPanelSlot* HandleAsSlot = Cast<UCanvasPanelSlot>(Slot))
-	{
-		if (UWorld* World = GetWorld())
-		{
-			if (APlayerController* PlayerController = World->GetFirstPlayerController())
-			{
-				float ViewportX;
-				float ViewportY;
-
-				UWidgetLayoutLibrary::GetMousePositionScaledByDPI(PlayerController, ViewportX, ViewportY);
-
-				if (IsMoving)
-				{
-					HandleAsSlot->SetPosition(FVector2D(ViewportX, ViewportY) - MousePosition);
-				}
-
-				const FColor Colour = IsMoving ? FColor::Green : FColor::Red;
-				GEngine->AddOnScreenDebugMessage(-1, 1, Colour, FString::Printf(TEXT("Mouse at: %s"), *FVector2D(ViewportX, ViewportY).ToString()));
-			}
-		}
-	}
-
-	return FReply::Handled();
-}
-
-FReply UInventoryPanel::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
-{
-	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
-
-	if (UWorld* World = GetWorld())
-	{
-		if (APlayerController* PlayerController = World->GetFirstPlayerController())
-		{
-			float ViewportX;
-			float ViewportY;
-			
-			UWidgetLayoutLibrary::GetMousePositionScaledByDPI(PlayerController, ViewportX, ViewportY);
-
-			const FVector2D WidgetLocation = FVector2D(ViewportX, ViewportY);
-
-			if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(MoveHandle->Slot))
-			{
-				MousePosition = CanvasSlot->GetPosition() - WidgetLocation;
-			}
-
-			IsMoving = true;
-		}
-	}
-
-	return FReply::Handled();
-}
-
-FReply UInventoryPanel::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
-{
-	IsMoving = false;
-
-	return FReply::Handled();
-}
-
-void UInventoryPanel::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-
 }
