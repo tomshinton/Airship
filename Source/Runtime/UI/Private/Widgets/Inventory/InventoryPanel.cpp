@@ -37,6 +37,7 @@ UInventoryPanel::UInventoryPanel(const FObjectInitializer& ObjectInitializer)
 	, IsMoving(false)
 	, ClickAndDragKey()
 	, MouseDragDelta(FVector2D::ZeroVector)
+	, BagID(FGuid())
 {
 	ClickAndDragKey = UAirInputSettings::GetClickAndDragKey();
 }
@@ -67,7 +68,9 @@ void UInventoryPanel::Build()
 				}
 				else if (IInventoryViewInterface* SlotViewInterface = Cast<IInventoryViewInterface>(ChildSlot))
 				{
-					ChildSlot->SetLinkedInventory((IInventoryInterface*)LinkedInventory.GetInterface());
+					IInventoryInterface* LinkedInventoryInterface = (IInventoryInterface*)LinkedInventory.GetInterface();
+					SlotViewInterface->SetLinkedInventory(LinkedInventoryInterface, BagID);
+
 					ChildSlot->Build();
 				}
 			}
@@ -111,13 +114,15 @@ void UInventoryPanel::SynchronizeProperties()
 
 					if (IInventoryViewInterface* InvViewInterface = Cast<IInventoryViewInterface>(NewSlot))
 					{
-						InvViewInterface->SetLinkedInventory((IInventoryInterface*)LinkedInventory.GetInterface());
+						IInventoryInterface* InventoryInterface = (IInventoryInterface*)LinkedInventory.GetInterface();
+						
+						InvViewInterface->SetLinkedInventory(InventoryInterface, BagID);
 						InvViewInterface->SetSlotDomain(SlotDomain);
 					}
 
 					UGridSlot* AddedChild = PanelBody->AddChildToGrid(NewSlot);
 
-					  int32 TargetRow = i / Columns;
+					int32 TargetRow = i / Columns;
 					const int32 TargetColumn = (i % Columns);
 
 					AddedChild->SetRow(TargetRow);

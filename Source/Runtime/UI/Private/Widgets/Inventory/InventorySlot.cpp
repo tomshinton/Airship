@@ -33,6 +33,7 @@ UInventorySlot::UInventorySlot(const FObjectInitializer& ObjectInitializer)
 	, ClickAndDragKey()
 	, LinkedInventoryItem()
 	, SlotChordLookup(*this)
+	, BagID(FGuid())
 {
 	ClickAndDragKey = UAirInputSettings::GetClickAndDragKey();
 }

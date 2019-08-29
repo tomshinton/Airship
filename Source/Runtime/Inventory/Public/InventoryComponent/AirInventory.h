@@ -3,10 +3,11 @@
 #pragma once
 
 #include "Runtime/Inventory/Public/InventoryInterface.h"
-#include "Runtime/Inventory/Public/HotbarInterface.h"
-#include "Runtime/Inventory/Public/InventoryTypes/Inventory.h"
+#include "Runtime/Inventory/Public/InventoryTypes/CompoundInventory.h"
+#include "Runtime/Inventory/Public/InventoryTypes/InventoryBag.h"
 
 #include <Runtime/Item/Public/WieldInterface.h>
+
 #include "AirInventory.generated.h"
 
 class AWorldItem;
@@ -14,7 +15,6 @@ class AWorldItem;
 UCLASS(MinimalAPI)
 class UAirInventory : public UActorComponent
 	, public IInventoryInterface
-	, public IHotbarInterface
 {
 	GENERATED_BODY()
 
@@ -24,45 +24,36 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Name)
 	FString InventoryName;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Bags)
+	TArray<FInventoryBag> DefaultBags;
 	
 public:
 
 	//IInventoryInterface
 	virtual FOnInventoryUpdated& GetOnInventoryUpdated() override { return OnInventoryUpdated; };
 	virtual FOnSlotFocusUpdated& GetOnSlotFocusUpdated() override { return OnSlotFocusUpdated; };
-	virtual FInventory& GetInventory() override { return Inventory; };
-	virtual int32 GetCurrentFocusedSlot() const override { return CurrFocusedSlot; }
-
+	virtual CompoundInventory& GetInventory() override { return Inventory; };
 	virtual FInventoryItem GetItemBySlot(const int32 InSlot) const;
 	virtual void SetItemBySlot(const FInventoryItem& InItem, const int32 InSlot) override;
-
-	virtual int32 GetInventorySlotCount() const override { return InventorySize; };
+	virtual int32 GetInventorySlotCount() const override;
+	virtual FGuid GetBagIDByIndex(const int32 InIndex) const override;
+	virtual FGuid GetFirstPrimaryBagID() const override;
+	virtual const FInventoryBag* GetBagByType(const EBagType& InBagType) const override;
+	virtual int32 GetCurrentFocusedSlot() const override { return CurrFocusedSlot; };
 	//~IInventoryInterface
-
-	//IHotbarInterface
-	virtual int32 GetNumHotbarSlots() const override { return HotbarSlots; };
-	//~IHotbarInterface
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void AddItem(const FName& ID, const int32& Quantity);
-
+	
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void RemoveItem(const FName& ID, const int32& Quantity);
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void TransferItem(const FName& ItemID, const int32& Quantity, UAirInventory* RemoveInventory);
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = Inventory)
-	int32 GetInventorySize() const { return InventorySize; }
-
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void SwapSlots(const int32& FirstSlot, const int32& SecondSlot);
-
-	UFUNCTION(BlueprintPure, Category = Inventory)
-	void GetBackpackBounds(bool& HasBackpackSlots, int32& BackpackStart, int32& BackpackEnd);
-
-	UFUNCTION(BlueprintPure, Category = Inventory)
-	void GetHotbarBounds(bool& HasHotbarSlots, int32& HotbarStart, int32& HotbarEnd);
 
 	void SetHandComponents(USceneComponent* InLeftHand, USceneComponent* InRightHand) { RightHand = InRightHand; }
 	
@@ -74,12 +65,9 @@ public:
 
 	FName GetItemNameBySlot(const int32& ID) const;
 
-	INVENTORY_API void SetItemBySlot(FInventoryItem InItem, const int32 InSlot);
-
 	void UpdateFocus();
 	INVENTORY_API void FocusNextItem();
 	INVENTORY_API void FocusLastItem();
-
 
 	void SetIsAiming(const bool InAiming) { IsAiming = InAiming; }
 	bool GetIsAiming() const { return IsAiming; }
@@ -98,17 +86,11 @@ public:
 	FOnInventoryUpdated OnInventoryUpdated;
 	FOnSlotFocusUpdated OnSlotFocusUpdated;
 
-	UPROPERTY(EditDefaultsOnly)
-	int32 InventorySize;
-
-	UPROPERTY(EditDefaultsOnly)
-	int32 HotbarSlots;
-
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(VisibleAnywhere)
-	FInventory Inventory;
+
+	CompoundInventory Inventory;
 
 	int32 CurrFocusedSlot;
 

@@ -33,7 +33,7 @@ void UAirHUDBase::NativeConstruct()
 
 	if (LocalChar)
 	{
-		if (PlayerInventoryPanel)
+		/*if (PlayerInventoryPanel)
 		{
 			if (IInventoryInterface* InventoryInterface = InterfaceHelpers::GetInterface<IInventoryInterface>(*LocalChar))
 			{
@@ -45,7 +45,7 @@ void UAirHUDBase::NativeConstruct()
 
 			PlayerInventoryPanel->Build();
 			PlayerInventoryPanel->SetVisibility(ESlateVisibility::Collapsed);
-		}
+		}*/
 
 		if (PlayerHealthBar)
 		{
@@ -72,12 +72,11 @@ void UAirHUDBase::NativeConstruct()
 		{
 			if (IInventoryInterface* InventoryInterface = InterfaceHelpers::GetInterface<IInventoryInterface>(*LocalChar))
 			{
-				if (IHotbarInterface* HotbarInterface = InterfaceHelpers::GetInterface<IHotbarInterface>(*LocalChar))
+				if (IInventoryViewInterface* InventoryViewInterface = Cast<IInventoryViewInterface>(Hotbar))
 				{
-					if (IInventoryViewInterface* InventoryViewInterface = Cast<IInventoryViewInterface>(Hotbar))
+					if (const FInventoryBag* HotbarBag = InventoryInterface->GetBagByType(EBagType::Hotbar))
 					{
-						InventoryViewInterface->SetLinkedInventory(InventoryInterface);
-						InventoryViewInterface->SetLinkedHotbar(HotbarInterface);
+						InventoryViewInterface->SetLinkedInventory(InventoryInterface, HotbarBag->GetBagID());
 						Hotbar->Build();
 					}
 				}

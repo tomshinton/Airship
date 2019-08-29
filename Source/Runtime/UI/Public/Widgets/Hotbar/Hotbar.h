@@ -4,8 +4,6 @@
 
 #include "Runtime/UI/Public/AirWidget.h"
 #include "Runtime/UI/Public/Widgets/Inventory/InventoryViewInterface.h"
-
-#include <Runtime/Inventory/Public/HotbarInterface.h>
  
 #include "Hotbar.generated.h"
 
@@ -39,25 +37,20 @@ public:
 	virtual void Build() override;
 
 	//IInventoryViewInterface
-	virtual void SetLinkedInventory(IInventoryInterface* InInterface) override
+	virtual void SetLinkedInventory(IInventoryInterface* InInterface, const FGuid& InBagID) override
 	{
 		LinkedInventory.SetInterface(InInterface);
 		LinkedInventory.SetObject(this);
-	};
-	virtual void SetLinkedHotbar(IHotbarInterface* InInterface) override 
-	{ 
-		LinkedHotbar.SetInterface(InInterface);
-		LinkedHotbar.SetObject(this);
+	
+		BagID = InBagID;
 	};
 	virtual void SetSlotDomain(const ESlotDomain InDomain) override { SlotDomain = InDomain; };
 	//~IInventoryViewInterface
 
 private:
 
-	void SetHotbarSlotCount();
-
 	int32 HotbarSlotCount;
 
-	TScriptInterface<IInventoryViewInterface> LinkedInventory;
-	TScriptInterface<IHotbarInterface> LinkedHotbar;
+	TScriptInterface<IInventoryInterface> LinkedInventory;
+	FGuid BagID;
 };

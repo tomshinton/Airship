@@ -46,14 +46,20 @@ void UTransferWindowBase::Build()
 
 	if (OwnerInventory && OwnerPanel)
 	{
-		OwnerPanel->SetLinkedInventory((IInventoryInterface*)OwnerInventory.GetInterface());
-		OwnerPanel->Build();
+		if (IInventoryInterface* OwnerInventoryInterface = (IInventoryInterface*)OwnerInventory.GetInterface())
+		{
+			OwnerPanel->SetLinkedInventory(OwnerInventoryInterface, OwnerInventoryInterface->GetFirstPrimaryBagID());
+			OwnerPanel->Build();
+		}
 	}
 
 	if (PlayerInventory && PlayerPanel)
 	{
-		PlayerPanel->SetLinkedInventory((IInventoryInterface*)PlayerInventory.GetInterface());
-		PlayerPanel->Build();
+		if (IInventoryInterface* PlayerInventoryInterface = (IInventoryInterface*)PlayerInventory.GetInterface())
+		{
+			PlayerPanel->SetLinkedInventory(PlayerInventoryInterface, PlayerInventoryInterface->GetFirstPrimaryBagID());
+			PlayerPanel->Build();
+		}
 	}
 }
 

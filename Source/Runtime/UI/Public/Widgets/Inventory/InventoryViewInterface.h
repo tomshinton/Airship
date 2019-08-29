@@ -8,7 +8,6 @@
 
 #include "InventoryViewInterface.generated.h"
 
-class IHotbarInterface;
 class IInventoryInterface;
 
 UINTERFACE(MinimalAPI)
@@ -23,7 +22,6 @@ class UI_API IInventoryViewInterface
 
 public:
 
-	virtual void SetLinkedInventory(IInventoryInterface* InInterface) = 0;
-	virtual void SetLinkedHotbar(IHotbarInterface* InInterface) = 0;
+	virtual void SetLinkedInventory(IInventoryInterface* InInterface, const FGuid& InBagID) = 0;
 	virtual void SetSlotDomain(const ESlotDomain InDomain) = 0;
 };

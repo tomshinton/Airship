@@ -14,7 +14,7 @@ UHotbar::UHotbar(const FObjectInitializer& ObjectInitializer)
 	, SlotDomain(ESlotDomain::Hotbar)
 	, HotbarSlotCount(10)
 	, LinkedInventory(nullptr)
-	, LinkedHotbar(nullptr)
+	, BagID(FGuid())
 {}
 
 void UHotbar::SynchronizeProperties()
@@ -46,11 +46,9 @@ void UHotbar::Build()
 {
 	Super::Build();
 
-	SetHotbarSlotCount();
-
-	if (LinkedInventory && LinkedHotbar && Bar)
+	if (LinkedInventory && Bar)
 	{
-		if (LinkedHotbar)
+		if (const FInventoryBag* HotbarBag = LinkedInventory->GetBagByType(EBagType::Hotbar))
 		{
 			TArray<UWidget*> ChildWidgets = Bar->GetAllChildren();
 
@@ -58,13 +56,14 @@ void UHotbar::Build()
 			{
 				if (UInventorySlot* ChildSlot = Cast<UInventorySlot>(Widget))
 				{
-					if (ChildSlot->InventorySlot > LinkedHotbar->GetNumHotbarSlots())
+					if (ChildSlot->InventorySlot > HotbarBag->GetSlotNum())
 					{
 						ChildSlot->RemoveFromParent();
 					}
 					else if (IInventoryViewInterface* SlotViewInterface = Cast<IInventoryViewInterface>(ChildSlot))
 					{
-						SlotViewInterface->SetLinkedInventory((IInventoryInterface*)LinkedInventory.GetInterface());
+						IInventoryInterface* LinkedInventoryInterface = (IInventoryInterface*)LinkedInventory.GetInterface();
+						SlotViewInterface->SetLinkedInventory(LinkedInventoryInterface, HotbarBag->GetBagID());
 						SlotViewInterface->SetSlotDomain(SlotDomain);
 
 						ChildSlot->Build();
@@ -72,13 +71,5 @@ void UHotbar::Build()
 				}
 			}
 		}
-	}
-}
-
-void UHotbar::SetHotbarSlotCount()
-{
-	if (LinkedHotbar)
-	{
-		HotbarSlotCount = LinkedHotbar->GetNumHotbarSlots();
 	}
 }

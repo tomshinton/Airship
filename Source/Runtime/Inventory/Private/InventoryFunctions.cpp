@@ -2,10 +2,10 @@
 
 #include "Runtime/Inventory/Public/InventoryFunctions.h"
 #include "Runtime/Inventory/Public/InventorySettings.h"
-#include "Runtime/Inventory/Public/InventoryTypes/Inventory.h"
+#include "Runtime/Inventory/Public/InventoryTypes/CompoundInventory.h"
 #include "Runtime/Inventory/Public/InventoryTypes/InventoryItem.h"
 
-FInventoryItem UInventoryFunctions::AddItemFromID(FInventory& Inventory, const FName ItemID, const int32 Quantity)
+FInventoryItem InventoryFunctions::AddItemFromID(CompoundInventory& Inventory, const FName ItemID, const int32 Quantity)
 {
 	FInventoryItemRow* NewItemInfo = UInventorySettings::GetItemInfo(ItemID);
 
@@ -14,7 +14,7 @@ FInventoryItem UInventoryFunctions::AddItemFromID(FInventory& Inventory, const F
 		int32 QuantityLeft = Quantity;
 
 		//Top up existing slots
-		for (FInventoryItem& ExistingStack : Inventory.ItemSlots)
+		for (FInventoryItem& ExistingStack : Inventory.GetAllSlots())
 		{
 			if (ExistingStack.ItemID == ItemID && (NewItemInfo->Stacks ? ExistingStack.Quantity < NewItemInfo->StackSize : false))
 			{
@@ -37,7 +37,7 @@ FInventoryItem UInventoryFunctions::AddItemFromID(FInventory& Inventory, const F
 
 			for (int32 i = 0; i < StacksToMake; i++)
 			{
-				for (FInventoryItem& ExistingSlot : Inventory.ItemSlots)
+				for (FInventoryItem& ExistingSlot : Inventory.GetAllSlots())
 				{
 					const int32 NewStackSize = (NewItemInfo->Stacks ? FMath::Clamp(QuantityLeft, 0, NewItemInfo->StackSize) : 1);
 					FInventoryItem NewStack = FInventoryItem(ItemID, NewStackSize, NewItemInfo->Clip);
@@ -66,7 +66,7 @@ FInventoryItem UInventoryFunctions::AddItemFromID(FInventory& Inventory, const F
 	return FInventoryItem(ItemID, Quantity, NewItemInfo->Clip);
 }
 
-FInventoryItem UInventoryFunctions::RemoveItem(FInventory& InventoryToRemoveFrom, const FName ItemID, const int32 Quantity)
+FInventoryItem InventoryFunctions::RemoveItem(CompoundInventory& InventoryToRemoveFrom, const FName ItemID, const int32 Quantity)
 {
 	int32 QuantityLeft = Quantity;
 	int32 AmountRemoved = 0;
@@ -75,9 +75,9 @@ FInventoryItem UInventoryFunctions::RemoveItem(FInventory& InventoryToRemoveFrom
 
 	if (NewItemInfo)
 	{
-		for (int32 i = InventoryToRemoveFrom.ItemSlots.Num() - 1; i >= 0; i--)
+		for (int32 i = InventoryToRemoveFrom.GetAllSlots().Num() - 1; i >= 0; i--)
 		{
-			FInventoryItem& CurrInventoryItem = InventoryToRemoveFrom.ItemSlots[i];
+			FInventoryItem& CurrInventoryItem = InventoryToRemoveFrom.GetAllSlots()[i];
 
 			if (CurrInventoryItem.ItemID == ItemID && QuantityLeft > 0)
 			{
@@ -97,11 +97,11 @@ FInventoryItem UInventoryFunctions::RemoveItem(FInventory& InventoryToRemoveFrom
 	return AmountRemoved > 0 ? FInventoryItem(ItemID, AmountRemoved, NewItemInfo->Clip) : FInventoryItem();
 }
 
-bool UInventoryFunctions::InventoryHasEmptySlots(FInventory& Inventory)
+bool InventoryFunctions::InventoryHasEmptySlots(CompoundInventory& Inventory)
 {
 	int32 EmptySlots = 0;
 
-	for (const FInventoryItem& ExistingSlot : Inventory.ItemSlots)
+	for (const FInventoryItem& ExistingSlot : Inventory.GetAllSlots())
 	{
 		if (ExistingSlot.ItemID == "Item")
 		{
@@ -113,10 +113,10 @@ bool UInventoryFunctions::InventoryHasEmptySlots(FInventory& Inventory)
 
 }
 
-int32 UInventoryFunctions::GetNumStacksInInventory(const FInventory& Inventory, const FName& InItemID)
+int32 InventoryFunctions::GetNumStacksInInventory(const CompoundInventory& Inventory, const FName& InItemID)
 {
 	int32 AmountFound = 0;
-	for (const FInventoryItem& Item : Inventory.ItemSlots)
+	for (const FInventoryItem& Item : Inventory.GetAllSlots())
 	{
 		if (Item.ItemID == InItemID)
 		{
@@ -127,10 +127,10 @@ int32 UInventoryFunctions::GetNumStacksInInventory(const FInventory& Inventory, 
 	return AmountFound;
 }
 
-bool UInventoryFunctions::InventoryContains(const FInventory& InInventory, const FName& InItemID, const int32& InQuantity)
+bool InventoryFunctions::InventoryContains(const CompoundInventory& InInventory, const FName& InItemID, const int32& InQuantity)
 {
 	int32 AmountFound = 0;
-	for (const FInventoryItem& Item : InInventory.ItemSlots)
+	for (const FInventoryItem& Item : InInventory.GetAllSlots())
 	{
 		if (Item.ItemID == InItemID)
 		{
@@ -148,10 +148,10 @@ bool UInventoryFunctions::InventoryContains(const FInventory& InInventory, const
 	}
 }
 
-int32 UInventoryFunctions::GetNumItemsInInventory(const FInventory& Inventory, const FName& ItemID)
+int32 InventoryFunctions::GetNumItemsInInventory(const CompoundInventory& Inventory, const FName& ItemID)
 {
 	int32 AmountFound = 0;
-	for (const FInventoryItem& Item : Inventory.ItemSlots)
+	for (const FInventoryItem& Item : Inventory.GetAllSlots())
 	{
 		if (Item.ItemID == ItemID)
 		{
@@ -162,7 +162,7 @@ int32 UInventoryFunctions::GetNumItemsInInventory(const FInventory& Inventory, c
 	return AmountFound;
 }
 
-void UInventoryFunctions::TransferItems(FName ItemID, int32 Quantity, FInventory& InventoryToRemoveFrom, FInventory& InventoryToAddTo)
+void InventoryFunctions::TransferItems(FName ItemID, int32 Quantity, CompoundInventory& InventoryToRemoveFrom, CompoundInventory& InventoryToAddTo)
 {
 	FInventoryItem RemovedItem = RemoveItem(InventoryToRemoveFrom, ItemID, Quantity);
 	if (RemovedItem.Quantity > 0)

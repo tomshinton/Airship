@@ -2,27 +2,23 @@
 
 #include <Runtime/Engine/Classes/Engine/DataTable.h>
 
-#include "InventoryFunctions.generated.h"
+class CompoundInventory;
 
 struct FInventoryItemRow;
 struct FInventoryItem;
-struct FInventory;
 
-UCLASS(MinimalAPI)
-class UInventoryFunctions : public UObject
+class InventoryFunctions
 {
-	GENERATED_BODY()
-
 public:
 
-	static FInventoryItem AddItemFromID(FInventory& Inventory, const FName ItemID, const int32 Quantity);
-	static FInventoryItem RemoveItem(FInventory& InventoryToRemoveFrom, const FName ItemID, const int32 Quantity);
-	static void TransferItems(FName ItemID, int32 Quantity, FInventory& InventoryToRemoveFrom, FInventory& InventoryToAddTo);
+	static FInventoryItem AddItemFromID(CompoundInventory& Inventory, const FName ItemID, const int32 Quantity);
+	static FInventoryItem RemoveItem(CompoundInventory& InventoryToRemoveFrom, const FName ItemID, const int32 Quantity);
+	static void TransferItems(FName ItemID, int32 Quantity, CompoundInventory& InventoryToRemoveFrom, CompoundInventory& InventoryToAddTo);
 
-	static bool InventoryHasEmptySlots(FInventory& Inventory);
+	static bool InventoryHasEmptySlots(CompoundInventory& Inventory);
 	
-	static bool InventoryContains(const FInventory& Inventory, const FName& InItemID, const int32& InQuantity);
-	static int32 GetNumItemsInInventory(const FInventory& Inventory, const FName& ItemID);
-	static int32 GetNumStacksInInventory(const FInventory& Inventory, const FName& InItemID);
+	static bool InventoryContains(const CompoundInventory& Inventory, const FName& InItemID, const int32& InQuantity);
+	static int32 GetNumItemsInInventory(const CompoundInventory& Inventory, const FName& ItemID);
+	static int32 GetNumStacksInInventory(const CompoundInventory& Inventory, const FName& InItemID);
 };
 

@@ -30,12 +30,13 @@ public:
 	virtual void SynchronizeProperties() override;
 
 	// InventoryViewInterface
-	virtual void SetLinkedInventory(IInventoryInterface* InInterface) override
+	virtual void SetLinkedInventory(IInventoryInterface* InInterface, const FGuid& InBagID) override
 	{
 		LinkedInventory.SetInterface(InInterface);
 		LinkedInventory.SetObject(this);
+
+		BagID = InBagID;
 	};
-	virtual void SetLinkedHotbar(IHotbarInterface* InInterface) override {};
 	virtual void SetSlotDomain(const ESlotDomain InDomain) override { SlotDomain = InDomain; };
 	//~InventoryViewInterface
 
@@ -79,4 +80,6 @@ private:
 	FVector2D MouseDragDelta;
 
 	FVector2D MousePosition;
+
+	FGuid BagID;
 };

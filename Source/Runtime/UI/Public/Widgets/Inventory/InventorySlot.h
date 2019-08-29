@@ -7,10 +7,9 @@
 
 #include <Runtime/Input/Public/Types/ChordLookup.h>
 #include <Runtime/Inventory/Public/InventoryComponent/AirInventory.h>
+#include <Runtime/Inventory/Public/InventoryTypes/InventoryItem.h>
 
 #include "InventorySlot.generated.h"
-
-struct FInventoryItem;
 
 class UInventorySlotPayload;
 class UTextBlock;
@@ -71,12 +70,13 @@ public:
 	virtual void SynchronizeProperties() override;
 	
 	// InventoryViewInterface
-	virtual void SetLinkedInventory(IInventoryInterface* InInterface) override
+	virtual void SetLinkedInventory(IInventoryInterface* InInterface, const FGuid& InBagID) override
 	{
 		LinkedInventory.SetInterface(InInterface);
 		LinkedInventory.SetObject(this);
+
+		BagID = InBagID;
 	};
-	virtual void SetLinkedHotbar(IHotbarInterface* InInterface) override {};
 	virtual void SetSlotDomain(const ESlotDomain InDomain) override { SlotDomain = InDomain; };
 	//~InventoryViewInterface
 
@@ -116,4 +116,6 @@ private:
 	ChordLookup SlotChordLookup;
 
 	void QuickTransfer();
+
+	FGuid BagID;
 };
