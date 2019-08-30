@@ -19,20 +19,25 @@ struct FInventoryBag
 public:
 
 	FInventoryBag()
-		: BagId(FGuid::NewGuid())
-		, IsPrimary(true)
+		: IsPrimary(true)
 		, BagName(TEXT("Uninitialised Bag"))
+		, BagId(FGuid::NewGuid())
 		, BagSlots()
 		, BagType(EBagType::Default)
 	{}
 
-	FInventoryBag(const FString InBagName, const int32 InBagSize, const bool InIsPrimary, const EBagType& InBagType)
-		: BagId(FGuid::NewGuid())
-		, IsPrimary(InIsPrimary)
+	FInventoryBag(const bool InIsPrimary, const FString& InBagName, const EBagType& InBagType, const int32 InBagSize)
+		: IsPrimary(InIsPrimary)
 		, BagName(InBagName)
+		, BagId(FGuid::NewGuid())
 		, BagType(InBagType)
 	{
-		BagSlots.SetNumUninitialized(FMath::Min(0, InBagSize - 1));
+		BagSlots.Empty();
+
+		for (int32 i = 0; i < InBagSize; ++i)
+		{
+			BagSlots.Add(FInventoryItem());
+		}
 	}
 
 	TArray<FInventoryItem> GetSlots() const { return BagSlots; };
@@ -44,12 +49,16 @@ public:
 
 	bool GetIsPrimary() const { return IsPrimary; };
 
+	UPROPERTY(EditDefaultsOnly)
+	bool IsPrimary;
+
+	UPROPERTY(EditDefaultsOnly)
+	FString BagName;
+
 private:
 
 	FGuid BagId;
-	bool IsPrimary;
-
-	FString BagName;
+	   
 	TArray<FInventoryItem> BagSlots;
 
 	EBagType BagType;

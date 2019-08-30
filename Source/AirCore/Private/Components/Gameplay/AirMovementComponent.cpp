@@ -26,6 +26,13 @@ UAirMovementComponent::UAirMovementComponent()
 		BankingCurve = BankingCurveRef.Object;
 	}
 
+	PrimaryComponentTick.bCanEverTick = true;
+}
+
+void UAirMovementComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
 	if (!OwningCharacter)
 	{
 		OwningCharacter = Cast<AAirChar>(GetOwner());
@@ -36,8 +43,6 @@ UAirMovementComponent::UAirMovementComponent()
 			OwnerCamera = OwningCharacter->FindComponentByClass<UCameraComponent>();
 		}
 	}
-
-	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UAirMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)

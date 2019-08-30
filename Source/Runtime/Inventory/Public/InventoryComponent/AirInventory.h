@@ -43,6 +43,8 @@ public:
 	virtual int32 GetCurrentFocusedSlot() const override { return CurrFocusedSlot; };
 	//~IInventoryInterface
 
+	INVENTORY_API void AddBag(const FInventoryBag& InNewBag);
+
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void AddItem(const FName& ID, const int32& Quantity);
 	

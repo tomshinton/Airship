@@ -70,6 +70,9 @@ void AAirChar::BeginPlay()
 		CachedWorld = World;
 	}
 
+	InventoryComponent->AddBag(FInventoryBag(true, TEXT("Player Hotbar"), EBagType::Hotbar, 10));
+	InventoryComponent->AddBag(FInventoryBag(true, TEXT("Player Inventory"), EBagType::Default, 20));
+
 	Super::BeginPlay();
 }
 

@@ -8,6 +8,7 @@ class CompoundInventory
 public:
 
 	CompoundInventory();
+	~CompoundInventory();
 
 	CompoundInventory(const TArray<FInventoryBag>& InDefaultBags, const int32 InMaxBags);
 	   

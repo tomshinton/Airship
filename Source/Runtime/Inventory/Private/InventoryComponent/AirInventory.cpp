@@ -28,6 +28,11 @@ void UAirInventory::BeginPlay()
 	Super::BeginPlay();
 }
 
+void UAirInventory::AddBag(const FInventoryBag& InNewBag)
+{
+	Inventory.AddBag(InNewBag);
+}
+
 void UAirInventory::AddItem(const FName& ID, const int32& Quantity)
 {
 	InventoryFunctions::AddItemFromID(Inventory, ID, Quantity);

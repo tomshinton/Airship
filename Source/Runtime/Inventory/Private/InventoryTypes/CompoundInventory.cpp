@@ -2,6 +2,8 @@
 
 #include "Runtime/Inventory/Public/InventoryTypes/CompoundInventory.h"
 
+DEFINE_LOG_CATEGORY_STATIC(CompoundInventoryLog, Log, Log);
+
 CompoundInventory::CompoundInventory() 
 	: Bags()
 	, MaxBags(0)
@@ -14,6 +16,11 @@ CompoundInventory::CompoundInventory(const TArray<FInventoryBag>& InDefaultBags,
 #if !UE_BUILD_SHIPPING
 	checkf(Bags.Num() <= MaxBags, TEXT("CompoundInventory has more bags than MaxBags allows"));
 #endif //!UE_BUILD_SHIPPING
+}
+
+CompoundInventory::~CompoundInventory()
+{
+	UE_LOG(CompoundInventoryLog, Log, TEXT("Compound Inventory Destroyed"));
 }
 
 TArray<FInventoryItem> CompoundInventory::GetAllSlots() const
