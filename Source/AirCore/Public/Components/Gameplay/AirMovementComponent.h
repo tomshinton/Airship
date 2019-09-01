@@ -2,15 +2,15 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
-#include "Curves/CurveFloat.h"
-#include <Camera/CameraComponent.h>
-#include "Camera/CameraShake.h"
+#include <Runtime/Engine/Classes/Components/ActorComponent.h>
+
 #include "AirMovementComponent.generated.h"
 
 class AAirChar;
 class UCharacterMovementComponent;
+class UCameraComponent;
+class UCameraShake;
+class UCurveFloat;
 
 UCLASS()
 class UAirMovementComponent : public UActorComponent

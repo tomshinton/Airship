@@ -1,8 +1,10 @@
+// Airship Project - Tom Shinton 2018
+
 #pragma once
 
-#include "InventorySettings.h"
-#include "InventoryItemRow.h"
-#include "Clip.h"
+#include "Runtime/Inventory/Public/InventorySettings.h"
+#include "Runtime/Inventory/Public/InventoryTypes/Clip.h"
+#include "Runtime/Inventory/Public/InventoryTypes/InventoryItemRow.h"
 
 #include "InventoryItem.generated.h"
 
@@ -46,12 +48,6 @@ public:
 	{
 		return ItemInfo.IsNullSlot;
 	}
-
-	void Print()
-	{
-		FString Callback = ItemInfo.IsNullSlot ? "Empty" : ItemInfo.ItemName.ToString();
-		UE_LOG(LogTemp, Log, TEXT("%s"), *Callback);
- 	}
 
 	TSubclassOf<AWorldItem> GetItemClass()
 	{

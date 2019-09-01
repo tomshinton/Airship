@@ -7,8 +7,8 @@
 #include "AirCore/Public/Components/Gameplay/HealthComponent.h"
 #include "AirCore/Public/Components/Gameplay/InteractionComponent.h"
 
+#include <Runtime/Engine/Classes/Camera/CameraComponent.h>
 #include <Runtime/Engine/Classes/GameFramework/CharacterMovementComponent.h>
-#include <Runtime/Engine/Public/DrawDebugHelpers.h>
 #include <Runtime/Input/Public/AirInputComponent.h>
 #include <Runtime/Inventory/Public/InventoryComponent/AirInventory.h>
 

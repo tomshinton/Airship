@@ -1,24 +1,31 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Airship Project - Tom Shinton 2018
 
-#include "AirMovementComponent.h"
-#include "ConstructorHelpers.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "AirChar.h"
-#include "AirController.h"
-#include "CameraBobs.h"
-#include "HUDTools.h"
-#include "Camera/CameraShake.h"
-#include "Camera/CameraComponent.h"
+#include "AirCore/Public/Components/Gameplay/AirMovementComponent.h"
+
+#include "AirCore/Public/Core/AirChar.h"
+#include "AirCore/Public/Core/AirController.h"
+#include "AirCore/Public/Shakes/CameraBobs.h"
+
+#include <Runtime/Engine/Classes/Camera/CameraComponent.h>
+#include <Runtime/Engine/Classes/Camera/CameraShake.h>
+#include <Runtime/Engine/Classes/GameFramework/CharacterMovementComponent.h>
+#include <Runtime/UI/Public/Utils/HUDTools.h>
 
 UAirMovementComponent::UAirMovementComponent()
 	: MaxCameraPitch(40.f)
 	, TurnSpeed(1.f)
 	, TiltCameraSpeed(.5f)
 	, StrafeSpeed(350.f)
+	, LastTurnValue(0.f)
 	, MaxTurnValue(3.f)
 	, ForwardSpeed(400.f)
 	, BackwardsSpeed(200.f)
+	, IsSprinting(false)
 	, SprintModifier(1.5f)
+	, BankingCurve(nullptr)
+	, OwningCharacter(nullptr)
+	, OwningMovementComponent(nullptr)
+	, OwnerCamera(nullptr)
 {
 	static ConstructorHelpers::FObjectFinder<UCurveFloat> BankingCurveRef(TEXT("CurveFloat'/Game/Data/Curves/C_Player_Banking.C_Player_Banking'"));
 	if (BankingCurveRef.Object)
