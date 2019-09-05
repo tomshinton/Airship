@@ -33,12 +33,13 @@ public:
 		
 	virtual CompoundInventory& GetInventory() = 0;
 
-	virtual FInventoryItem GetItemBySlot(const int32 InSlot) const = 0;
+	virtual FInventoryItem GetItemBySlot(const FGuid& InBagID, const int32 InInventorySlot) const = 0;
 	virtual void SetItemBySlot(const FInventoryItem& InItem, const int32 InSlot) = 0;
 
 	virtual int32 GetInventorySlotCount() const = 0;
 
 	virtual const FInventoryBag* GetBagByType(const EBagType& InBagType) const = 0;
+	virtual const FInventoryBag* GetBagByID(const FGuid& InBagID) const = 0;
 	virtual FGuid GetBagIDByIndex(const int32 InIndex) const = 0;
 	virtual FGuid GetFirstPrimaryBagID() const = 0;
 };

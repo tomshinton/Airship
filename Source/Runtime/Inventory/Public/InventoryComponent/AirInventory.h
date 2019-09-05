@@ -34,12 +34,13 @@ public:
 	virtual FOnInventoryUpdated& GetOnInventoryUpdated() override { return OnInventoryUpdated; };
 	virtual FOnSlotFocusUpdated& GetOnSlotFocusUpdated() override { return OnSlotFocusUpdated; };
 	virtual CompoundInventory& GetInventory() override { return Inventory; };
-	virtual FInventoryItem GetItemBySlot(const int32 InSlot) const;
+	virtual FInventoryItem GetItemBySlot(const FGuid& InBagID, const int32 InSlot) const;
 	virtual void SetItemBySlot(const FInventoryItem& InItem, const int32 InSlot) override;
 	virtual int32 GetInventorySlotCount() const override;
 	virtual FGuid GetBagIDByIndex(const int32 InIndex) const override;
 	virtual FGuid GetFirstPrimaryBagID() const override;
 	virtual const FInventoryBag* GetBagByType(const EBagType& InBagType) const override;
+	virtual const FInventoryBag* GetBagByID(const FGuid& InBagID) const override;
 	virtual int32 GetCurrentFocusedSlot() const override { return CurrFocusedSlot; };
 	//~IInventoryInterface
 

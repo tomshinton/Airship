@@ -7,18 +7,29 @@ class CompoundInventory;
 struct FInventoryItemRow;
 struct FInventoryItem;
 
+enum class EOperationReturnType
+{
+	BagFull,
+	BagEmpty,
+	AllItemsAdded,
+	AllItemsRemoved,
+	InvalidBag
+};
+
 class InventoryFunctions
 {
 public:
 
-	static FInventoryItem AddItemFromID(CompoundInventory& Inventory, const FName ItemID, const int32 Quantity);
-	static FInventoryItem RemoveItem(CompoundInventory& InventoryToRemoveFrom, const FName ItemID, const int32 Quantity);
-	static void TransferItems(FName ItemID, int32 Quantity, CompoundInventory& InventoryToRemoveFrom, CompoundInventory& InventoryToAddTo);
+	static bool AddItemFromID(CompoundInventory& InInventory, const FName& InItemID, const int32 InQuantity);
+	static EOperationReturnType AddItemToBag(const CompoundInventory& InInventory, const FGuid& InBagID, const FInventoryItemRow& InNewItemInfo, int32& InQuantityLeft);
 
-	static bool InventoryHasEmptySlots(CompoundInventory& Inventory);
+	static bool RemoveItemFromID(CompoundInventory& Inventory, const FName& ItemID, const int32 Quantity);
+	static EOperationReturnType RemoveItemFromBag(const CompoundInventory& InInventory, const FGuid& InBagID, const FName& InItemID, int32& InQuantityLeft);
+
+	static void TransferItems(const FName& InItemID, const int32 InQuantity, CompoundInventory& InInventoryToRemoveFrom, CompoundInventory& InInventoryToAddTo);
 	
-	static bool InventoryContains(const CompoundInventory& Inventory, const FName& InItemID, const int32& InQuantity);
-	static int32 GetNumItemsInInventory(const CompoundInventory& Inventory, const FName& ItemID);
-	static int32 GetNumStacksInInventory(const CompoundInventory& Inventory, const FName& InItemID);
+	static bool InventoryContains(const CompoundInventory& InInventory, const FName& InItemID, const int32& InQuantity);
+	static int32 GetNumItemsInInventory(const CompoundInventory& InInventory, const FName& ItemID);
+	static int32 GetNumStacksInInventory(const CompoundInventory& InInventory, const FName& InItemID);
 };
 

@@ -56,7 +56,7 @@ void UHotbar::Build()
 			{
 				if (UInventorySlot* ChildSlot = Cast<UInventorySlot>(Widget))
 				{
-					if (ChildSlot->InventorySlot > HotbarBag->GetSlotNum())
+					if (ChildSlot->InventorySlot > HotbarBag->GetSlotNum() -1)
 					{
 						ChildSlot->RemoveFromParent();
 					}

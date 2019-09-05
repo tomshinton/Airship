@@ -35,6 +35,9 @@ AAirChar::AAirChar()
 	InventoryComponent->SetHandComponents(LeftHand, RightHand);
 
 	bUseControllerRotationYaw = false;
+
+	InventoryComponent->AddBag(FInventoryBag(true, TEXT("Player Hotbar"), EBagType::Hotbar, 5));
+	InventoryComponent->AddBag(FInventoryBag(true, TEXT("Player Inventory"), EBagType::Default, 5));
 }
 
 void AAirChar::Tick(float DeltaSeconds)
@@ -69,9 +72,6 @@ void AAirChar::BeginPlay()
 	{
 		CachedWorld = World;
 	}
-
-	InventoryComponent->AddBag(FInventoryBag(true, TEXT("Player Hotbar"), EBagType::Hotbar, 10));
-	InventoryComponent->AddBag(FInventoryBag(true, TEXT("Player Inventory"), EBagType::Default, 20));
 
 	Super::BeginPlay();
 }

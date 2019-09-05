@@ -23,8 +23,8 @@ public:
 	FInventoryBag()
 		: IsPrimary(true)
 		, BagName(TEXT("Uninitialised Bag"))
-		, BagId(FGuid::NewGuid())
 		, BagSlots()
+		, BagId(FGuid::NewGuid())
 		, BagType(EBagType::Default)
 	{}
 
@@ -38,11 +38,9 @@ public:
 
 		for (int32 i = 0; i < InBagSize; ++i)
 		{
-			BagSlots.Add(FInventoryItem());
+			BagSlots.Add(FInventoryItem(BagId));
 		}
 	}
-
-	TArray<FInventoryItem> GetSlots() const { return BagSlots; };
 
 	const EBagType GetBagType() const { return BagType; };
 	FInventoryItem& GetSlotByIndex(const int32 InIndex) { return BagSlots[InIndex]; };
@@ -57,11 +55,10 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	FString BagName;
 
+	TArray<FInventoryItem> BagSlots;
+
 private:
 
 	FGuid BagId;
-	   
-	TArray<FInventoryItem> BagSlots;
-
 	EBagType BagType;
 };

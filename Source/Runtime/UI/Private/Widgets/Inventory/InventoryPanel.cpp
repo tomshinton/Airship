@@ -62,16 +62,19 @@ void UInventoryPanel::Build()
 		{
 			if (UInventorySlot* ChildSlot = Cast<UInventorySlot>(Widget))
 			{
-				if (ChildSlot->InventorySlot > LinkedInventory->GetInventorySlotCount())
+				if (const FInventoryBag* Bag = LinkedInventory->GetBagByID(BagID))
 				{
-					ChildSlot->RemoveFromParent();
-				}
-				else if (IInventoryViewInterface* SlotViewInterface = Cast<IInventoryViewInterface>(ChildSlot))
-				{
-					IInventoryInterface* LinkedInventoryInterface = (IInventoryInterface*)LinkedInventory.GetInterface();
-					SlotViewInterface->SetLinkedInventory(LinkedInventoryInterface, BagID);
+					if (ChildSlot->InventorySlot > Bag->GetSlotNum() - 1)
+					{
+						ChildSlot->RemoveFromParent();
+					}
+					else if (IInventoryViewInterface* SlotViewInterface = Cast<IInventoryViewInterface>(ChildSlot))
+					{
+						IInventoryInterface* LinkedInventoryInterface = (IInventoryInterface*)LinkedInventory.GetInterface();
+						SlotViewInterface->SetLinkedInventory(LinkedInventoryInterface, BagID);
 
-					ChildSlot->Build();
+						ChildSlot->Build();
+					}
 				}
 			}
 		}

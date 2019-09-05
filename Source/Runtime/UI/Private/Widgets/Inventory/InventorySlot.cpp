@@ -69,20 +69,13 @@ void UInventorySlot::Build()
 
 	if (LinkedInventory)
 	{
-		LinkedInventory->GetOnSlotFocusUpdated().AddLambda([this](const int32 NewSlot)
-		{
-			PlayerFocusChanged(NewSlot);
-		});
-
-		LinkedInventory->GetOnInventoryUpdated().AddLambda([this]()
-		{
-			PlayerInventoryChanged();
-		});
+		LinkedInventory->GetOnSlotFocusUpdated().AddUObject(this, &UInventorySlot::PlayerFocusChanged);
+		LinkedInventory->GetOnInventoryUpdated().AddUObject(this, &UInventorySlot::PlayerInventoryChanged);
 
 		const int32 FocusedSlot = LinkedInventory->GetCurrentFocusedSlot();
 		PlayerFocusChanged(FocusedSlot);
 
-		LinkedInventoryItem = LinkedInventory->GetItemBySlot(InventorySlot);
+		LinkedInventoryItem = LinkedInventory->GetItemBySlot(BagID, InventorySlot);
 		BuildSlotVisuals();
 	}
 }
@@ -150,7 +143,7 @@ void UInventorySlot::PlayerInventoryChanged()
 {
 	if (LinkedInventory)
 	{
-		LinkedInventoryItem = LinkedInventory->GetItemBySlot(InventorySlot);
+		LinkedInventoryItem = LinkedInventory->GetItemBySlot(BagID, InventorySlot);
 		BuildSlotVisuals();
 	}
 }

@@ -33,19 +33,19 @@ void UAirHUDBase::NativeConstruct()
 
 	if (LocalChar)
 	{
-		/*if (PlayerInventoryPanel)
+		if (PlayerInventoryPanel)
 		{
 			if (IInventoryInterface* InventoryInterface = InterfaceHelpers::GetInterface<IInventoryInterface>(*LocalChar))
 			{
 				if (IInventoryViewInterface* InventoryViewInterface = Cast<IInventoryViewInterface>(PlayerInventoryPanel))
 				{
-					InventoryViewInterface->SetLinkedInventory(InventoryInterface);
+					InventoryViewInterface->SetLinkedInventory(InventoryInterface, InventoryInterface->GetFirstPrimaryBagID());
 				}
 			}
 
 			PlayerInventoryPanel->Build();
 			PlayerInventoryPanel->SetVisibility(ESlateVisibility::Collapsed);
-		}*/
+		}
 
 		if (PlayerHealthBar)
 		{

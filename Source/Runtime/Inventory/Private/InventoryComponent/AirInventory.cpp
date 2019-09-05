@@ -47,7 +47,7 @@ void UAirInventory::AddItem(const FName& ID, const int32& Quantity)
 
 void UAirInventory::RemoveItem(const FName& ID, const int32& Quantity)
 {
-	InventoryFunctions::RemoveItem(Inventory, ID, Quantity);
+	InventoryFunctions::RemoveItemFromID(Inventory, ID, Quantity);
 
 	if (OnInventoryUpdated.IsBound())
 	{
@@ -80,21 +80,21 @@ void UAirInventory::TransferItem(const FName& ItemID, const int32& Quantity, UAi
 
 void UAirInventory::SwapSlots(const int32& FirstSlot, const int32& SecondSlot)
 {
-	Inventory.GetAllSlots().Swap(FirstSlot, SecondSlot);
+	/*Inventory.GetAllSlots().Swap(FirstSlot, SecondSlot);
 
 	if (OnInventoryUpdated.IsBound())
 	{
 		OnInventoryUpdated.Broadcast();
 	}
 
-	Wield();
+	Wield();*/
 }
 
-FInventoryItem UAirInventory::GetItemBySlot(const int32 InSlot) const
+FInventoryItem UAirInventory::GetItemBySlot(const FGuid& InBagID, const int32 InSlot) const
 {
-	if (Inventory.GetAllSlots().Num() - 1 >= InSlot)
+	if (FInventoryBag* FoundBag = Inventory.GetBag(InBagID))
 	{
-		return Inventory.GetAllSlots()[InSlot];
+		return FoundBag->GetSlotByIndex(InSlot);
 	}
 
 	return FInventoryItem();
@@ -102,30 +102,32 @@ FInventoryItem UAirInventory::GetItemBySlot(const int32 InSlot) const
 
 FName UAirInventory::GetItemNameBySlot(const int32& Slot) const
 {
-	if (Inventory.GetAllSlots().Num() - 1 >= Slot)
+	/*if (Inventory.GetAllSlots().Num() - 1 >= Slot)
 	{
 		const FInventoryItem FoundSlot = Inventory.GetAllSlots()[Slot];
 		return FoundSlot.ItemID;
-	}
+	}*/
 
 	return FName();
 }
 
 void UAirInventory::SetItemBySlot(const FInventoryItem& InItem, const int32 InSlot)
 {
-	Inventory.GetAllSlots()[InSlot] = InItem;
+	/*Inventory.GetAllSlots()[InSlot] = InItem;
 
 	if (OnInventoryUpdated.IsBound())
 	{
 		OnInventoryUpdated.Broadcast();
 	}
 
-	Wield();
+	Wield();*/
 }
 
 int32 UAirInventory::GetInventorySlotCount() const
 {
-	return Inventory.GetAllSlots().Num();
+	//return Inventory.GetAllSlots().Num();
+
+	return 0;
 }
 
 FGuid UAirInventory::GetBagIDByIndex(const int32 InIndex) const
@@ -148,7 +150,7 @@ FGuid UAirInventory::GetFirstPrimaryBagID() const
 
 	if (IndexOfFirstPrimary != INDEX_NONE)
 	{
-		Inventory.GetAllBags()[IndexOfFirstPrimary].GetBagID();
+		return Inventory.GetAllBags()[IndexOfFirstPrimary].GetBagID();
 	}
 
 	return FGuid();
@@ -157,6 +159,11 @@ FGuid UAirInventory::GetFirstPrimaryBagID() const
 const FInventoryBag* UAirInventory::GetBagByType(const EBagType& InBagType) const
 {
 	return Inventory.GetBagByType(InBagType);
+}
+
+const FInventoryBag* UAirInventory::GetBagByID(const FGuid& InBagID) const
+{
+	return Inventory.GetBag(InBagID);
 }
 
 void UAirInventory::UpdateFocus()
@@ -185,7 +192,7 @@ void UAirInventory::FocusLastItem()
 
 void UAirInventory::Wield()
 {
-	if (Cast<ACharacter>(GetOwner()))
+	/*if (Cast<ACharacter>(GetOwner()))
 	{
 		if (Inventory.GetAllSlots().Num() <= 0)
 		{
@@ -229,7 +236,7 @@ void UAirInventory::Wield()
 				}
 			}
 		}
-	}
+	}*/
 }
 
 void UAirInventory::StartPrimary()
@@ -266,7 +273,7 @@ void UAirInventory::EndSecondary()
 
 void UAirInventory::Reload()
 {
-	if (FInventoryBag* HotbarBag = const_cast<FInventoryBag*>(Inventory.GetBagByType(EBagType::Hotbar)))
+	/*if (FInventoryBag* HotbarBag = const_cast<FInventoryBag*>(Inventory.GetBagByType(EBagType::Hotbar)))
 	{
 		FInventoryItem& CurrItem = HotbarBag->GetSlotByIndex(CurrFocusedSlot);
 		FClip& Clip = CurrItem.Clip;
@@ -275,11 +282,7 @@ void UAirInventory::Reload()
 		if (Clip.ClipSize > 0 && ClipCount < Clip.ClipSize)
 		{
 			const int32 RoomLeft = Clip.ClipSize - Clip.GetClipCount();
-			UE_LOG(AirInventoryLog, Log, TEXT("Currently loading %i %s(s) into %s"), RoomLeft, *Clip.AmmoName.ToString(), *CurrItem.ItemID.ToString());
-
-			const int32 NumRemovedFromInventory = InventoryFunctions::RemoveItem(Inventory, Clip.AmmoName, RoomLeft).Quantity;
-
-			UE_LOG(AirInventoryLog, Log, TEXT("Removed %i items, ready to load into item"), NumRemovedFromInventory);
+			const int32 NumRemovedFromInventory = InventoryFunctions::RemoveItemFromID(Inventory, Clip.AmmoName, RoomLeft).Quantity;
 
 			const int32 NewClipCount = Clip.GetClipCount() + NumRemovedFromInventory;
 			Clip.SetClipCount(NewClipCount);
@@ -294,7 +297,7 @@ void UAirInventory::Reload()
 		{
 			UE_LOG(AirInventoryLog, Log, TEXT("Clip full"));
 		}
-	}
+	}*/
 }
 
 void UAirInventory::ReduceCurrentClip(const int32 InAmountToReduce)

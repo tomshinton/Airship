@@ -93,31 +93,7 @@ void AAimable::EndPrimary()
 
 void AAimable::StartFire()
 {
-	if (AssociatedInventoryComponent)
-	{
-		const int32 CurrentSlot = AssociatedInventoryComponent->GetCurrentFocusedSlot();
-		const FInventoryItem& CurrentFocusedItem = AssociatedInventoryComponent->GetItemBySlot(CurrentSlot);
 
-		if(CurrentFocusedItem.Clip.AmmoName != "")
-		{
-			AssociatedInventoryComponent->ReduceCurrentClip(FireCost);
-		}
-
-		const TSubclassOf<AProjectileBase> AmmoClass = CurrentFocusedItem.Clip.AmmoClass;
-		if (AmmoClass && CurrentFocusedItem.Clip.GetClipCount() > 0)
-		{
-			if (UWorld* World = GetWorld())
-			{
-				if (GetBarrelTransform().IsSet())
-				{
-					if (AProjectileBase* Projectile = World->SpawnActor<AProjectileBase>(AmmoClass, GetBarrelTransform().GetValue(), FActorSpawnParameters()))
-					{
-						Projectile->OnFire(GetFireDirection());
-					}
-				}
-			}
-		}
-	}
 }
 
 void AAimable::EndFire()

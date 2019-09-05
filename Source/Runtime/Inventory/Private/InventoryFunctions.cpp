@@ -3,124 +3,157 @@
 #include "Runtime/Inventory/Public/InventoryFunctions.h"
 #include "Runtime/Inventory/Public/InventorySettings.h"
 #include "Runtime/Inventory/Public/InventoryTypes/CompoundInventory.h"
+#include "Runtime/Inventory/Public/InventoryTypes/InventoryBag.h"
 #include "Runtime/Inventory/Public/InventoryTypes/InventoryItem.h"
 
-FInventoryItem InventoryFunctions::AddItemFromID(CompoundInventory& Inventory, const FName ItemID, const int32 Quantity)
+bool InventoryFunctions::AddItemFromID(CompoundInventory& InInventory, const FName& InItemID, const int32 InQuantity)
 {
-	FInventoryItemRow* NewItemInfo = UInventorySettings::GetItemInfo(ItemID);
-
-	if (NewItemInfo)
+	if (FInventoryItemRow* NewItemInfo = UInventorySettings::GetItemInfo(InItemID))
 	{
-		int32 QuantityLeft = Quantity;
+		int32 QuantityLeft = InQuantity;
 
-		//Top up existing slots
-		for (FInventoryItem& ExistingStack : Inventory.GetAllSlots())
+		for (const FInventoryBag& Bag : InInventory.GetAllBags())
 		{
-			if (ExistingStack.ItemID == ItemID && (NewItemInfo->Stacks ? ExistingStack.Quantity < NewItemInfo->StackSize : false))
+			const EOperationReturnType ReturnType = AddItemToBag(InInventory, Bag.GetBagID(), *NewItemInfo, QuantityLeft);
+
+			if (ReturnType == EOperationReturnType::AllItemsAdded)
+			{
+				return true;
+			}
+		}
+	}
+
+	if (InQuantity > 0)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+EOperationReturnType InventoryFunctions::AddItemToBag(const CompoundInventory& InInventory, const FGuid& InBagID, const FInventoryItemRow& InNewItemInfo, int32& InQuantityLeft)
+{
+	if (FInventoryBag* Bag = InInventory.GetBag(InBagID))
+	{
+		//Top up existing slots
+		for (FInventoryItem& ExistingStack : Bag->BagSlots)
+		{
+			if (ExistingStack.ItemID == InNewItemInfo.ItemName && (InNewItemInfo.Stacks ? ExistingStack.Quantity < InNewItemInfo.StackSize : false))
 			{
 				//There's room in this stack - top it up
-				int32 AmountToAdd = FMath::Clamp(NewItemInfo->StackSize - ExistingStack.Quantity, 0, QuantityLeft);
+				int32 AmountToAdd = FMath::Clamp(InNewItemInfo.StackSize - ExistingStack.Quantity, 0, InQuantityLeft);
 				ExistingStack.Quantity += AmountToAdd;
-				QuantityLeft -= AmountToAdd;
+				InQuantityLeft -= AmountToAdd;
 			}
 
-			if (QuantityLeft <= 0)
+			if (InQuantityLeft <= 0)
 			{
-				return FInventoryItem();
+				return EOperationReturnType::AllItemsAdded;
 			}
 		}
 
 		//Create new stacks
-		if (QuantityLeft > 0)
+		if (InQuantityLeft > 0)
 		{
-			int32 StacksToMake = NewItemInfo->Stacks ? FMath::CeilToInt((float)QuantityLeft / (float)NewItemInfo->StackSize) : QuantityLeft;
+			const int32 StacksToMake = InNewItemInfo.Stacks ? FMath::CeilToInt((float)InQuantityLeft / (float)InNewItemInfo.StackSize) : InQuantityLeft;
 
-			for (int32 i = 0; i < StacksToMake; i++)
+			for (int32 i = 0; i < StacksToMake; ++i)
 			{
-				for (FInventoryItem& ExistingSlot : Inventory.GetAllSlots())
+				for (FInventoryItem& ExistingSlot : Bag->BagSlots)
 				{
-					const int32 NewStackSize = (NewItemInfo->Stacks ? FMath::Clamp(QuantityLeft, 0, NewItemInfo->StackSize) : 1);
-					FInventoryItem NewStack = FInventoryItem(ItemID, NewStackSize, NewItemInfo->Clip);
+					const int32 NewStackSize = (InNewItemInfo.Stacks ? FMath::Clamp(InQuantityLeft, 0, InNewItemInfo.StackSize) : 1);
+					const FInventoryItem NewStack = FInventoryItem(InNewItemInfo.ItemName, NewStackSize, InNewItemInfo.Clip, InBagID);
 					
 					if (ExistingSlot.ItemID == "Item")
 					{
-						//this is an empty slot - fill it
+
 						ExistingSlot = NewStack;
-						QuantityLeft -= NewStack.Quantity;
+						InQuantityLeft -= NewStack.Quantity;
 					}
 
-					if (QuantityLeft <= 0)
+					if (InQuantityLeft <= 0)
 					{
-						return FInventoryItem();
-					}
-				
-					if (!InventoryHasEmptySlots(Inventory))
-					{
-						return FInventoryItem(ItemID, QuantityLeft, NewItemInfo->Clip);
+						return EOperationReturnType::AllItemsAdded;
 					}
 				}
 			}
 		}
 	}
-	//Leftover from add
-	return FInventoryItem(ItemID, Quantity, NewItemInfo->Clip);
+	else
+	{
+		return EOperationReturnType::InvalidBag;
+	}
+
+	return EOperationReturnType::BagFull;
 }
 
-FInventoryItem InventoryFunctions::RemoveItem(CompoundInventory& InventoryToRemoveFrom, const FName ItemID, const int32 Quantity)
+bool InventoryFunctions::RemoveItemFromID(CompoundInventory& InInventory, const FName& InItemID, const int32 InQuantity)
 {
-	int32 QuantityLeft = Quantity;
-	int32 AmountRemoved = 0;
+	//Backwards so we address non-hotbar related bags first
+	int32 QuantityLeft = InQuantity;
 
-	FInventoryItemRow* NewItemInfo = UInventorySettings::GetItemInfo(ItemID);
-
-	if (NewItemInfo)
+	for(int32 i = InInventory.GetAllBags().Num() - 1; i >= 0; i--)
 	{
-		for (int32 i = InventoryToRemoveFrom.GetAllSlots().Num() - 1; i >= 0; i--)
-		{
-			FInventoryItem& CurrInventoryItem = InventoryToRemoveFrom.GetAllSlots()[i];
+		const FInventoryBag& Bag = InInventory.GetAllBags()[i];
+		const EOperationReturnType ReturnType = RemoveItemFromBag(InInventory, Bag.GetBagID(), InItemID, QuantityLeft);
 
-			if (CurrInventoryItem.ItemID == ItemID && QuantityLeft > 0)
+		if (ReturnType == EOperationReturnType::AllItemsRemoved)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+EOperationReturnType InventoryFunctions::RemoveItemFromBag(const CompoundInventory& InInventory, const FGuid& InBagID, const FName& InItemID, int32& InQuantityLeft)
+{
+	if (FInventoryBag* Bag = InInventory.GetBag(InBagID))
+	{
+		//Remove from existing slots backwards - forwards look odd
+		for (int32 i = Bag->BagSlots.Num() - 1; i >= 0; i--)
+		{
+			FInventoryItem& ExistingStack = Bag->BagSlots[i];
+
+			if (ExistingStack.ItemID == InItemID && InQuantityLeft > 0)
 			{
-				const int32 AmountToRemove = FMath::Clamp(QuantityLeft, 0, CurrInventoryItem.Quantity);
-				CurrInventoryItem.Quantity -= AmountToRemove;
-				if (CurrInventoryItem.Quantity <= 0)
+				const int32 AmountToRemove = FMath::Min(ExistingStack.Quantity, InQuantityLeft);
+
+				ExistingStack.Quantity -= AmountToRemove;
+				InQuantityLeft -= AmountToRemove;
+
+				if (ExistingStack.Quantity == 0)
 				{
-					CurrInventoryItem = FInventoryItem();
+					ExistingStack = FInventoryItem();
 				}
 
-				QuantityLeft -= AmountToRemove;
-				AmountRemoved += AmountToRemove;
+				if (InQuantityLeft <= 0)
+				{
+					return EOperationReturnType::AllItemsRemoved;
+				}
 			}
 		}
-	}
 
-	return AmountRemoved > 0 ? FInventoryItem(ItemID, AmountRemoved, NewItemInfo->Clip) : FInventoryItem();
-}
-
-bool InventoryFunctions::InventoryHasEmptySlots(CompoundInventory& Inventory)
-{
-	int32 EmptySlots = 0;
-
-	for (const FInventoryItem& ExistingSlot : Inventory.GetAllSlots())
-	{
-		if (ExistingSlot.ItemID == "Item")
+		if (InQuantityLeft > 0)
 		{
-			EmptySlots++;
+			return EOperationReturnType::BagEmpty;
 		}
 	}
 
-	return EmptySlots > 0 ? true : false;
-
+	return EOperationReturnType::InvalidBag;
 }
 
-int32 InventoryFunctions::GetNumStacksInInventory(const CompoundInventory& Inventory, const FName& InItemID)
+int32 InventoryFunctions::GetNumStacksInInventory(const CompoundInventory& InInventory, const FName& InItemID)
 {
 	int32 AmountFound = 0;
-	for (const FInventoryItem& Item : Inventory.GetAllSlots())
+	for (const FInventoryBag& Bag : InInventory.GetAllBags())
 	{
-		if (Item.ItemID == InItemID)
+		for (const FInventoryItem& Item : Bag.BagSlots)
 		{
-			AmountFound++;
+			if (Item.ItemID == InItemID)
+			{
+				AmountFound++;
+			}
 		}
 	}
 
@@ -130,11 +163,15 @@ int32 InventoryFunctions::GetNumStacksInInventory(const CompoundInventory& Inven
 bool InventoryFunctions::InventoryContains(const CompoundInventory& InInventory, const FName& InItemID, const int32& InQuantity)
 {
 	int32 AmountFound = 0;
-	for (const FInventoryItem& Item : InInventory.GetAllSlots())
+
+	for (const FInventoryBag& Bag : InInventory.GetAllBags())
 	{
-		if (Item.ItemID == InItemID)
+		for (const FInventoryItem& Item : Bag.BagSlots)
 		{
-			AmountFound += Item.Quantity;
+			if (Item.ItemID == InItemID)
+			{
+				AmountFound += Item.Quantity;
+			}
 		}
 	}
 
@@ -142,29 +179,31 @@ bool InventoryFunctions::InventoryContains(const CompoundInventory& InInventory,
 	{
 		return true;
 	}
-	else
-	{
-		return false;
-	}
+
+	return false;
 }
 
-int32 InventoryFunctions::GetNumItemsInInventory(const CompoundInventory& Inventory, const FName& ItemID)
+int32 InventoryFunctions::GetNumItemsInInventory(const CompoundInventory& InInventory, const FName& InItemID)
 {
 	int32 AmountFound = 0;
-	for (const FInventoryItem& Item : Inventory.GetAllSlots())
+
+	for (const FInventoryBag& Bag : InInventory.GetAllBags())
 	{
-		if (Item.ItemID == ItemID)
+		for (const FInventoryItem& Item : Bag.BagSlots)
 		{
-			AmountFound += Item.Quantity;
+			if (Item.ItemID == InItemID)
+			{
+				AmountFound += Item.Quantity;
+			}
 		}
 	}
-	
+
 	return AmountFound;
 }
 
-void InventoryFunctions::TransferItems(FName ItemID, int32 Quantity, CompoundInventory& InventoryToRemoveFrom, CompoundInventory& InventoryToAddTo)
+void InventoryFunctions::TransferItems(const FName& InItemID, const int32 Quantity, CompoundInventory& InventoryToRemoveFrom, CompoundInventory& InventoryToAddTo)
 {
-	FInventoryItem RemovedItem = RemoveItem(InventoryToRemoveFrom, ItemID, Quantity);
+	/*FInventoryItem RemovedItem = RemoveItem(InventoryToRemoveFrom, ItemID, Quantity);
 	if (RemovedItem.Quantity > 0)
 	{
 		FInventoryItem LeftoverItems = AddItemFromID(InventoryToAddTo, RemovedItem.ItemID, RemovedItem.Quantity);
@@ -172,6 +211,6 @@ void InventoryFunctions::TransferItems(FName ItemID, int32 Quantity, CompoundInv
 		{
 			AddItemFromID(InventoryToRemoveFrom, LeftoverItems.ItemID, LeftoverItems.Quantity);
 		}
-	}
+	}*/
 }
 

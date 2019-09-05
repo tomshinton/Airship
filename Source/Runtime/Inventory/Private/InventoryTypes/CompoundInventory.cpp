@@ -23,17 +23,6 @@ CompoundInventory::~CompoundInventory()
 	UE_LOG(CompoundInventoryLog, Log, TEXT("Compound Inventory Destroyed"));
 }
 
-TArray<FInventoryItem> CompoundInventory::GetAllSlots() const
-{
-	TArray<FInventoryItem> RunningTotal;
-	for (const FInventoryBag& Bag : Bags)
-	{
-		RunningTotal.Append(Bag.GetSlots());
-	}
-
-	return RunningTotal;
-}
-
 void CompoundInventory::AddBag(const FInventoryBag& InNewBag)
 {
 	if (Bags.Num() < MaxBags)
@@ -53,7 +42,7 @@ bool CompoundInventory::GetBag(const int32 InBagNum, FInventoryBag& OutBag) cons
 	return false;
 }
 
-bool CompoundInventory::GetBag(const FGuid& InBagID, FInventoryBag& OutBag) const
+FInventoryBag* CompoundInventory::GetBag(const FGuid& InBagID) const
 {
 	const FInventoryBag* FoundBag = Bags.FindByPredicate([InBagID](const FInventoryBag& Bag)
 	{
@@ -62,11 +51,10 @@ bool CompoundInventory::GetBag(const FGuid& InBagID, FInventoryBag& OutBag) cons
 
 	if (FoundBag != nullptr)
 	{
-		OutBag = *FoundBag;
-		return true;
+		return const_cast<FInventoryBag*>(FoundBag);
 	}
 
-	return false;
+	return nullptr;
 }
 
 const FInventoryBag* CompoundInventory::GetBagByType(const EBagType& InType) const
@@ -77,5 +65,22 @@ const FInventoryBag* CompoundInventory::GetBagByType(const EBagType& InType) con
 	});
 
 	return nullptr;
+}
+
+void CompoundInventory::GetSlotByID(const FGuid& InBagID, const FGuid& InSlotID, FInventoryItem& OutSlot)
+{
+	for (const FInventoryBag& Bag : Bags)
+	{
+		if (Bag.GetBagID() == InBagID)
+		{
+			for (const FInventoryItem& Slot : Bag.BagSlots)
+			{
+				if (Slot.GetSlotID() == InSlotID)
+				{
+					OutSlot = Slot;
+				}
+			}
+		}
+	}
 }
 
