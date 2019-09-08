@@ -2,10 +2,8 @@
 
 #pragma once
 
-#include "Runtime/UI/Public/Widgets/Inventory/InventorySlot.h"
-
+#include <Runtime/Inventory/Public/InventoryTypes/InventorySlotReference.h>
 #include <Runtime/UMG/Public/Blueprint/DragDropOperation.h>
-#include <Runtime/Inventory/Public/InventoryInterface.h>
 
 #include "InventorySlotDragOperation.generated.h"
 
@@ -16,8 +14,5 @@ class UInventorySlotDragOperation : public UDragDropOperation
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "IncomingSlot", ExposeOnSpawn = true), Category = "Slot Info")
-	UInventorySlot* IncomingSlot;
-
-	TScriptInterface<IInventoryInterface> SourceInventoryInterface;
+	InventorySlotReference OutgoingSlot;
 };

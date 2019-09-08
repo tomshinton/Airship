@@ -33,10 +33,8 @@ public:
 	//IInventoryInterface
 	virtual FOnInventoryUpdated& GetOnInventoryUpdated() override { return OnInventoryUpdated; };
 	virtual FOnSlotFocusUpdated& GetOnSlotFocusUpdated() override { return OnSlotFocusUpdated; };
-	virtual CompoundInventory& GetInventory() override { return Inventory; };
+	virtual CompoundInventory* GetInventory() override { return &Inventory; };
 	virtual FInventoryItem GetItemBySlot(const FGuid& InBagID, const int32 InSlot) const;
-	virtual void SetItemBySlot(const FInventoryItem& InItem, const int32 InSlot) override;
-	virtual int32 GetInventorySlotCount() const override;
 	virtual FGuid GetBagIDByIndex(const int32 InIndex) const override;
 	virtual FGuid GetFirstPrimaryBagID() const override;
 	virtual const FInventoryBag* GetBagByType(const EBagType& InBagType) const override;
@@ -45,6 +43,8 @@ public:
 	//~IInventoryInterface
 
 	INVENTORY_API void AddBag(const FInventoryBag& InNewBag);
+
+	void BroadcastUpdate();
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void AddItem(const FName& ID, const int32& Quantity);
@@ -55,9 +55,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void TransferItem(const FName& ItemID, const int32& Quantity, UAirInventory* RemoveInventory);
 
-	UFUNCTION(BlueprintCallable, Category = Inventory)
-	void SwapSlots(const int32& FirstSlot, const int32& SecondSlot);
-
 	void SetHandComponents(USceneComponent* InLeftHand, USceneComponent* InRightHand) { RightHand = InRightHand; }
 	
 	UFUNCTION()
@@ -65,8 +62,6 @@ public:
 
 	UFUNCTION()
 	INVENTORY_API void ReduceCurrentClip(const int32 InAmountToReduce);
-
-	FName GetItemNameBySlot(const int32& ID) const;
 
 	void UpdateFocus();
 	INVENTORY_API void FocusNextItem();

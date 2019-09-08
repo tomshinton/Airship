@@ -5,6 +5,7 @@
 #include "Runtime/Inventory/Public/InventoryTypes/CompoundInventory.h"
 #include "Runtime/Inventory/Public/InventoryTypes/InventoryBag.h"
 #include "Runtime/Inventory/Public/InventoryTypes/InventoryItem.h"
+#include "Runtime/Inventory/Public/InventoryTypes/InventorySlotReference.h"
 
 bool InventoryFunctions::AddItemFromID(CompoundInventory& InInventory, const FName& InItemID, const int32 InQuantity)
 {
@@ -143,6 +144,52 @@ EOperationReturnType InventoryFunctions::RemoveItemFromBag(const CompoundInvento
 	return EOperationReturnType::InvalidBag;
 }
 
+
+
+void InventoryFunctions::TransferItems(const FName& InItemID, const int32 InQuantity, CompoundInventory& InInventoryToRemoveFrom, CompoundInventory& InInventoryToAddTo)
+{
+
+}
+
+void InventoryFunctions::SwapSlots(const InventorySlotReference& InFirstSlotReference, const InventorySlotReference& InSecondSlotReference)
+{
+	FInventoryItem FirstSlotItem = GetItemBySlotReference(InFirstSlotReference);
+	FInventoryItem SecondSlotItem = GetItemBySlotReference(InSecondSlotReference);
+
+	SetItemBySlotReference(FirstSlotItem, InSecondSlotReference);
+	SetItemBySlotReference(SecondSlotItem, InFirstSlotReference);
+}
+
+FInventoryItem InventoryFunctions::GetItemBySlotReference(const InventorySlotReference& InReference)
+{
+	if(CompoundInventory* Inventory = InReference.AssociatedInventory)
+	{
+		if (FInventoryBag* Bag = Inventory->GetBag(InReference.BagReference))
+		{
+			if (Bag->BagSlots.IsValidIndex(InReference.SlotNumberReference))
+			{
+				return Bag->BagSlots[InReference.SlotNumberReference];
+			}
+		}
+	}
+	return FInventoryItem();
+}
+
+void InventoryFunctions::SetItemBySlotReference(const FInventoryItem& InItem, const InventorySlotReference& InReference)
+{
+	if (CompoundInventory* Inventory = InReference.AssociatedInventory)
+	{
+		if (FInventoryBag* Bag = Inventory->GetBag(InReference.BagReference))
+		{
+			if (Bag->BagSlots.IsValidIndex(InReference.SlotNumberReference))
+			{
+				Bag->BagSlots[InReference.SlotNumberReference] = InItem;
+				Inventory->Update();
+			}
+		}
+	}
+}
+
 int32 InventoryFunctions::GetNumStacksInInventory(const CompoundInventory& InInventory, const FName& InItemID)
 {
 	int32 AmountFound = 0;
@@ -200,17 +247,3 @@ int32 InventoryFunctions::GetNumItemsInInventory(const CompoundInventory& InInve
 
 	return AmountFound;
 }
-
-void InventoryFunctions::TransferItems(const FName& InItemID, const int32 Quantity, CompoundInventory& InventoryToRemoveFrom, CompoundInventory& InventoryToAddTo)
-{
-	/*FInventoryItem RemovedItem = RemoveItem(InventoryToRemoveFrom, ItemID, Quantity);
-	if (RemovedItem.Quantity > 0)
-	{
-		FInventoryItem LeftoverItems = AddItemFromID(InventoryToAddTo, RemovedItem.ItemID, RemovedItem.Quantity);
-		if (LeftoverItems.Quantity > 0)
-		{
-			AddItemFromID(InventoryToRemoveFrom, LeftoverItems.ItemID, LeftoverItems.Quantity);
-		}
-	}*/
-}
-

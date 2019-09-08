@@ -1,9 +1,12 @@
 #pragma once
 
 #include "Clip.h"
-#include "Engine/DataTable.h"
+
+#include <Runtime/Engine/Classes/Engine/DataTable.h>
 
 #include "InventoryItemRow.generated.h"
+
+class UTexture2D;
 
 USTRUCT(Blueprintable, BlueprintType)
 struct FInventoryItemRow : public FTableRowBase

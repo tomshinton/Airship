@@ -4,6 +4,8 @@
 
 #include "Runtime/Inventory/Public/InventoryTypes/InventoryItemRow.h"
 
+#include <Runtime/Engine/Classes/Engine/DataTable.h>
+
 #include "InventorySettings.generated.h"
 
 class UDataTable;

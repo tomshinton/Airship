@@ -8,11 +8,14 @@
 #include <AirCore/Public/Core/GameSettings/UISettings.h>
 #include <AirCore/Utils/Functions/BindingFunctions.h>
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
+#include <Runtime/Inventory/Public/InventoryFunctions.h>
+#include <Runtime/Inventory/Public/InventoryTypes/InventorySlotReference.h>
 #include <Runtime/Input/Public/AirInputSettings.h>
 #include <Runtime/Inventory/Public/InventorySettings.h>
 #include <Runtime/UMG/Public/Blueprint/WidgetBlueprintLibrary.h>
 #include <Runtime/UMG/Public/Components/CanvasPanelSlot.h>
 #include <Runtime/UMG/Public/Components/SizeBox.h>
+
 
 DEFINE_LOG_CATEGORY(InventorySlotLog);
 
@@ -54,6 +57,11 @@ void UInventorySlot::SynchronizeProperties()
 	}
 }
 
+InventorySlotReference UInventorySlot::GetSlotRef()
+{
+	return InventorySlotReference(LinkedInventory->GetInventory(), BagID, InventorySlot);
+}
+
 void UInventorySlot::Build()
 {
 	SlotChordLookup.Bind({ ClickAndDragKey, EKeys::LeftShift },
@@ -92,26 +100,9 @@ FInventoryItem UInventorySlot::GetLinkedItem()
 
 bool UInventorySlot::OnInventorySlotDrop(UInventorySlotDragOperation* Operation)
 {
-	IInventoryInterface* ThisInventory = (IInventoryInterface*)LinkedInventory.GetInterface();
-	IInventoryInterface* OtherInventory = (IInventoryInterface*)Operation->SourceInventoryInterface.GetInterface();
+	InventoryFunctions::SwapSlots(GetSlotRef(), Operation->OutgoingSlot);
 
-	const int32 ThisSlotNum = InventorySlot;
-	const int32 OtherSlotNum = Operation->IncomingSlot->InventorySlot;
-
-	FInventoryItem OtherInventoryItem = Operation->IncomingSlot->GetLinkedItem();
-	FInventoryItem ThisInventoryItem = LinkedInventoryItem;
-
-	if (OtherInventory && ThisInventory)
-	{
-		OtherInventory->SetItemBySlot(ThisInventoryItem, OtherSlotNum);
-		ThisInventory->SetItemBySlot(OtherInventoryItem, ThisSlotNum);
-
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return true;
 }
 
 void UInventorySlot::SetInventorySlot(const int32 InSlot, bool InIsHotbarSlot)
@@ -159,10 +150,7 @@ void UInventorySlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPo
 			if (UInventorySlotDragOperation* DragOp = Cast<UInventorySlotDragOperation>(UWidgetBlueprintLibrary::CreateDragDropOperation(UInventorySlotDragOperation::StaticClass())))
 			{
 				DragOp->DefaultDragVisual = DragAndDropWidget;
-				DragOp->IncomingSlot = this;
-
-				DragOp->SourceInventoryInterface.SetInterface((IInventoryInterface*)LinkedInventory.GetInterface());
-				DragOp->SourceInventoryInterface.SetObject(DragOp);
+				DragOp->OutgoingSlot = GetSlotRef();
 
 				OutOperation = DragOp;
 			}

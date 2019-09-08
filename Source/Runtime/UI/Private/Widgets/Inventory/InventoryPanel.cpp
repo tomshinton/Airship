@@ -46,13 +46,17 @@ void UInventoryPanel::Build()
 {
 	if (PanelBody)
 	{
-		if (PanelBody->GetAllChildren().Num() < LinkedInventory->GetInventorySlotCount())
+		if (const FInventoryBag* Bag = LinkedInventory->GetBagByID(BagID))
 		{
-			UE_LOG(InventoryPanelLog, Warning, TEXT("%s not configured to handle an inventory of this size - attempting to rebuild with the correct number of slots at runtime"), *GetName());
-			UE_LOG(InventoryPanelLog, Warning, TEXT("We need %i slots - we only have %i"), LinkedInventory->GetInventorySlotCount(), PanelBody->GetAllChildren().Num());
-	
-			Slots = LinkedInventory->GetInventorySlotCount();
-			SynchronizeProperties();
+			const int32 SlotNum = Bag->GetSlotNum() - 1;
+			if (PanelBody->GetAllChildren().Num() < SlotNum)
+			{
+				UE_LOG(InventoryPanelLog, Warning, TEXT("%s not configured to handle an inventory of this size - attempting to rebuild with the correct number of slots at runtime"), *GetName());
+				UE_LOG(InventoryPanelLog, Warning, TEXT("We need %i slots - we only have %i"), SlotNum, PanelBody->GetAllChildren().Num());
+
+				Slots = SlotNum;
+				SynchronizeProperties();
+			}
 		}
 	}
 

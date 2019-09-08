@@ -1,8 +1,7 @@
 #pragma once
 
-#include <Runtime/Engine/Classes/Engine/DataTable.h>
-
 class CompoundInventory;
+class InventorySlotReference;
 
 struct FInventoryItemRow;
 struct FInventoryItem;
@@ -19,7 +18,6 @@ enum class EOperationReturnType
 class InventoryFunctions
 {
 public:
-
 	static bool AddItemFromID(CompoundInventory& InInventory, const FName& InItemID, const int32 InQuantity);
 	static EOperationReturnType AddItemToBag(const CompoundInventory& InInventory, const FGuid& InBagID, const FInventoryItemRow& InNewItemInfo, int32& InQuantityLeft);
 
@@ -27,7 +25,10 @@ public:
 	static EOperationReturnType RemoveItemFromBag(const CompoundInventory& InInventory, const FGuid& InBagID, const FName& InItemID, int32& InQuantityLeft);
 
 	static void TransferItems(const FName& InItemID, const int32 InQuantity, CompoundInventory& InInventoryToRemoveFrom, CompoundInventory& InInventoryToAddTo);
-	
+	INVENTORY_API static void SwapSlots(const InventorySlotReference& InFirstSlotReference, const InventorySlotReference& InSecondSlotReference);
+	static FInventoryItem GetItemBySlotReference(const InventorySlotReference& InReference);
+	static void SetItemBySlotReference(const FInventoryItem& InItem, const InventorySlotReference& InReference);
+
 	static bool InventoryContains(const CompoundInventory& InInventory, const FName& InItemID, const int32& InQuantity);
 	static int32 GetNumItemsInInventory(const CompoundInventory& InInventory, const FName& ItemID);
 	static int32 GetNumStacksInInventory(const CompoundInventory& InInventory, const FName& InItemID);

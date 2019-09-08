@@ -17,6 +17,8 @@ class UImage;
 class UDragAndDropVisual;
 class USizeBox;
 
+class InventorySlotReference;
+
 DECLARE_LOG_CATEGORY_EXTERN(InventorySlotLog, All, All);
 
 UCLASS(abstract)
@@ -24,6 +26,8 @@ class UInventorySlot : public UAirWidget
 	, public IInventoryViewInterface
 {
 	GENERATED_BODY()
+
+	friend class InventorySlotReference;
 
 public:
 
@@ -58,7 +62,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = Inventory)
 	int32 InventorySlot;
 
-	UPROPERTY(EditAnywhere, Category = Inventory)
+	UPROPERTY(EditAnywhere, Category = Inventory) 
 	bool IsHotBarSlot;
 	
 	UPROPERTY(VisibleAnywhere, Category = Inventory)
@@ -79,6 +83,8 @@ public:
 	};
 	virtual void SetSlotDomain(const ESlotDomain InDomain) override { SlotDomain = InDomain; };
 	//~InventoryViewInterface
+
+	InventorySlotReference GetSlotRef();
 
 protected:
 

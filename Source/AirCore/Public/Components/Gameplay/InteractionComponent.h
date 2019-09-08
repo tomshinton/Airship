@@ -2,7 +2,10 @@
 
 #pragma once
 
-#include "InteractionInterface.h"
+#include "AirCore/Public/Interfaces/InteractionInterface.h"
+
+#include <Runtime/Engine/Public/WorldCollision.h>
+
 #include "InteractionComponent.generated.h"
 
 class AAirChar;

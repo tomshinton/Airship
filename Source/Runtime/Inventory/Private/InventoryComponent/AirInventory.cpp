@@ -15,7 +15,7 @@ UAirInventory::UAirInventory()
 	, DefaultBags()
 	, OnInventoryUpdated()
 	, OnSlotFocusUpdated()
-	, Inventory(DefaultBags, 10)
+	, Inventory(DefaultBags, 10, [this](){ BroadcastUpdate(); })
 	, CurrFocusedSlot()
 	, CurrentWieldActor(nullptr)
 	, IsAiming(false)
@@ -33,14 +33,19 @@ void UAirInventory::AddBag(const FInventoryBag& InNewBag)
 	Inventory.AddBag(InNewBag);
 }
 
-void UAirInventory::AddItem(const FName& ID, const int32& Quantity)
+void UAirInventory::BroadcastUpdate()
 {
-	InventoryFunctions::AddItemFromID(Inventory, ID, Quantity);
-
 	if (OnInventoryUpdated.IsBound())
 	{
 		OnInventoryUpdated.Broadcast();
 	}
+}
+
+void UAirInventory::AddItem(const FName& ID, const int32& Quantity)
+{
+	InventoryFunctions::AddItemFromID(Inventory, ID, Quantity);
+
+	BroadcastUpdate();
 
 	Wield();
 }
@@ -49,10 +54,7 @@ void UAirInventory::RemoveItem(const FName& ID, const int32& Quantity)
 {
 	InventoryFunctions::RemoveItemFromID(Inventory, ID, Quantity);
 
-	if (OnInventoryUpdated.IsBound())
-	{
-		OnInventoryUpdated.Broadcast();
-	}
+	BroadcastUpdate();
 
 	Wield();
 }
@@ -61,12 +63,9 @@ void UAirInventory::TransferItem(const FName& ItemID, const int32& Quantity, UAi
 {
 	if (Quantity > 0 && ItemID != "Item")
 	{
-		InventoryFunctions::TransferItems(ItemID, Quantity, Inventory, ItemToRemoveItemFrom->Inventory);
+		InventoryFunctions::TransferItems(ItemID, Quantity, *ItemToRemoveItemFrom->GetInventory(), Inventory);
 
-		if (OnInventoryUpdated.IsBound())
-		{
-			OnInventoryUpdated.Broadcast();
-		}
+		BroadcastUpdate();
 
 		if (ItemToRemoveItemFrom->OnInventoryUpdated.IsBound())
 		{
@@ -78,18 +77,6 @@ void UAirInventory::TransferItem(const FName& ItemID, const int32& Quantity, UAi
 	}
 }
 
-void UAirInventory::SwapSlots(const int32& FirstSlot, const int32& SecondSlot)
-{
-	/*Inventory.GetAllSlots().Swap(FirstSlot, SecondSlot);
-
-	if (OnInventoryUpdated.IsBound())
-	{
-		OnInventoryUpdated.Broadcast();
-	}
-
-	Wield();*/
-}
-
 FInventoryItem UAirInventory::GetItemBySlot(const FGuid& InBagID, const int32 InSlot) const
 {
 	if (FInventoryBag* FoundBag = Inventory.GetBag(InBagID))
@@ -98,36 +85,6 @@ FInventoryItem UAirInventory::GetItemBySlot(const FGuid& InBagID, const int32 In
 	}
 
 	return FInventoryItem();
-}
-
-FName UAirInventory::GetItemNameBySlot(const int32& Slot) const
-{
-	/*if (Inventory.GetAllSlots().Num() - 1 >= Slot)
-	{
-		const FInventoryItem FoundSlot = Inventory.GetAllSlots()[Slot];
-		return FoundSlot.ItemID;
-	}*/
-
-	return FName();
-}
-
-void UAirInventory::SetItemBySlot(const FInventoryItem& InItem, const int32 InSlot)
-{
-	/*Inventory.GetAllSlots()[InSlot] = InItem;
-
-	if (OnInventoryUpdated.IsBound())
-	{
-		OnInventoryUpdated.Broadcast();
-	}
-
-	Wield();*/
-}
-
-int32 UAirInventory::GetInventorySlotCount() const
-{
-	//return Inventory.GetAllSlots().Num();
-
-	return 0;
 }
 
 FGuid UAirInventory::GetBagIDByIndex(const int32 InIndex) const
@@ -309,9 +266,6 @@ void UAirInventory::ReduceCurrentClip(const int32 InAmountToReduce)
 		const int32 ClipSize = HotbarBag->GetSlotByIndex(CurrFocusedSlot).Clip.ClipSize;
 		HotbarBag->GetSlotByIndex(CurrFocusedSlot).Clip.CurrentClip = FMath::Clamp<int32>(CurrentClip - InAmountToReduce, 0, ClipSize);
 
-		if (OnInventoryUpdated.IsBound())
-		{
-			OnInventoryUpdated.Broadcast();
-		}
+		BroadcastUpdate();
 	}
 }

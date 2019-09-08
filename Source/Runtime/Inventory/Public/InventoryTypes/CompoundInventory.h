@@ -4,7 +4,7 @@
 
 #include "Runtime/Inventory/Public/InventoryTypes/InventoryBag.h"
 
-class CompoundInventory
+class INVENTORY_API CompoundInventory
 {
 
 public:
@@ -12,7 +12,7 @@ public:
 	CompoundInventory();
 	~CompoundInventory();
 
-	CompoundInventory(const TArray<FInventoryBag>& InDefaultBags, const int32 InMaxBags);
+	CompoundInventory(const TArray<FInventoryBag>& InDefaultBags, const int32 InMaxBags, const TFunction<void()>& InUpdateFunc);
 	   
 	void AddBag(const FInventoryBag& InNewBag);
 
@@ -24,8 +24,18 @@ public:
 	const FInventoryBag* GetBagByType(const EBagType& InType) const;
 	void GetSlotByID(const FGuid& InBagID, const FGuid& InSlotID, FInventoryItem& OutSlot);
 
+	void Update()
+	{
+		if (UpdateFunc)
+		{
+			UpdateFunc();
+		}
+	}
+
 private:
 
 	TArray<FInventoryBag> Bags;
 	int32 MaxBags;
+
+	TFunction<void()> UpdateFunc;
 };

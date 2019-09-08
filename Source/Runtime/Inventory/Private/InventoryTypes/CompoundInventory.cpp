@@ -9,9 +9,10 @@ CompoundInventory::CompoundInventory()
 	, MaxBags(0)
 {}
 
-CompoundInventory::CompoundInventory(const TArray<FInventoryBag>& InDefaultBags, const int32 InMaxBags) 
+CompoundInventory::CompoundInventory(const TArray<FInventoryBag>& InDefaultBags, const int32 InMaxBags, const TFunction<void()>& InUpdateFunc)
 	: Bags(InDefaultBags)
 	, MaxBags(InMaxBags)
+	, UpdateFunc(InUpdateFunc)
 {
 #if !UE_BUILD_SHIPPING
 	checkf(Bags.Num() <= MaxBags, TEXT("CompoundInventory has more bags than MaxBags allows"));
