@@ -1,3 +1,5 @@
+// Airship Project - Tom Shinton 2018
+
 #include "ProjectileModule.h"
  
 DEFINE_LOG_CATEGORY(ProjectileLog);

@@ -1,3 +1,5 @@
+// Airship Project - Tom Shinton 2018
+
 #include "BaseFixtures.h"
 
 #if WITH_DEV_AUTOMATION_TESTS

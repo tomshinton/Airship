@@ -1,3 +1,5 @@
+// Airship Project - Tom Shinton 2018
+
 #include "InventoryModule.h"
  
 DEFINE_LOG_CATEGORY(InventoryLog);

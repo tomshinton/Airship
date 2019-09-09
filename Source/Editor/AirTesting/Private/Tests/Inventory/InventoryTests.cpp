@@ -1,3 +1,5 @@
+// Airship Project - Tom Shinton 2018
+
 #include "BaseFixtures.h"
 #include "AirInventory.h"
 #include <GameFramework\Character.h>

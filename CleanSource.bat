@@ -3,7 +3,12 @@ title CleanSource
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
-set targetDir=BatTest
+set targetDir=Source
+
+REM !\n! will add a blank line
+(set \n=^
+%=DONT REMOVE THIS=%
+)
 
 for /f "tokens=1,2 delims==" %%a in (Config/DefaultGame.ini) do (
 if %%a==CopyrightNotice set foundNotice=// %%b
@@ -23,7 +28,8 @@ for /r %targetDir% %%a in (*) do (
 	set /p foundLine=<!%%a!
 	
 	REM Does this file already have the copyright notice already match? if so, carry on
-	if NOT "!foundLine!" == "!foundNotice!" (
+	echo !foundLine!|find "!foundNotice!" >nul
+	if errorlevel 1 ( 
 		set /a total=total+1
 		echo %%a 
 		echo !foundLine! 
@@ -34,8 +40,7 @@ for /r %targetDir% %%a in (*) do (
 			echo Found include, maybe a pragma.  Appending.
 			
 			REM duplicate the file, add the new copyright and a new line, and replace the old file with the new
-			(echo !foundNotice!) > %%a.txt.new
-			(echo.) >> %%a.txt.new
+			(echo !foundNotice!!\n!) > %%a.txt.new
 
 			type %%a >> %%a.txt.new
 			move /y %%a.txt.new %%a

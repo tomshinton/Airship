@@ -1,3 +1,5 @@
+// Airship Project - Tom Shinton 2018
+
 #pragma once
 #include <Runtime/CoreUObject/Public/UObject/Interface.h>
 
