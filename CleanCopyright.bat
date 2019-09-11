@@ -1,5 +1,5 @@
 @echo off
-title CleanSource
+title CleanCopyright
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
@@ -49,6 +49,26 @@ for /r %targetDir% %%a in (*) do (
 		echo !foundLine!|find "//" >nul
 		if NOT errorlevel 1 (
 			echo Found a comment that isnt the copyright notice. Replacing.
+			
+			REM Copy and delete first line
+			more +1 "%%a" > %%adeleted.txt.new
+			
+			REM Is there a space here? if not, we should probably add one
+			set /p newTempLine=<"%%adeleted.txt.new"
+			
+			if [!newTempLine!] == [] (
+			echo Space avaliable at the start of the new file - adding our copyright notice.
+			(echo !foundNotice!) > %%a.txt.new
+			
+			) else (
+			echo No space avaliable at the start of the new file - pushing existing content down and adding copyright notice
+			(echo !foundNotice!!\n!) > %%a.txt.new
+			
+			)
+
+			type %%adeleted.txt.new >> %%a.txt.new
+			REM move /y "%%a.txt.new" "%%a" > nul
+			del "%%adeleted.txt.new"
 		)
 		
 		echo --------------------------------------------------------------------------------
