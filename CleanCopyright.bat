@@ -49,11 +49,8 @@ for /r %targetDir% %%a in (*) do (
 		echo !foundLine!|find "//" >nul
 		if NOT errorlevel 1 (
 			echo Found a comment that isnt the copyright notice. Replacing.
-			
-			REM Copy and delete first line
-			REM more +1 /t3 "%%a" > %%adeleted.txt.new
-			REM Implementation expands tabs to spaces - not useful for code!
-									
+												
+			REM DONT USE MORE HERE! It'll expand into 8 spaces instead of tabs that'll wreck any code formatting
 			type !%%a! | FIND /V "!foundLine!" > %%adeleted.txt.new
 			
 			REM Is there a space here? if not, we should probably add one
