@@ -1,4 +1,4 @@
-// Editor only testing module
+// Airship Project - Tom Shinton 2018
 
 using UnrealBuildTool;
 
