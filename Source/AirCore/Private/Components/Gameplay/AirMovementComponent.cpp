@@ -40,15 +40,12 @@ void UAirMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!OwningCharacter)
-	{
-		OwningCharacter = Cast<AAirChar>(GetOwner());
+	OwningCharacter = Cast<AAirChar>(GetOwner());
 
-		if (OwningCharacter)
-		{
-			OwningMovementComponent = Cast<UCharacterMovementComponent>(OwningCharacter->GetMovementComponent());
-			OwnerCamera = OwningCharacter->FindComponentByClass<UCameraComponent>();
-		}
+	if (OwningCharacter)
+	{
+		OwningMovementComponent = Cast<UCharacterMovementComponent>(OwningCharacter->GetMovementComponent());
+		OwnerCamera = OwningCharacter->FindComponentByClass<UCameraComponent>();
 	}
 }
 
@@ -86,6 +83,8 @@ void UAirMovementComponent::LookRight(float InAxis)
 			const FRotator CurrentRotation = OwningCharacter->GetActorRotation();
 			const FRotator TargetRotation = CurrentRotation + FRotator(0.f, InAxis*TurnSpeed, 0.f);
 
+			GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::White, FString::Printf(TEXT("Actor rotation: %s"), *TargetRotation.ToString()));
+
 			OwningCharacter->SetActorRotation(TargetRotation);
 		}
 	}
@@ -107,7 +106,7 @@ void UAirMovementComponent::LookUp(float InAxis)
 
 void UAirMovementComponent::StartJump()
 {
-	OwningCharacter->bPressedJump = true;
+ 	OwningCharacter->bPressedJump = true;
 }
 
 void UAirMovementComponent::EndJump()

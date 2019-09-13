@@ -23,16 +23,18 @@ public:
 	FInventoryBag()
 		: IsPrimary(true)
 		, BagName(TEXT("Uninitialised Bag"))
-		, BagSlots()
-		, BagId(FGuid::NewGuid())
+		, SlotsNum(0)
 		, BagType(EBagType::Default)
+		, BagId(FGuid::NewGuid())
+		, BagSlots()
 	{}
 
 	FInventoryBag(const bool InIsPrimary, const FString& InBagName, const EBagType& InBagType, const int32 InBagSize)
 		: IsPrimary(InIsPrimary)
 		, BagName(InBagName)
-		, BagId(FGuid::NewGuid())
+		, SlotsNum(InBagSize)
 		, BagType(InBagType)
+		, BagId(FGuid::NewGuid())
 	{
 		BagSlots.Empty();
 
@@ -55,10 +57,14 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	FString BagName;
 
-	TArray<FInventoryItem> BagSlots;
+	UPROPERTY(EditDefaultsOnly)
+	int32 SlotsNum;
 
-private:
-
-	FGuid BagId;
+	UPROPERTY(EditDefaultsOnly)
 	EBagType BagType;
+
+	UPROPERTY(VisibleAnywhere)
+	FGuid BagId;
+
+	TArray<FInventoryItem> BagSlots;
 };
