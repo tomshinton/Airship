@@ -23,12 +23,13 @@ UAirInventory::UAirInventory()
 
 void UAirInventory::BeginPlay()
 {
-	OnSlotFocusUpdated.Broadcast(0);
-
 	for (const FInventoryBag& Bag : DefaultBags)
 	{
 		Inventory.AddBag(Bag);
 	}
+
+	OnInventoryInitialised.Broadcast();
+	OnSlotFocusUpdated.Broadcast(0);
 
 	Super::BeginPlay();
 }

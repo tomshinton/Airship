@@ -56,12 +56,13 @@ void UHotbar::Build()
 			{
 				if (UInventorySlot* ChildSlot = Cast<UInventorySlot>(Widget))
 				{
-					if (ChildSlot->InventorySlot > HotbarBag->GetSlotNum() -1)
+					if (ChildSlot->InventorySlot > HotbarBag->SlotsNum - 1)
 					{
 						ChildSlot->RemoveFromParent();
 					}
 					else if (IInventoryViewInterface* SlotViewInterface = Cast<IInventoryViewInterface>(ChildSlot))
 					{
+
 						IInventoryInterface* LinkedInventoryInterface = (IInventoryInterface*)LinkedInventory.GetInterface();
 						SlotViewInterface->SetLinkedInventory(LinkedInventoryInterface, HotbarBag->GetBagID());
 						SlotViewInterface->SetSlotDomain(SlotDomain);

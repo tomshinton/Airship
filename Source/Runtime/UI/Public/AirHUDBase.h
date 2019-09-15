@@ -52,6 +52,9 @@ protected:
 
 	virtual void NativeConstruct() override;
 
+	UFUNCTION()
+	void InitialiseInventoryViews();
+
 private:
 
 	static bool ShouldBeSnapshot(const UWidget& InWidget, const UWidgetTree& InWidgetTree, const UDynamicOverlayPanel& InOverlay);

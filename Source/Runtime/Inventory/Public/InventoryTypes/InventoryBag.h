@@ -35,10 +35,13 @@ public:
 		, SlotsNum(InBagSize)
 		, BagType(InBagType)
 		, BagId(FGuid::NewGuid())
+	{}
+
+	void InitSlots()
 	{
 		BagSlots.Empty();
 
-		for (int32 i = 0; i < InBagSize; ++i)
+		for (int32 i = 0; i < SlotsNum; ++i)
 		{
 			BagSlots.Add(FInventoryItem(BagId));
 		}

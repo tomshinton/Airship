@@ -33,18 +33,12 @@ void UAirHUDBase::NativeConstruct()
 
 	if (LocalChar)
 	{
-		if (PlayerInventoryPanel)
+		if (IInventoryInterface* InventoryInterface = InterfaceHelpers::GetInterface<IInventoryInterface>(*LocalChar))
 		{
-			if (IInventoryInterface* InventoryInterface = InterfaceHelpers::GetInterface<IInventoryInterface>(*LocalChar))
+			InventoryInterface->GetOnInventoryInitialised().AddLambda([this]()
 			{
-				if (IInventoryViewInterface* InventoryViewInterface = Cast<IInventoryViewInterface>(PlayerInventoryPanel))
-				{
-					InventoryViewInterface->SetLinkedInventory(InventoryInterface, InventoryInterface->GetFirstPrimaryBagID());
-				}
-			}
-
-			PlayerInventoryPanel->Build();
-			PlayerInventoryPanel->SetVisibility(ESlateVisibility::Collapsed);
+				InitialiseInventoryViews();
+			});
 		}
 
 		if (PlayerHealthBar)
@@ -67,18 +61,35 @@ void UAirHUDBase::NativeConstruct()
 				InspectorPanel->SetVisibility(ESlateVisibility::Collapsed);
 			}
 		}
+	}
+}
 
-		if (Hotbar)
+void UAirHUDBase::InitialiseInventoryViews()
+{
+	if (PlayerInventoryPanel)
+	{
+		if (IInventoryInterface* InventoryInterface = InterfaceHelpers::GetInterface<IInventoryInterface>(*LocalChar))
 		{
-			if (IInventoryInterface* InventoryInterface = InterfaceHelpers::GetInterface<IInventoryInterface>(*LocalChar))
+			if (IInventoryViewInterface* InventoryViewInterface = Cast<IInventoryViewInterface>(PlayerInventoryPanel))
 			{
-				if (IInventoryViewInterface* InventoryViewInterface = Cast<IInventoryViewInterface>(Hotbar))
+				InventoryViewInterface->SetLinkedInventory(InventoryInterface, InventoryInterface->GetFirstPrimaryBagID());
+			}
+		}
+
+		PlayerInventoryPanel->Build();
+		PlayerInventoryPanel->SetVisibility(ESlateVisibility::Collapsed);
+	}
+
+	if (Hotbar)
+	{
+		if (IInventoryInterface* InventoryInterface = InterfaceHelpers::GetInterface<IInventoryInterface>(*LocalChar))
+		{
+			if (IInventoryViewInterface* InventoryViewInterface = Cast<IInventoryViewInterface>(Hotbar))
+			{
+				if (const FInventoryBag* HotbarBag = InventoryInterface->GetBagByType(EBagType::Hotbar))
 				{
-					if (const FInventoryBag* HotbarBag = InventoryInterface->GetBagByType(EBagType::Hotbar))
-					{
-						InventoryViewInterface->SetLinkedInventory(InventoryInterface, HotbarBag->GetBagID());
-						Hotbar->Build();
-					}
+					InventoryViewInterface->SetLinkedInventory(InventoryInterface, HotbarBag->GetBagID());
+					Hotbar->Build();
 				}
 			}
 		}

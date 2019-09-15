@@ -12,6 +12,7 @@ class CompoundInventory;
 struct FInventoryItem;
 
 DECLARE_MULTICAST_DELEGATE(FOnInventoryUpdated);
+DECLARE_MULTICAST_DELEGATE(FOnInventoryInitialised);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSlotFocusUpdated, const int32);
 
 UINTERFACE(BlueprintType, MinimalAPI)
@@ -28,6 +29,7 @@ public:
 
 	virtual FOnInventoryUpdated& GetOnInventoryUpdated() = 0;
 	virtual FOnSlotFocusUpdated& GetOnSlotFocusUpdated() = 0;
+	virtual FOnInventoryInitialised& GetOnInventoryInitialised() = 0;
 
 	virtual int32 GetCurrentFocusedSlot() const = 0;
 		

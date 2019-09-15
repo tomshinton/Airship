@@ -27,12 +27,13 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Bags)
 	TArray<FInventoryBag> DefaultBags;
-	
+
 public:
 
 	//IInventoryInterface
 	virtual FOnInventoryUpdated& GetOnInventoryUpdated() override { return OnInventoryUpdated; };
 	virtual FOnSlotFocusUpdated& GetOnSlotFocusUpdated() override { return OnSlotFocusUpdated; };
+	virtual FOnInventoryInitialised& GetOnInventoryInitialised() override { return OnInventoryInitialised; };
 	virtual CompoundInventory* GetInventory() override { return &Inventory; };
 	virtual FInventoryItem GetItemBySlot(const FGuid& InBagID, const int32 InSlot) const;
 	virtual FGuid GetBagIDByIndex(const int32 InIndex) const override;
@@ -83,6 +84,7 @@ public:
 
 	FOnInventoryUpdated OnInventoryUpdated;
 	FOnSlotFocusUpdated OnSlotFocusUpdated;
+	FOnInventoryInitialised OnInventoryInitialised;
 
 	virtual void BeginPlay() override;
 

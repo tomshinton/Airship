@@ -30,8 +30,18 @@ void CompoundInventory::AddBag(const FInventoryBag& InNewBag)
 {
 	if (Bags.Num() < MaxBags)
 	{
-		Bags.Add(InNewBag);
+		FInventoryBag PreInitBag = InNewBag;
+		PreInitBag.InitSlots();
+
+#if !UE_BUILD_SHIPPING
+		checkf(PreInitBag.BagSlots.Num() > 0, TEXT("Could not init BagSlots!"));
+#endif //!UE_BUILD_SHIPPING
+
+		UE_LOG(CompoundInventoryLog, Log, TEXT("Adding bag %s, with %i slots"), *PreInitBag.BagName, PreInitBag.SlotsNum);
+		Bags.Add(PreInitBag);
 	}
+
+	UpdateFunc();
 }
 
 bool CompoundInventory::GetBag(const int32 InBagNum, FInventoryBag& OutBag) const
@@ -85,5 +95,11 @@ void CompoundInventory::GetSlotByID(const FGuid& InBagID, const FGuid& InSlotID,
 			}
 		}
 	}
+}
+
+void CompoundInventory::Clear()
+{
+	Bags.Empty();
+	UpdateFunc();
 }
 

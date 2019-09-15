@@ -32,6 +32,8 @@ public:
 		}
 	}
 
+	void Clear();
+
 private:
 
 	TArray<FInventoryBag> Bags;

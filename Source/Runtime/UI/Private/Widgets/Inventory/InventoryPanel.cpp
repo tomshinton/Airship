@@ -15,7 +15,9 @@
 #include <Runtime/UMG/Public/Components/SizeBox.h>
 #include <Runtime/UMG/Public/Components/TextBlock.h>
 
+#if !UE_BUILD_SHIPPING
 #include "Engine/Engine.h"
+#endif //!UE_BUILD_SHIPPING
 
 DEFINE_LOG_CATEGORY_STATIC(InventoryPanelLog, Log, Log);
 
@@ -51,8 +53,10 @@ void UInventoryPanel::Build()
 			const int32 SlotNum = Bag->GetSlotNum() - 1;
 			if (PanelBody->GetAllChildren().Num() < SlotNum)
 			{
+#if !UE_BUILD_SHIPPING
 				UE_LOG(InventoryPanelLog, Warning, TEXT("%s not configured to handle an inventory of this size - attempting to rebuild with the correct number of slots at runtime"), *GetName());
 				UE_LOG(InventoryPanelLog, Warning, TEXT("We need %i slots - we only have %i"), SlotNum, PanelBody->GetAllChildren().Num());
+#endif //!UE_BUILD_SHIPPING
 
 				Slots = SlotNum;
 				SynchronizeProperties();
