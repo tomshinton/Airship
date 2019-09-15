@@ -62,7 +62,6 @@ void UHotbar::Build()
 					}
 					else if (IInventoryViewInterface* SlotViewInterface = Cast<IInventoryViewInterface>(ChildSlot))
 					{
-
 						IInventoryInterface* LinkedInventoryInterface = (IInventoryInterface*)LinkedInventory.GetInterface();
 						SlotViewInterface->SetLinkedInventory(LinkedInventoryInterface, HotbarBag->GetBagID());
 						SlotViewInterface->SetSlotDomain(SlotDomain);
