@@ -4,36 +4,13 @@
 
 #include "Runtime/UI/Public/QuickTransfer/SlotDomain.h"
 
-#include <Runtime/CoreUObject/Public/UObject/WeakInterfacePtr.h>
-#include <Runtime/Inventory/Public/InventoryInterface.h>
+class InventorySlotReference;
 
-struct FTransferTarget
+DECLARE_LOG_CATEGORY_EXTERN(TransferRequestLog, All, All);
+
+class TransferRequest
 {
-	FTransferTarget(const TWeakInterfacePtr<IInventoryInterface>& InTargetInterface, const uint32 InTargetIndex)
-		: TargetInterface(InTargetInterface)
-		, TargetIndex(InTargetIndex)
-	{}
+public:
 
-	UPROPERTY()
-	TWeakInterfacePtr<IInventoryInterface> TargetInterface;
-
-	uint32 TargetIndex;
-};
-
-class FTransferRequest
-{
-	FTransferRequest(const TWeakInterfacePtr<IInventoryInterface>& InSourceInterface, const uint32 InSourceIndex)
-		: SourceInterface(*SourceInterface)
-		, SourceIndex(InSourceIndex)
-	{}
-
-private:
-
-	UPROPERTY()
-	TWeakInterfacePtr<IInventoryInterface> SourceInterface;
-
-	uint32 SourceIndex;
-	
-	virtual bool Transfer() = 0;
-	virtual const FTransferTarget& GetTransferTarget(IInventoryInterface& RequestingInventory) const = 0;
+	static void RequestTransfer(const InventorySlotReference& InRequestingSlot, const ESlotDomain InDomain, UObject& InTransferTargetLookup);
 };

@@ -83,8 +83,6 @@ void UAirMovementComponent::LookRight(float InAxis)
 			const FRotator CurrentRotation = OwningCharacter->GetActorRotation();
 			const FRotator TargetRotation = CurrentRotation + FRotator(0.f, InAxis*TurnSpeed, 0.f);
 
-			GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::White, FString::Printf(TEXT("Actor rotation: %s"), *TargetRotation.ToString()));
-
 			OwningCharacter->SetActorRotation(TargetRotation);
 		}
 	}

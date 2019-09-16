@@ -35,4 +35,7 @@ public:
 
 	UPROPERTY(EditAnywhere, config, Category = "UI | Inventory")
 	float InventorySlotSize;
+
+	UPROPERTY(EditDefaultsOnly, config, Category = "Quick Transfer", meta = (AllowedClasses = TransferRequestTargetDataAsset))
+	FStringAssetReference TransferRequestTargetAsset;
 };

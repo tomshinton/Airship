@@ -4,6 +4,7 @@
 
 #include "Runtime/UI/Public/DragAndDrop/InventorySlotDragOperation.h"
 #include "Runtime/UI/Public/DragAndDrop/DragAndDropVisual.h"
+#include "Runtime/UI/Public/QuickTransfer/TransferRequest.h"
 
 #include <AirCore/Public/Core/GameSettings/UISettings.h>
 #include <AirCore/Utils/Functions/BindingFunctions.h>
@@ -15,7 +16,6 @@
 #include <Runtime/UMG/Public/Blueprint/WidgetBlueprintLibrary.h>
 #include <Runtime/UMG/Public/Components/CanvasPanelSlot.h>
 #include <Runtime/UMG/Public/Components/SizeBox.h>
-
 
 DEFINE_LOG_CATEGORY(InventorySlotLog);
 
@@ -248,6 +248,12 @@ void UInventorySlot::BuildFromInvalidData()
 
 void UInventorySlot::QuickTransfer()
 {
-	UE_LOG(InventorySlotLog, Log, TEXT("Attempting Quick Transfer"));
+	if (UUISettings* UISettings = UUISettings::Get())
+	{
+		if (UObject* TransferRequestLookup = UISettings->TransferRequestTargetAsset.TryLoad())
+		{
+			TransferRequest::RequestTransfer(GetSlotRef(), SlotDomain, *TransferRequestLookup);
+		}
+	}
 }
 

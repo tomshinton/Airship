@@ -17,9 +17,13 @@ public class Inventory : ModuleRules
             "Projectile"
         });
 
+        PrivateDependencyModuleNames.AddRange(new string[] 
+        {
+            "Inventory"
+        });
+
 		PublicIncludePaths.AddRange(new string[] {"Runtime/Inventory/Public"});
 		PrivateIncludePaths.AddRange(new string[] {"Runtime/Inventory/Private"});
 
-        PrivateDependencyModuleNames.AddRange(new string[] { });
     }
 }

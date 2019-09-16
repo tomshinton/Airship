@@ -4,7 +4,7 @@
 
 #include "SlotDomain.generated.h"
 
-UENUM()
+UENUM(BlueprintType)
 enum class ESlotDomain : uint8
 {
 	Default,
