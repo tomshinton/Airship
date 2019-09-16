@@ -23,7 +23,8 @@
 				"Engine",
 				"Input",
 				"Inventory",
-				"UI"
+				"UI",
+				"Utils"
 			]
 		},
 		{
@@ -54,6 +55,11 @@
 				"Engine",
 				"UMG"
 			]
+		},
+		{
+			"Name": "Utils",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		},
 		{
 			"Name": "AirEditor",

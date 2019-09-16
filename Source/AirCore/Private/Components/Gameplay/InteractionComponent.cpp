@@ -1,21 +1,19 @@
 // Airship Project - Tom Shinton 2018
 
-#include "InteractionComponent.h"
-#include "AirChar.h"
-#include "AirController.h"
-#include "InteractionInterface.h"
-#include "GameFramework/Controller.h"
-#include "Engine/Engine.h"
-#include "Utils/Defs/CollisionDefs.h"
-#include <CollisionQueryParams.h>
-#include "GameFramework/Pawn.h"
-#include "Components/InputComponent.h"
-#include "TimerManager.h"
-#include "DrawDebugHelpers.h"
-#include "Camera/CameraComponent.h"
-#include "Components/ActorComponent.h"
-#include "Utils/Functions/InterfaceHelpers.h"
-#include "InteractableInterface.h"
+#include "AirCore/Public/Components/Gameplay/InteractionComponent.h"
+#include "AirCore/Public/Core/AirChar.h"
+#include "AirCore/Public/Core/AirController.h"
+#include "AirCore/Public/Interfaces/InteractableInterface.h"
+#include "AirCore/Public/Interfaces/InteractionInterface.h"
+
+#include <Runtime/Engine/Classes/Camera/CameraComponent.h>
+#include <Runtime/Engine/Classes/Components/InputComponent.h>
+#include <Runtime/Utils/Public/Collision/CollisionDefs.h>
+#include <Runtime/Utils/Public/Interface/InterfaceHelpers.h>
+
+#if !UE_BUILD_SHIPPING
+#include <Runtime/Engine/Public/DrawDebugHelpers.h>
+#endif //!UE_BUILD_SHIPPIONG
 
 DEFINE_LOG_CATEGORY_STATIC(InteractionComponentLog, Log, Log);
 
@@ -63,7 +61,6 @@ void UInteractionComponent::SetupInput(APawn* InNewPawn)
 
 		if (UInputComponent* CachedInputComponent = CachedOwningPawn->GetCachedInputComponent())
 		{
-
 			UE_LOG(InteractionComponentLog, Log, TEXT("Setting up Interaction bindings"));
 
 			CachedInputComponent->BindAction("Interact", IE_Pressed, this, &UInteractionComponent::StartInteraction);
@@ -181,7 +178,9 @@ void UInteractionComponent::OnLookOver(const TArray<FHitResult>& InHits)
 						HoveredInteractable.SetObject(FirstHit);
 						HoveredInteractable.SetInterface(HitInteractableInterface);
 
+#if !UE_BUILD_SHIPPING
 						UE_LOG(InteractionComponentLog, Log, TEXT("Caching %s for interactions"), *FirstHit->GetName());
+#endif //!UE_BUILD_SHIPPING
 
 						OnNewItemHovered.Broadcast(HitInteractableInterface);
 					}
@@ -206,7 +205,9 @@ void UInteractionComponent::ResetHoveredInteractable()
 {
 	if (HoveredInteractable)
 	{
+#if !UE_BUILD_SHIPPING
 		UE_LOG(InteractionComponentLog, Log, TEXT("No longer looking at %s, clearing"), *HoveredInteractable.GetObject()->GetName());
+#endif //!UE_BUILD_SHIPPING
 
 		HoveredInteractable.SetObject(nullptr);
 		HoveredInteractable.SetInterface(nullptr);
@@ -218,7 +219,9 @@ void UInteractionComponent::StartInteraction()
 {
 	if (HoveredInteractable)
 	{
+#if !UE_BUILD_SHIPPING
 		UE_LOG(InteractionComponentLog, Log, TEXT("Starting interaction"));
+#endif //!UE_BUILD_SHIPPING
 		HoveredInteractable->OnInteract(CachedOwningPawn);
 	}
 }
@@ -227,7 +230,10 @@ void UInteractionComponent::EndInteraction()
 {
 	if (HoveredInteractable)
 	{
+#if !UE_BUILD_SHIPPING
 		UE_LOG(InteractionComponentLog, Log, TEXT("Ending interaction"));
+#endif //!UE_BUILD_SHIPPING
+
 		//EndInteraction
 	}
 }

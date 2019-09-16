@@ -5,32 +5,27 @@
 #include "Runtime/UI/Public/QuickTransfer/Targets/TransferTargetBase.h"
 #include "Runtime/UI/Public/QuickTransfer/TransferRequestTargetDataAsset.h"
 
+#if !UE_BUILD_SHIPPING
+#include <Runtime/Utils/Public/Enum/EnumHelpers.h>
+#endif //!UE_BUILD_SHIPPING
+
 #include <Runtime/Inventory/Public/InventoryTypes/InventorySlotReference.h>
 
 DEFINE_LOG_CATEGORY(TransferRequestLog);
 
-#if !UE_BUILD_SHIPPING
-namespace EnumHelper
-{
-	FString GetEnumFromDomain(const ESlotDomain InDomain)
-	{
-		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("ESlotDomain"), true);
-		return EnumPtr->GetNameByValue((int64)InDomain).ToString();
-	}
-}
-#endif //!UE_BUILD_SHIPPING
-
 void TransferRequest::RequestTransfer(const InventorySlotReference& InRequestingSlot, const ESlotDomain InDomain, UObject& InTransferTargetLookup)
 {
 #if !UE_BUILD_SHIPPING
-	UE_LOG(TransferRequestLog, Log, TEXT("Quick Transfer request issued from %s - slot %i, with domain %s"), *InRequestingSlot.BagReference.ToString(), InRequestingSlot.SlotNumberReference, *EnumHelper::GetEnumFromDomain(InDomain));
+	UE_LOG(TransferRequestLog, Log, TEXT("Quick Transfer request issued from %s - slot %i, with domain %s"), *InRequestingSlot.BagReference.ToString(), InRequestingSlot.SlotNumberReference, *EnumHelpers::EnumToString<ESlotDomain>("ESlotDomain", InDomain));
 #endif //!UE_BUILD_SHIPPING
 
 	if (UTransferRequestTargetDataAsset* TransferLookup = CastChecked<UTransferRequestTargetDataAsset>(&InTransferTargetLookup))
 	{
 		if (const FTransferTarget* Targets = TransferLookup->Targets.Find(InDomain))
 		{
-			UE_LOG(TransferRequestLog, Log, TEXT("Found a transfer target for domain %s - spinning up lookup targets"), *EnumHelper::GetEnumFromDomain(InDomain));
+#if !UE_BUILD_SHIPPING
+			UE_LOG(TransferRequestLog, Log, TEXT("Found a transfer target for domain %s - spinning up lookup targets"), *EnumHelpers::EnumToString<ESlotDomain>("ESlotDomain", InDomain));
+#endif //!UE_BUILD_SHIPPING
 
 			for (const TSubclassOf<UTransferTargetBase>& Target : Targets->TransferTargets)
 			{
@@ -40,7 +35,10 @@ void TransferRequest::RequestTransfer(const InventorySlotReference& InRequesting
 
 					if (RespondingTarget.IsSet())
 					{
-						UE_LOG(TransferRequestLog, Log, TEXT("Found a transfer response for domain %s - returning"), *EnumHelper::GetEnumFromDomain(InDomain));
+#if !UE_BUILD_SHIPPING
+						UE_LOG(TransferRequestLog, Log, TEXT("Found a transfer response for domain %s - returning"), *EnumHelpers::EnumToString<ESlotDomain>("ESlotDomain", InDomain));
+#endif //!UE_BUILD_SHIPPING
+
 						return;
 					}
 				}

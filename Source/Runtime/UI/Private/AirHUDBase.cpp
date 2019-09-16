@@ -9,7 +9,6 @@
 #include "Runtime/UI/Public/Widgets/Inventory/InventoryPanel.h"
 #include "Runtime/UI/Public/Widgets/Inventory/InventoryViewInterface.h"
 
-#include <AirCore/Utils/Functions/InterfaceHelpers.h>
 #include <AirCore/Public/Core/AirChar.h>
 #include <AirCore/Public/Interfaces/HealthInterface.h>
 #include <AirCore/Public/Interfaces/InteractionInterface.h>
@@ -17,6 +16,7 @@
 #include <Runtime/UMG/Public/Blueprint/WidgetTree.h>
 #include <Runtime/UMG/Public/Components/Overlay.h>
 #include <Runtime/UMG/Public/Components/Widget.h>
+#include <Runtime/Utils/Public/Interface/InterfaceHelpers.h>
 
 UAirHUDBase::UAirHUDBase(const FObjectInitializer& ObjectInitializer)
 	: UAirWidget(ObjectInitializer)

@@ -4,10 +4,10 @@
 #include "Runtime/UI/Public/Utils/HUDTools.h"
 
 #include <AirCore/Public/Core/AirChar.h>
-#include <AirCore/Utils/Functions/BindingFunctions.h>
 #include <Runtime/UMG/Public/Animation/WidgetAnimationDelegateBinding.h>
 #include <Runtime/UMG/Public/Components/TextBlock.h>
 #include <Runtime/UMG/Public/Animation/WidgetAnimation.h>
+#include <Runtime/Utils/Public/Input/BindingFunctions.h>
 
 namespace InspectorPanelPrivate
 {

@@ -25,7 +25,8 @@ public class UI : ModuleRules
             "SlateCore",
             "UMG",
             "Slate",
-            "SlateCore"
+            "SlateCore",
+            "Utils"
         });
 
 		PublicIncludePaths.AddRange(new string[] {"Runtime/UI/Public"});

@@ -8,11 +8,19 @@ public class AirCore : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG"});
-
-        PublicDependencyModuleNames.AddRange(new string[] 
+		PublicDependencyModuleNames.AddRange(new string[] 
         {
-            "UI"
+            "Core",
+            "CoreUObject",
+            "Engine",
+            "InputCore",
+            "UMG"
+        });
+
+        PrivateDependencyModuleNames.AddRange(new string[] 
+        {
+            "UI",
+            "Utils"
         });
 
         PublicDependencyModuleNames.AddRange(new string[] { "MoreManagers" });

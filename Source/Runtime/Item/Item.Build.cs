@@ -21,11 +21,11 @@ public class Item : ModuleRules
 
         PrivateDependencyModuleNames.AddRange(new string[] 
         {
-            "UMG"
+            "UMG",
+            "Utils"
         });
 
 		PublicIncludePaths.AddRange(new string[] {"Runtime/Item/Public"});
 		PrivateIncludePaths.AddRange(new string[] {"Runtime/Item/Private"});
-
     }
 }

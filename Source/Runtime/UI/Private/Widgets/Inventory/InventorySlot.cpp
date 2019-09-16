@@ -7,7 +7,6 @@
 #include "Runtime/UI/Public/QuickTransfer/TransferRequest.h"
 
 #include <AirCore/Public/Core/GameSettings/UISettings.h>
-#include <AirCore/Utils/Functions/BindingFunctions.h>
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 #include <Runtime/Inventory/Public/InventoryFunctions.h>
 #include <Runtime/Inventory/Public/InventoryTypes/InventorySlotReference.h>
@@ -16,6 +15,7 @@
 #include <Runtime/UMG/Public/Blueprint/WidgetBlueprintLibrary.h>
 #include <Runtime/UMG/Public/Components/CanvasPanelSlot.h>
 #include <Runtime/UMG/Public/Components/SizeBox.h>
+#include <Runtime/Utils/Public/Input/BindingFunctions.h>
 
 DEFINE_LOG_CATEGORY(InventorySlotLog);
 

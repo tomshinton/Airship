@@ -2,14 +2,14 @@
 
 #pragma once
 
-#include <GameFramework/PlayerController.h>
-#include <GameFramework/PlayerInput.h>
-#include "Kismet/BlueprintFunctionLibrary.h"
+#include <Runtime/Engine/Classes/GameFramework/PlayerController.h>
+#include <Runtime/Engine/Classes/GameFramework/PlayerInput.h>
+#include <Runtime/Engine/Classes/Kismet/BlueprintFunctionLibrary.h>
 
 #include "BindingFunctions.generated.h"
 
-UCLASS(MinimalAPI)
-class UBindingFunctions : public UBlueprintFunctionLibrary
+UCLASS()
+class UTILS_API UBindingFunctions : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
