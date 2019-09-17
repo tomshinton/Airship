@@ -5,6 +5,8 @@
 #include "Runtime/UI/Public/QuickTransfer/Targets/TransferTargetBase.h"
 #include "Runtime/UI/Public/QuickTransfer/TransferRequestTargetDataAsset.h"
 
+#include <Runtime/Inventory/Public/InventoryFunctions.h>
+
 #if !UE_BUILD_SHIPPING
 #include <Runtime/Utils/Public/Enum/EnumHelpers.h>
 #endif //!UE_BUILD_SHIPPING
@@ -39,6 +41,7 @@ void TransferRequest::RequestTransfer(const InventorySlotReference& InRequesting
 						UE_LOG(TransferRequestLog, Log, TEXT("Found a transfer response for domain %s - returning"), *EnumHelpers::EnumToString<ESlotDomain>("ESlotDomain", InDomain));
 #endif //!UE_BUILD_SHIPPING
 
+						InventoryFunctions::SwapSlots(InRequestingSlot, RespondingTarget.GetValue());
 						return;
 					}
 				}

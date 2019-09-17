@@ -2,7 +2,7 @@
 
 #pragma once
 
-class CompoundInventory;
+#include <Runtime/Inventory/Public/InventoryTypes/CompoundInventory.h>
 
 /**
  * Wrapper class for UInventorySlots and what they actually represent under the hood.

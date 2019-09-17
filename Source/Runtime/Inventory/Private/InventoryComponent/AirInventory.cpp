@@ -65,24 +65,6 @@ void UAirInventory::RemoveItem(const FName& ID, const int32& Quantity)
 	Wield();
 }
 
-void UAirInventory::TransferItem(const FName& ItemID, const int32& Quantity, UAirInventory* ItemToRemoveItemFrom)
-{
-	if (Quantity > 0 && ItemID != "Item")
-	{
-		InventoryFunctions::TransferItems(ItemID, Quantity, *ItemToRemoveItemFrom->GetInventory(), Inventory);
-
-		BroadcastUpdate();
-
-		if (ItemToRemoveItemFrom->OnInventoryUpdated.IsBound())
-		{
-			ItemToRemoveItemFrom->OnInventoryUpdated.Broadcast();
-		}
-
-		Wield();
-		ItemToRemoveItemFrom->Wield();
-	}
-}
-
 FInventoryItem UAirInventory::GetItemBySlot(const FGuid& InBagID, const int32 InSlot) const
 {
 	if (FInventoryBag* FoundBag = Inventory.GetBag(InBagID))

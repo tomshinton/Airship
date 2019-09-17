@@ -24,24 +24,24 @@ struct FInventoryItem
 		: ItemID(InventoryItemStatics::DefaultItemName)
 		, Quantity(0)
 		, Clip(FClip())
-		, SlotID(FGuid::NewGuid())
 		, BagID(FGuid())
+		, SlotID(FGuid::NewGuid())
 	{}
 
 	FInventoryItem(const FGuid& InBagID)
 		: ItemID(InventoryItemStatics::DefaultItemName)
 		, Quantity(0)
 		, Clip(FClip())
-		, SlotID(FGuid::NewGuid())
 		, BagID(InBagID)
+		, SlotID(FGuid::NewGuid())
 	{}
 
 	FInventoryItem(const FName& InItemID, const int32 InQuantity, const FClip& InClip, const FGuid& InBagID)
 		: ItemID(InItemID)
 		, Quantity(InQuantity)
 		, Clip(InClip)
-		, SlotID(FGuid::NewGuid())
 		, BagID(InBagID)
+		, SlotID(FGuid::NewGuid())
 	{
 		ItemInfo = *UInventorySettings::GetItemInfo(ItemID);
 	}
@@ -57,6 +57,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FClip Clip;
 	
+	FGuid BagID;
+
 	bool IsItemValid()
 	{
 		return ItemInfo.IsNullSlot;
@@ -88,5 +90,4 @@ private:
 	}
 
 	FGuid SlotID;
-	FGuid BagID;
 };

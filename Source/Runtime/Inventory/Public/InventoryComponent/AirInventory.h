@@ -53,9 +53,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void RemoveItem(const FName& ID, const int32& Quantity);
 
-	UFUNCTION(BlueprintCallable, Category = Inventory)
-	void TransferItem(const FName& ItemID, const int32& Quantity, UAirInventory* RemoveInventory);
-
 	void SetHandComponents(USceneComponent* InLeftHand, USceneComponent* InRightHand) { RightHand = InRightHand; }
 	
 	UFUNCTION()

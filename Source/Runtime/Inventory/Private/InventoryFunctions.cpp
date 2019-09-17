@@ -146,13 +146,6 @@ EOperationReturnType InventoryFunctions::RemoveItemFromBag(const CompoundInvento
 	return EOperationReturnType::InvalidBag;
 }
 
-
-
-void InventoryFunctions::TransferItems(const FName& InItemID, const int32 InQuantity, CompoundInventory& InInventoryToRemoveFrom, CompoundInventory& InInventoryToAddTo)
-{
-
-}
-
 void InventoryFunctions::SwapSlots(const InventorySlotReference& InFirstSlotReference, const InventorySlotReference& InSecondSlotReference)
 {
 	FInventoryItem FirstSlotItem = GetItemBySlotReference(InFirstSlotReference);
@@ -248,4 +241,51 @@ int32 InventoryFunctions::GetNumItemsInInventory(const CompoundInventory& InInve
 	}
 
 	return AmountFound;
+}
+
+TOptional<InventorySlotReference> InventoryFunctions::GetFirstSlotOfType(const CompoundInventory& InInventory, const EBagType& InBagType)
+{
+	const TOptional<InventorySlotReference> FoundSlot = GetFirstSlotByType(InInventory, InBagType, false);
+	return (FoundSlot.IsSet() ? FoundSlot : TOptional<InventorySlotReference>());
+}
+
+TOptional<InventorySlotReference> InventoryFunctions::GetFirstSlotNotOfType(const CompoundInventory& InInventory, const EBagType& InBagType)
+{
+	const TOptional<InventorySlotReference> FoundSlot = GetFirstSlotByType(InInventory, InBagType, true);
+	return (FoundSlot.IsSet() ? FoundSlot : TOptional<InventorySlotReference>());
+}
+
+TOptional<InventorySlotReference> InventoryFunctions::GetFirstEmptySlotInBag(const CompoundInventory& InInventory, const FGuid& InBagID)
+{
+	if (const FInventoryBag* FoundBag = InInventory.GetBag(InBagID))
+	{
+		for(int32 i = 0; i <= FoundBag->GetSlotNum()-1; i++)
+		{
+			const FInventoryItem& Item = FoundBag->BagSlots[i];
+			if (Item.ItemID == "Item")
+			{
+				const InventorySlotReference NewSlotRef(const_cast<CompoundInventory*>(&InInventory), Item.BagID, i);
+				return NewSlotRef;
+			}
+		}
+	}
+
+	return TOptional<InventorySlotReference>();
+}
+
+TOptional<InventorySlotReference> InventoryFunctions::GetFirstSlotByType(const CompoundInventory& InInventory, const EBagType& InBagType, const bool ShouldExcludeType /*= false*/)
+{
+	for (const FInventoryBag& Bag : InInventory.GetAllBags())
+	{
+		if ((Bag.GetBagType() == InBagType && !ShouldExcludeType) || (Bag.GetBagType() != InBagType && ShouldExcludeType))
+		{
+			TOptional<InventorySlotReference> FoundEmptySlot = GetFirstEmptySlotInBag(InInventory, Bag.GetBagID());
+			if (FoundEmptySlot.IsSet())
+			{
+				return FoundEmptySlot;
+			}
+		}
+	}
+
+	return TOptional<InventorySlotReference>();
 }
