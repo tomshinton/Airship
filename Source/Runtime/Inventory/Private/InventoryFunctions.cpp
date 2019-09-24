@@ -264,7 +264,7 @@ TOptional<InventorySlotReference> InventoryFunctions::GetFirstEmptySlotInBag(con
 			const FInventoryItem& Item = FoundBag->BagSlots[i];
 			if (Item.ItemID == "Item")
 			{
-				const InventorySlotReference NewSlotRef(const_cast<CompoundInventory*>(&InInventory), Item.BagID, i);
+				const InventorySlotReference NewSlotRef(const_cast<CompoundInventory*>(&InInventory), FoundBag->BagId, i);
 				return NewSlotRef;
 			}
 		}
