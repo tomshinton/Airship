@@ -86,6 +86,8 @@ public:
 
 	InventorySlotReference GetSlotRef();
 
+	ESlotDomain GetSlotDomain() const { return SlotDomain; };
+
 protected:
 
 	UPROPERTY(VisibleAnywhere, Category = DragAndDrop)

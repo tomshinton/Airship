@@ -59,7 +59,13 @@ void UInventorySlot::SynchronizeProperties()
 
 InventorySlotReference UInventorySlot::GetSlotRef()
 {
-	return InventorySlotReference(LinkedInventory->GetInventory(), BagID, InventorySlot);
+	if (LinkedInventory)
+	{
+		return InventorySlotReference(LinkedInventory->GetInventory(), BagID, InventorySlot);
+	}
+
+	UE_LOG(InventorySlotLog, Error, TEXT("Attempted to get the SlotReference from a slot with no valid linked inventory - returning a null reference"));
+	return InventorySlotReference();
 }
 
 void UInventorySlot::Build()
