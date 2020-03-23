@@ -34,7 +34,7 @@ public:
 		}
 	};
 
-	TArray<InventorySlotReference> Get()
+	TArray<InventorySlotReference> Get() const
 	{
 		TArray<InventorySlotReference> FoundSlots;
 		for (TObjectIterator<UInventorySlot> Itr; Itr; ++Itr)
@@ -59,7 +59,7 @@ public:
 		return FoundSlots;
 	};
 
-	bool SlotMatchesFilters(const UInventorySlot& InSlot);
+	bool SlotMatchesFilters(const UInventorySlot& InSlot) const;
 
 	static bool SlotMatchesDomainFilter(const UInventorySlot& InSlot, const TOptional<ESlotDomain>& InSlotDomainFilter);;
 	static bool SlotMatchesSlateVisibilityFilter(const UInventorySlot& InSlot, const TOptional<TArray<ESlateVisibility>>& InSlateVisibilityFilters);

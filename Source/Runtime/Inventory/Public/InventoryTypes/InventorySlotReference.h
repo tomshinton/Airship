@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <Runtime/Inventory/Public/InventoryTypes/CompoundInventory.h>
+class CompoundInventory;
 
 /**
  * Wrapper class for UInventorySlots and what they actually represent under the hood.
@@ -12,7 +12,11 @@ class INVENTORY_API InventorySlotReference
 {
 public:
 
-	InventorySlotReference() {};
+	InventorySlotReference()
+		: AssociatedInventory(nullptr)
+		, BagReference()
+		, SlotNumberReference(0)
+	{};
 
 	InventorySlotReference(CompoundInventory* InAssociatedInventory, const FGuid& InBagRef, const uint32 InSlotNum)
 		: AssociatedInventory(InAssociatedInventory)
@@ -20,6 +24,7 @@ public:
 		, SlotNumberReference(InSlotNum)
 	{}
 
+	UPROPERTY()
 	CompoundInventory* AssociatedInventory;
 
 	FGuid BagReference;

@@ -57,7 +57,7 @@ void UInventorySlot::SynchronizeProperties()
 	}
 }
 
-InventorySlotReference UInventorySlot::GetSlotRef()
+InventorySlotReference UInventorySlot::GetSlotRef() const
 {
 	if (LinkedInventory)
 	{

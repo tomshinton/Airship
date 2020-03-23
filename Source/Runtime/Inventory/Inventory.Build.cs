@@ -19,7 +19,6 @@ public class Inventory : ModuleRules
 
         PrivateDependencyModuleNames.AddRange(new string[] 
         {
-            "Inventory"
         });
 
 		PublicIncludePaths.AddRange(new string[] {"Runtime/Inventory/Public"});

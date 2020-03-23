@@ -84,7 +84,7 @@ public:
 	virtual void SetSlotDomain(const ESlotDomain InDomain) override { SlotDomain = InDomain; };
 	//~InventoryViewInterface
 
-	InventorySlotReference GetSlotRef();
+	InventorySlotReference GetSlotRef() const;
 
 	ESlotDomain GetSlotDomain() const { return SlotDomain; };
 

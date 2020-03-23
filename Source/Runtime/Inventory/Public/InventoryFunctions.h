@@ -39,7 +39,7 @@ public:
 	INVENTORY_API static TOptional<InventorySlotReference> GetFirstSlotOfType(const CompoundInventory& InInventory, const EBagType& InSlotDomain);
 	INVENTORY_API static TOptional<InventorySlotReference> GetFirstSlotNotOfType(const CompoundInventory& InInventory, const EBagType& InSlotDomain);
 
-	static TOptional<InventorySlotReference> GetFirstEmptySlotInBag(const CompoundInventory& InInventory, const FGuid& InBagID);
+	INVENTORY_API static TOptional<InventorySlotReference> GetFirstEmptySlotInBag(const CompoundInventory& InInventory, const FGuid& InBagID);
 	
 private:
 

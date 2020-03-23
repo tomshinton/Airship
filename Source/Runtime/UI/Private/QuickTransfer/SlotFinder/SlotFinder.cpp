@@ -4,7 +4,7 @@
 
 #include "Runtime/UI/Public/QuickTransfer/SlotFinder/SlotFinder.h"
 
-bool SlotFinder::SlotMatchesFilters(const UInventorySlot& InSlot)
+bool SlotFinder::SlotMatchesFilters(const UInventorySlot& InSlot) const
 {
 	return
 		SlotMatchesDomainFilter(InSlot, SlotDomainFilter) &&

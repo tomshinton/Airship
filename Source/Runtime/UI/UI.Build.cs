@@ -9,7 +9,8 @@ public class UI : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PublicDependencyModuleNames.AddRange(new string[]
-        {   
+        {
+            "Inventory"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] 
